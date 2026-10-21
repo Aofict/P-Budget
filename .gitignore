@@ -28,6 +28,7 @@ node_modules/
 build/
 dist/
 outputs/
+_site/
 *.zip
 *.exe
 *.dll
