@@ -1,0 +1,13 @@
+{
+  "scripts": {
+    "build:meeting-ui": "node scripts/build-meeting-ui.cjs"
+  },
+  "dependencies": {
+    "html2canvas": "^1.4.1"
+  },
+  "devDependencies": {
+    "@tailwindcss/cli": "^4.3.3",
+    "daisyui": "^5.7.50",
+    "tailwindcss": "^4.3.3"
+  }
+}

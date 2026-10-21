@@ -1,0 +1,175 @@
+/* Shared charcoal chrome; spreadsheet styling intentionally stays in style.css. */
+.nine-box-dialog {max-width:min(520px,calc(100vw - 32px));padding:24px;border:1px solid #777;border-radius:12px;background:#fff;color:#222;font:inherit;}
+.nine-box-dialog::backdrop {background:#0008;}
+.nine-box-dialog p {white-space:pre-line;overflow-wrap:anywhere;margin:0 0 20px;}
+.nine-box-dialog input {box-sizing:border-box;width:100%;padding:10px;margin-bottom:16px;font:inherit;}
+.nine-box-dialog form > div {display:flex;gap:12px;justify-content:flex-end;}
+.nine-box-dialog button {min-height:44px;padding:8px 20px;cursor:pointer;font:inherit;}
+.nine-box-dialog :focus-visible {outline:3px solid #168bd2;outline-offset:3px;}
+.nine-dark .nine-box-dialog {background:#171719;color:#f3f3f3;border-color:#555;}
+@media screen {
+  html:fullscreen .storage-toolbar,
+  html:fullscreen .plan-layout > :is(.top-bar,.add-project-card) {display:none !important;}
+  html:fullscreen body {margin:0;height:100dvh;}
+  html.nine-dark {color-scheme:dark;background:#0b0b0c;}
+  .nine-dark body {background:#0b0b0c;color:#f3f3f3;}
+  .nine-dark :is(.storage-toolbar,.start-year-setup,.top-bar,.add-project-card,.year-tabs-container) {background:#171719;color:#f3f3f3;border:1px solid #38383b;border-radius:12px;}
+  .nine-dark :is(.start-year-setup,.add-project-card) :is(h2,h3,p,label) {color:#e4e4e8;}
+  .nine-dark :is(.start-year-setup,.add-project-card) :is(input,select) {background:#101012;color:#f3f3f3;border-color:#444448;color-scheme:dark;}
+  .nine-dark :is(.start-year-setup,.add-project-card) input::placeholder {color:#b1b1b7;}
+  .nine-dark .master-project-results {background:#232325;color:#f3f3f3;border-color:#444448;}
+  .nine-dark .master-project-results > * {background:#232325;color:#f3f3f3;border-color:#38383b;}
+  .nine-dark .master-project-results > *:hover {background:#303036;}
+  .nine-dark .table-container {color:#2d3748;color-scheme:light;}
+  :is(.top-bar,.start-year-setup,.add-project-card,.storage-toolbar) button {
+    min-height:44px;padding:10px 16px;border:2px solid transparent;border-radius:15px;color:#fff;font-weight:600;
+    background:linear-gradient(#1a1a1a,#1a1a1a) padding-box,linear-gradient(135deg,#2e8eff,rgba(46,142,255,.2) 30%) border-box;
+    transition:box-shadow .3s ease;
+  }
+  :is(.top-bar,.start-year-setup,.add-project-card,.storage-toolbar) button:is(:hover,:focus-visible):not(:disabled) {background:linear-gradient(#1a1a1a,#1a1a1a) padding-box,linear-gradient(135deg,#2e8eff,rgba(46,142,255,.7) 30%) border-box;box-shadow:0 0 10px #2e8eff80;color:#fff;}
+  .year-tabs-container .tab-btn {min-height:30px;font-size:13px;font-weight:500;line-height:1.2;}
+  .nine-dark .tab-btn {background:#101012;color:#dddde2;border:1px solid #55555b;border-radius:4px 4px 0 0;}
+  .year-tabs-container .tab-btn.active {color:#fff;font-weight:600;border:1px solid #47769c;border-radius:4px 4px 0 0;background:#173f6d;box-shadow:none;}
+  :is(.top-bar,.year-tabs-container,.start-year-setup,.add-project-card,.storage-toolbar) button:focus-visible {outline:3px solid #38bdf8;outline-offset:3px;}
+  :is(.top-bar,.start-year-setup,.add-project-card,.storage-toolbar) button:disabled {opacity:.45;cursor:not-allowed;box-shadow:none;}
+}
+@media(prefers-reduced-motion:reduce) {:is(.top-bar,.year-tabs-container,.start-year-setup,.add-project-card,.storage-toolbar) button {transition:none;}}
+.excel-years-dialog > form > label {display:block;margin:12px 0;}
+.excel-years-dialog input[type="radio"] {width:auto;margin:0 8px 0 0;}
+.excel-years-dialog fieldset {display:flex;gap:16px;flex-wrap:wrap;margin-top:16px;border:1px solid #777;border-radius:8px;padding:12px;}
+.excel-years-dialog fieldset label {display:flex;flex-direction:column;gap:8px;flex:1;}
+.excel-years-dialog select {font:inherit;padding:10px;border:1px solid #777;border-radius:6px;background:#fff;color:#222;}
+.nine-dark .excel-years-dialog select {background:#242426;color:#fff;}
+.excel-years-dialog .excel-years-error {color:#dc5555;margin:12px 0;}
+
+/* Match the host application's warm light palette inside the 9-box iframe. */
+@media screen {
+  html:not(.nine-dark) {
+    color-scheme: light;
+    background: #ebe6df;
+  }
+  html:not(.nine-dark) body {
+    background: #ebe6df;
+    color: #40352c;
+  }
+  html:not(.nine-dark) :is(.storage-toolbar,.start-year-setup,.top-bar,.add-project-card,.year-tabs-container,.table-container) {
+    background: #f3ece3;
+    color: #40352c;
+    border-color: #cfc2b3;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(75, 54, 37, .06);
+  }
+  html:not(.nine-dark) :is(.start-year-setup,.add-project-card) :is(h2,h3,p,label),
+  html:not(.nine-dark) #tableTitle {
+    color: #40352c;
+  }
+  html:not(.nine-dark) :is(.start-year-setup,.add-project-card) :is(input,select),
+  html:not(.nine-dark) .master-project-search-wrap > input {
+    background: #fffdf9;
+    color: #40352c;
+    border: 1px solid #cfc2b3;
+    border-radius: 8px;
+  }
+  html:not(.nine-dark) :is(.start-year-setup,.add-project-card) input::placeholder {
+    color: #78695c;
+  }
+  html:not(.nine-dark) .master-project-results,
+  html:not(.nine-dark) .master-project-results > *,
+  html:not(.nine-dark) .table-container {
+    background-color: #fbf7f1;
+    color: #40352c;
+    border-color: #cfc2b3;
+  }
+  html:not(.nine-dark) .master-project-results > *:hover {
+    background: #eee5dc;
+  }
+  html:not(.nine-dark) .budget-table,
+  html:not(.nine-dark) .budget-table th,
+  html:not(.nine-dark) .budget-table td {
+    border-color: #cfc2b3 !important;
+  }
+  html:not(.nine-dark) .budget-table thead th {
+    background: #e2d6c7;
+    color: #3f3026;
+    border-bottom-color: #b9a58f !important;
+  }
+  html:not(.nine-dark) .budget-table tbody tr.project-header-row td {
+    background: #eee5dc;
+    color: #40352c;
+  }
+  html:not(.nine-dark) :is(.top-bar,.start-year-setup,.add-project-card,.storage-toolbar) button {
+    min-height: 42px;
+    padding: 9px 15px;
+    border: 1px solid #c2aa91;
+    border-radius: 9px;
+    background: #fbf7f1;
+    color: #5c4738;
+    font-weight: 700;
+    box-shadow: none;
+    transition: background-color .18s ease, border-color .18s ease, box-shadow .18s ease;
+  }
+  html:not(.nine-dark) :is(.top-bar,.start-year-setup,.add-project-card,.storage-toolbar) button:is(:hover,:focus-visible):not(:disabled) {
+    background: #eee5dc;
+    border-color: #a9794f;
+    color: #3f3026;
+    box-shadow: 0 2px 6px rgba(75, 54, 37, .12);
+  }
+  html:not(.nine-dark) :is(.start-year-setup #startYearSubmit,.btn-add-year,.btn-add-master-project) {
+    background: #8b5e3c;
+    border-color: #8b5e3c;
+    color: #fff;
+  }
+  html:not(.nine-dark) :is(.start-year-setup #startYearSubmit,.btn-add-year,.btn-add-master-project):is(:hover,:focus-visible):not(:disabled) {
+    background: #70482f;
+    border-color: #70482f;
+    color: #fff;
+  }
+  html:not(.nine-dark) .tab-btn {
+    background: #f8f2ea;
+    color: #49382c;
+    border-color: #bda992;
+    border-radius: 4px 4px 0 0;
+  }
+  html:not(.nine-dark) .tab-btn:hover:not(.active) {
+    background: #e9dccd;
+    border-color: #a9794f;
+  }
+  html:not(.nine-dark) .year-tabs-container .tab-btn.active {
+    background: #795032;
+    color: #fff;
+    border: 1px solid #795032;
+    border-bottom-color: #f3ece3;
+    box-shadow: none;
+  }
+  html:not(.nine-dark) :is(.top-bar,.year-tabs-container,.start-year-setup,.add-project-card,.storage-toolbar) :focus-visible {
+    outline: 3px solid #a9794f;
+    outline-offset: 3px;
+  }
+  html:not(.nine-dark) :is(.top-bar,.start-year-setup,.add-project-card,.storage-toolbar) button:disabled {
+    opacity: .5;
+    cursor: not-allowed;
+    box-shadow: none;
+  }
+  .project-actions > button {
+    min-height: 30px;
+    padding: 4px 8px;
+    border: 1px solid transparent;
+    border-radius: 6px;
+    background: transparent;
+    box-shadow: none;
+    font: inherit;
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1.2;
+    cursor: pointer;
+  }
+  html:not(.nine-dark) .project-actions > button {color: #6f6257;}
+  html:not(.nine-dark) .project-actions > button:is(:hover,:focus-visible) {background: #e5d9cc;color: #40352c;}
+  html:not(.nine-dark) .project-actions > .btn-delete-project {color: #9e574b;}
+  html:not(.nine-dark) .project-actions > .btn-delete-project:is(:hover,:focus-visible) {background: #f3dcd6;color: #8e3529;}
+  .nine-dark .project-actions > button {color: #b1b1b7;}
+  .nine-dark .project-actions > button:is(:hover,:focus-visible) {background: #303036;color: #f3f3f3;}
+  .nine-dark .project-actions > .btn-delete-project {color: #e5a19b;}
+  .nine-dark .project-actions > .btn-delete-project:is(:hover,:focus-visible) {background: #3a2628;color: #ffaaa8;}
+  .project-actions > button:focus-visible {outline: 2px solid currentColor;outline-offset: 2px;}
+}

@@ -1,0 +1,235 @@
+<!doctype html>
+<html lang="th">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>ระบบจัดการงบประมาณโครงการ</title>
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCIgZmlsbD0ibm9uZSI+CiAgPGRlZnM+CiAgICA8bGluZWFyR3JhZGllbnQgaWQ9ImJsdWUiIHgxPSIxMiIgeTE9IjQiIHgyPSI0NSIgeTI9IjYwIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHN0b3Agc3RvcC1jb2xvcj0iIzAwZDJlOSIvPjxzdG9wIG9mZnNldD0iLjQ4IiBzdG9wLWNvbG9yPSIjMDBhOWY1Ii8+PHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjMDg2MGZmIi8+PC9saW5lYXJHcmFkaWVudD4KICAgIDxtYXNrIGlkPSJiYXJzIj48cmVjdCB3aWR0aD0iNjQiIGhlaWdodD0iNjQiIGZpbGw9IndoaXRlIi8+PHJlY3QgeD0iMjIiIHk9IjI2IiB3aWR0aD0iNiIgaGVpZ2h0PSIxNiIgcng9IjMiIGZpbGw9ImJsYWNrIi8+PHJlY3QgeD0iMzIiIHk9IjE5IiB3aWR0aD0iNiIgaGVpZ2h0PSIyMyIgcng9IjMiIGZpbGw9ImJsYWNrIi8+PHJlY3QgeD0iNDIiIHk9IjEyIiB3aWR0aD0iNiIgaGVpZ2h0PSIzMCIgcng9IjMiIGZpbGw9ImJsYWNrIi8+PC9tYXNrPgogIDwvZGVmcz4KICA8cGF0aCBkPSJNNiAxOSAyMSA0aDE3YTIyIDIyIDAgMCAxIDAgNDRIMjF2MTJINloiIGZpbGw9InVybCgjYmx1ZSkiIG1hc2s9InVybCgjYmFycykiLz4KICA8cGF0aCBkPSJNMjEgNXYxMmEzIDMgMCAwIDEtMyAzSDciIHN0cm9rZT0iIzA4N2ZlNCIgc3Ryb2tlLXdpZHRoPSIyLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgo8L3N2Zz4K" />
+    <link rel="stylesheet" href="/meeting-app/assets/daisyui.css" />
+    <link rel="stylesheet" href="style.css?v=20261021-eyebrow-unified" />
+    <link rel="stylesheet" href="meetings.css?v=20261015-remove-sidebar" />
+    <link rel="stylesheet" href="project-form.css?v=20261016-inline-investment-import" />
+      <link rel="stylesheet" href="/meeting-app/assets/tablet.css?v=1" />
+    <script src="/meeting-app/assets/fullscreen-compat.js?v=1"></script>
+      <link rel="stylesheet" href="/meeting-app/assets/shell-header.css?v=13-report-active" />
+    <link rel="stylesheet" href="/meeting-app/assets/dashboard-overview.css?v=20261021-modules-v1" />
+    <link rel="stylesheet" href="frontend/plan-results-table.css?v=20261021-modules-v1" />
+  </head>
+
+  <body>
+      <header class="app-header" aria-label="แถบเครื่องมือหลัก">
+      <div class="header-brand-row">
+      <a class="brand" href="#dashboard"
+        ><span class="brand-icon" aria-hidden="true"><img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCIgZmlsbD0ibm9uZSI+CiAgPGRlZnM+CiAgICA8bGluZWFyR3JhZGllbnQgaWQ9ImJsdWUiIHgxPSIxMiIgeTE9IjQiIHgyPSI0NSIgeTI9IjYwIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHN0b3Agc3RvcC1jb2xvcj0iIzAwZDJlOSIvPjxzdG9wIG9mZnNldD0iLjQ4IiBzdG9wLWNvbG9yPSIjMDBhOWY1Ii8+PHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjMDg2MGZmIi8+PC9saW5lYXJHcmFkaWVudD4KICAgIDxtYXNrIGlkPSJiYXJzIj48cmVjdCB3aWR0aD0iNjQiIGhlaWdodD0iNjQiIGZpbGw9IndoaXRlIi8+PHJlY3QgeD0iMjIiIHk9IjI2IiB3aWR0aD0iNiIgaGVpZ2h0PSIxNiIgcng9IjMiIGZpbGw9ImJsYWNrIi8+PHJlY3QgeD0iMzIiIHk9IjE5IiB3aWR0aD0iNiIgaGVpZ2h0PSIyMyIgcng9IjMiIGZpbGw9ImJsYWNrIi8+PHJlY3QgeD0iNDIiIHk9IjEyIiB3aWR0aD0iNiIgaGVpZ2h0PSIzMCIgcng9IjMiIGZpbGw9ImJsYWNrIi8+PC9tYXNrPgogIDwvZGVmcz4KICA8cGF0aCBkPSJNNiAxOSAyMSA0aDE3YTIyIDIyIDAgMCAxIDAgNDRIMjF2MTJINloiIGZpbGw9InVybCgjYmx1ZSkiIG1hc2s9InVybCgjYmFycykiLz4KICA8cGF0aCBkPSJNMjEgNXYxMmEzIDMgMCAwIDEtMyAzSDciIHN0cm9rZT0iIzA4N2ZlNCIgc3Ryb2tlLXdpZHRoPSIyLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgo8L3N2Zz4K" width="36" height="36" alt="" /></span
+        ><span
+          ><b>ระบบจัดการข้อมูลงบประมาณโครงการ</b
+          ><small>แผนกงบประมาณโครงการ</small></span
+        ></a
+      >
+</div>
+<nav class="header-nav" aria-label="เมนูหลัก">
+        <button data-page="dashboard" class="active">
+          ⌂ <span>หน้าหลัก</span></button
+        ><button data-page="projects">▤ <span>ข้อมูลโครงการ</span></button>
+        <button data-page="plan-results"><span>แผนและผล</span></button>
+        <button data-page="nine-box">▦ <span>9 ช่อง</span></button>
+        <button data-page="meetings">▦ <span>ประชุมงบประมาณ</span></button>
+        <details class="report-nav" id="report-nav"><summary>▧ <span>Report</span></summary><div><button type="button" data-page="reports-annual">▥ <span>แผนรายปี</span></button><button type="button" data-page="reports-monthly">▥ <span>แผนรายเดือน</span></button></div></details>
+      </nav>
+        <div class="header-right">
+          <button id="theme" class="icon-button" type="button" aria-label="เปลี่ยนเป็นโหมดสว่าง">☀</button>
+          <button type="button" data-page="settings" class="icon-button" aria-label="ตั้งค่า" title="ตั้งค่า">⚙ <span hidden>ตั้งค่า</span></button>
+          <div class="profile" title="JESSADA NASOMSRI · Admin">
+            <span class="avatar" role="img" aria-label="โปรไฟล์ JESSADA NASOMSRI">JS</span>
+          </div>
+        </div>
+      </header>
+
+    <div class="workspace">
+
+      <main>
+        <div id="connection-banner" class="connection-banner" hidden>
+          <span id="connection-message"></span
+          ><button class="secondary" data-action="refresh">
+            เชื่อมต่ออีกครั้ง
+          </button>
+        </div>
+        <section class="welcome">
+          <div>
+            <div class="eyebrow">PROJECT BUDGET OVERVIEW</div>
+            <h1 id="page-title">สวัสดีครับ <span class="wave">👋</span></h1>
+            <p id="page-subtitle">
+              ยินดีต้อนรับสู่ระบบประมาณการจ่ายเงินโครงการ PEA
+            </p>
+          </div>
+          <div class="overview-scope"><p id="dashboard-scope" aria-live="polite"></p><p id="analytics-scope" role="status"></p></div>
+          <div class="welcome-actions">
+            <div class="today">
+              <span class="overview-calendar-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M7 2v6M17 2v6M3 11h18"/></svg></span>
+              <div><small>วันนี้</small><b id="today"></b></div>
+            </div>
+          </div>
+        </section>
+        <section id="dashboard-filters" class="dashboard-filters" aria-label="ตัวกรองภาพรวม" hidden>
+
+            <div class="analytics-controls">
+              <label><span>ประเภทปี</span><select id="analytics-mode" aria-label="รอบปี"><option value="calendar">ปีปฏิทิน</option><option value="fiscal">ปีงบประมาณ</option></select></label>
+              <label><span>ปีดำเนินการ</span><select id="analytics-year" aria-label="ปี พ.ศ."><option value="all">ทุกปี</option></select></label>
+              <label><span>ชุดแผน</span><select id="analytics-plan" aria-label="ชุดแผน"><option value="cabinet">ชุดมติ ครม.</option><option value="revised">ชุดเปลี่ยนแปลงงบ</option></select></label>
+            </div>
+
+        </section>
+        <section id="dashboard-disbursement" class="dashboard-disbursement" aria-label="วิเคราะห์แผนและผลการเบิกจ่าย" hidden>
+          <div id="analytics-kpis" class="analytics-kpis" aria-label="ยอดสะสมโครงการตามตัวกรอง" aria-live="polite"></div>
+        </section>
+        <section id="stats" class="stats" aria-label="สรุปโครงการและงบประมาณ"></section>
+        <section id="main-panel" class="panel projects-panel">
+          <div class="panel-heading">
+            <h2>
+              <span class="section-icon">▣</span>
+              <span id="table-title">โครงการล่าสุด</span
+              ><span id="project-count" class="count"></span>
+            </h2>
+            <div class="filters" hidden>
+              <label class="overview-status-filter"><span>สถานะโครงการ</span><select id="status-filter" aria-label="กรองตามสถานะ"><option value="">ทุกสถานะ</option></select></label>
+              <label class="overview-division-filter"><span>สายงาน</span><select id="division-filter" aria-label="กรองตามสายงาน"><option value="">ทุกสายงาน</option></select></label>
+              <div id="projects-search" class="search-wrap" hidden>
+                <span aria-hidden="true">⌕</span>
+                <input id="search" type="search" aria-label="ค้นหาโครงการ รหัสโครงการ หรือคำสำคัญ" placeholder="ค้นหาโครงการ…" />
+              </div>
+              <button type="button" class="primary" id="add-project">
+                <span>＋</span> เพิ่มโครงการ
+              </button>
+            </div>
+            <button id="view-all" class="secondary">
+              ดูทั้งหมด <span>→</span>
+            </button>
+          </div>
+          <div class="table-scroll" tabindex="0" role="region" aria-label="ตารางโครงการ เลื่อนแนวนอนเพื่อดูทุกคอลัมน์">
+            <table aria-labelledby="table-title">
+              <thead>
+                <tr>
+                  <th>ลำดับ</th>
+                  <th>ชื่อโครงการ</th>
+                  <th class="number" id="project-budget-heading">งบประมาณรวม</th>
+                  <th class="number">เบิกจ่ายแล้ว</th>
+                  <th id="project-rate-heading">ความคืบหน้า</th>
+                  <th>สายงาน</th>
+                  <th>สถานะ</th>
+                  <th>แก้ไขล่าสุด</th>
+                  <th aria-label="การดำเนินการ"></th>
+                </tr>
+              </thead>
+              <tbody id="project-rows"></tbody>
+            </table>
+          </div>
+          <div class="table-footer">
+            <span id="row-caption"></span
+            ><span><i class="live-dot"></i> บันทึกใน Master DB</span>
+          </div>
+        </section>
+        <section id="plan-results-panel" class="plan-results-panel" aria-label="แผนและผลการเบิกจ่าย" hidden>
+          <article class="panel analytics-chart-panel">
+            <div class="panel-heading analytics-reference-heading"><div class="analytics-heading-copy"><div class="analytics-heading-title"><h2 id="analytics-chart-title">แผนและผลรายปี</h2><span id="analytics-chart-project" role="status">ทุกโครงการตามตัวกรอง</span></div><p id="analytics-chart-range"></p></div><div class="analytics-key"><span><i class="analytics-plan-key"></i>เป้าหมาย (Plan)</span><span><i class="analytics-actual-key"></i>เบิกจ่ายจริง (Actual)</span><span class="analytics-unit">หน่วย: ล้านบาท</span></div></div>
+            <div class="analytics-chart-tools"><button type="button" id="analytics-chart-reset" class="secondary" hidden>แสดงทุกโครงการ</button><div class="analytics-view-switch" role="group" aria-label="มุมมองกราฟ"><button type="button" data-analytics-view="monthly" aria-pressed="false">รายเดือน</button><button type="button" data-analytics-view="annual" aria-pressed="true">รายปี</button></div></div>
+            <div id="analytics-annual" class="analytics-chart" tabindex="0" role="region" aria-label="กราฟแผนและผลรายปี"></div>
+            <div id="analytics-monthly" class="analytics-chart" tabindex="0" role="region" aria-label="กราฟแผนและผลรายเดือน" hidden></div>
+            <div id="analytics-chart-summary" class="analytics-chart-summary" aria-live="polite"></div>
+          </article>
+          <article class="panel analytics-projects-panel">
+            <div class="panel-heading analytics-projects-heading">
+              <div class="analytics-projects-title"><h2>แผนและผลการเบิกจ่ายรายโครงการ</h2><span id="analytics-project-count" class="count" aria-live="polite"></span></div>
+              <div class="analytics-table-controls">
+                <label class="analytics-table-search"><span aria-hidden="true">⌕</span><input id="analytics-table-search" type="search" placeholder="ค้นหาชื่อหรือรหัสโครงการ..." aria-label="ค้นหาในตารางแผนและผล" /></label>
+                <div class="analytics-status-tabs" role="group" aria-label="กรองสถานะผลเทียบแผน"><button type="button" data-analytics-status="all" aria-pressed="true">ทั้งหมด</button><button type="button" data-analytics-status="on-track" aria-pressed="false">ตามแผน</button><button type="button" data-analytics-status="delayed" aria-pressed="false">ล่าช้า</button></div>
+                <details class="analytics-table-options"><summary aria-label="ตัวเลือกตาราง" title="ตัวเลือกตาราง"><span aria-hidden="true">☷</span></summary><div><label>สถานะ<select id="analytics-table-status"><option value="all">ทั้งหมด</option><option value="complete">ครบตามแผน</option><option value="on-track">ตามแผนและครบตามแผน</option><option value="warning">เฝ้าระวัง</option><option value="delayed">ล่าช้า</option><option value="missing">ยังไม่มีแผนหรือผล</option></select></label><label>จำนวนต่อหน้า<select id="analytics-table-page-size"><option value="6">6 โครงการ</option><option value="12">12 โครงการ</option><option value="24">24 โครงการ</option></select></label></div></details>
+              </div>
+            </div>
+            <div class="table-scroll analytics-table-scroll" tabindex="0" role="region" aria-label="ตารางแผนและผลการเบิกจ่ายรายโครงการ"><table><thead><tr><th scope="col">โครงการ</th><th scope="col">แผนการเบิกจ่าย (ลบ.)</th><th scope="col">ผลการเบิกจ่าย (ลบ.)</th><th scope="col">ผลเทียบแผน</th><th scope="col">สถานะ</th><th scope="col">การจัดการ</th></tr></thead><tbody id="analytics-project-rows"></tbody><tfoot id="analytics-project-totals"></tfoot></table></div>
+            <div class="analytics-projects-footer"><p class="analytics-note"><span aria-hidden="true">ⓘ</span> รวมเฉพาะรายการรายเดือนที่บันทึก ช่องที่ยังไม่มีข้อมูลไม่ถือเป็นศูนย์ · ผลเทียบแผนอาจยังไม่ครบปี</p><div class="analytics-table-pagination"><span id="analytics-table-caption" role="status"></span><button type="button" id="analytics-table-previous" class="secondary">ก่อนหน้า</button><button type="button" id="analytics-table-next" class="secondary">ถัดไป</button></div></div>
+          </article>
+        </section>
+        <section id="meeting-panel" hidden></section>
+        <section id="nine-box-panel" hidden></section>
+        <div id="settings-tabs" class="settings-tabs" role="tablist" aria-label="ตั้งค่า" hidden>
+          <button id="settings-tab-general" type="button" role="tab" aria-controls="other-panel" aria-selected="true" data-page="settings">ตั้งค่า</button>
+          <button id="settings-tab-master" type="button" role="tab" aria-controls="other-panel" aria-selected="false" tabindex="-1" data-page="master">ข้อมูลหลัก</button>
+        </div>
+        <section id="other-panel" class="panel other-panel" hidden></section>
+        <section id="reports-panel" class="panel" hidden aria-label="ส่งออกรายงาน Excel">
+          <div class="panel-heading"><h2 id="report-heading">แผนรายปี</h2></div>
+          <div class="report-controls"><label>รอบปี<select id="report-mode"><option value="calendar">ปีปฏิทิน (ม.ค.–ธ.ค.)</option><option value="fiscal">ปีงบประมาณ (ต.ค.–ก.ย.)</option></select></label><label>ตั้งแต่ปี พ.ศ.<select id="report-year-from"><option value="">ปีแรกที่มีข้อมูล</option></select></label><label>ถึงปี พ.ศ.<select id="report-year-to"><option value="">ปีสุดท้ายที่มีข้อมูล</option></select></label><label>ชุดแผน<select id="report-plan"><option value="cabinet">ชุดมติ ครม.</option><option value="revised">ชุดเปลี่ยนแปลงงบ</option></select></label><label>สายงาน<select id="report-division"><option value="">ทุกสายงาน</option></select></label><label>สถานะโครงการ<select id="report-project-status"><option value="">ทุกสถานะ</option></select></label><button type="button" class="primary" id="report-export">Export Excel</button></div>
+          <p class="report-hint">รายงานแสดงเป้าหมายและเบิกจ่ายจริง แยกแหล่งเงิน · หน่วย: ล้านบาท · ช่องว่างคือยังไม่มีข้อมูล</p>
+          <p id="report-status" role="status"></p>
+        </section>
+        <section id="project-form-page" class="project-profile-page" aria-labelledby="form-title" hidden></section>
+        <div class="workspace-note">
+          <span><i class="live-dot"></i> พร้อมใช้งาน</span
+          ><span>ฐานข้อมูลโครงการ • หน่วยงบประมาณ: ล้านบาท</span>
+        </div>
+      </main>
+
+    </div>
+    <dialog id="master-dialog">
+      <form id="master-form">
+        <div class="modal-heading">
+          <div>
+            <small>MASTER DATA</small>
+            <h2 id="master-title">ข้อมูลหลัก</h2>
+          </div>
+          <button
+            type="button"
+            class="icon-button close-dialog"
+            aria-label="ปิด"
+          >
+            ×
+          </button>
+        </div>
+        <label id="master-code-label"
+          >รหัสข้อมูลหลัก<input
+            name="code"
+            required
+            maxlength="30"
+            pattern="[A-Za-z0-9_-]+"
+            placeholder="เช่น INVESTMENT"
+          /><small class="field-help" id="master-code-help"
+            >ใช้ตัวอักษรอังกฤษ ตัวเลข - หรือ _ และแก้ไขรหัสภายหลังไม่ได้</small
+          ></label
+        ><label id="master-name-label">ชื่อ<input name="name" required maxlength="100" /></label
+        ><label class="checkbox-label"
+          ><input name="active" type="checkbox" checked /> เปิดใช้งาน</label
+        ><label class="checkbox-label" id="terminal-label"
+          ><input name="is_terminal" type="checkbox" />
+          เป็นสถานะสิ้นสุดโครงการ</label
+        >
+        <p id="master-error" role="alert"></p>
+        <div class="modal-actions">
+          <button type="button" class="secondary close-dialog">ยกเลิก</button
+          ><button type="submit" class="primary">บันทึกข้อมูลหลัก</button>
+        </div>
+      </form>
+    </dialog>
+    <dialog id="project-leave-dialog" aria-labelledby="project-leave-title" aria-describedby="project-leave-description">
+      <h2 id="project-leave-title">ยังไม่ได้บันทึก</h2>
+      <p id="project-leave-description">ข้อมูลที่แก้ไขจะหายไปหากออกจากหน้านี้</p>
+      <div class="project-leave-actions">
+        <button type="button" class="secondary" id="project-leave-stay">แก้ไขต่อ</button>
+        <button type="button" class="danger" id="project-leave-discard">ออกโดยไม่บันทึก</button>
+      </div>
+    </dialog>
+    <div id="toast" role="status"></div>
+    <script src="disbursement-plan.js?v=20261011-calendar-default"></script>
+    <script src="project-form.js?v=20261016-inline-investment-import"></script>
+    <script src="meetings.js?v=20261015-single-app-header"></script>
+    <script src="database-settings.js"></script>
+    <script src="patch-settings.js?v=20261019-in-place-zip-update"></script>
+    <script src="frontend/icons.js?v=20261021-modules-v1"></script>
+    <script src="frontend/finance.js?v=20261021-modules-v1"></script>
+    <script src="frontend/navigation.js?v=20261021-modules-v1"></script>
+    <script src="frontend/plan-results-table.js?v=20261021-modules-v1"></script>
+    <script src="frontend/dashboard.js?v=20261021-review-fixes-v2"></script>
+    <script src="app.js?v=20261021-modules-v1"></script>
+  </body>
+</html>
+
+

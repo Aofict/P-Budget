@@ -1,0 +1,702 @@
+/* ==========================================
+   1. GENERAL STYLES
+   ========================================== */
+:root {
+  /* ปรับความกว้างตาราง 9 ช่องจาก 4 ค่านี้เท่านั้น */
+  --nb-col-order: 3%;
+  --nb-col-short: 6%;
+  --nb-col-project: 28%;
+  --nb-col-money: calc(
+    (100% - var(--nb-col-order) - var(--nb-col-short) - var(--nb-col-project)) /
+      9
+  );
+}
+
+body {
+  font-family: 'Sarabun', 'Tahoma', 'Segoe UI', sans-serif;
+  margin: 20px;
+  background-color: #f8fafc;
+  color: #2d3748;
+}
+
+h2 {
+  margin-top: 0;
+  color: #1a202c;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+/* ==========================================
+   2. TOP BAR & MENU
+   ========================================== */
+.top-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 15px;
+  background: #edf2f7;
+  padding: 10px 15px;
+  border-radius: 8px;
+}
+
+.menu-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.menu-group button,
+.btn-add-year {
+  padding: 6px 14px;
+  margin-right: 0;
+  border: 1px solid #cbd5e0;
+  border-radius: 4px;
+  background-color: #ffffff;
+  cursor: pointer;
+  font-family: inherit;
+  font-weight: bold;
+  transition:
+    background-color 0.2s,
+    border-color 0.2s,
+    color 0.2s;
+}
+
+.menu-group button:hover,
+.btn-add-year:hover {
+  background-color: #e2e8f0;
+}
+
+.btn-add-year {
+  background-color: #3182ce;
+  color: #ffffff;
+  border-color: #3182ce;
+}
+
+.btn-add-year:hover {
+  background-color: #2b6cb0;
+}
+
+/* ==========================================
+   3. YEAR TABS
+   ========================================== */
+.year-tabs-container {
+  display: flex;
+  gap: 2px;
+  margin-bottom: -1px;
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+.tab-btn {
+  flex: 0 0 auto;
+  padding: 4px 10px;
+  border: 1px solid #cbd5e0;
+  border-bottom: none;
+  border-radius: 4px 4px 0 0;
+  background-color: #e2e8f0;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+.tab-btn.active {
+  background-color: #ffffff;
+  color: #2b6cb0;
+  font-weight: bold;
+  border-top: 3px solid #3182ce;
+}
+
+.btn-delete-year {
+  margin-left: 8px;
+  color: #e53e3e;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.btn-delete-year:hover {
+  color: #c53030;
+}
+
+/* ==========================================
+   4. ADD PROJECT FORM CARD
+   ========================================== */
+.add-project-card {
+  background: #ffffff;
+  padding: 6px 12px;
+  border-radius: 8px;
+  margin-bottom: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e2e8f0;
+}
+
+.add-project-card h3 {
+  margin-top: 0;
+  margin-bottom: 10px;
+  font-size: 16px;
+  color: #4a5568;
+}
+
+.form-group {
+  display: flex;
+  gap: 10px;
+  min-width: 0;
+}
+
+.form-group input,
+.form-group select {
+  min-width: 0;
+  padding: 6px 10px;
+  border: 1px solid #cbd5e0;
+  border-radius: 4px;
+  font-family: inherit;
+}
+
+.form-group input[type='text'] {
+  flex: 2;
+}
+
+.form-group input[type='number'] {
+  flex: 1;
+}
+
+.form-group button {
+  flex: 0 0 auto;
+  padding: 6px 15px;
+  background-color: #38a169;
+  color: #ffffff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-family: inherit;
+  font-weight: bold;
+}
+
+.form-group button:hover {
+  background-color: #2f855a;
+}
+
+/* ==========================================
+   5. TABLE STYLES
+   ========================================== */
+.table-container {
+  width: 100%;
+  overflow-x: auto;
+  background: #ffffff;
+  padding: 15px;
+  border-radius: 0 8px 8px 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  border: 1px solid #cbd5e0;
+}
+
+#tableTitle {
+  text-align: center;
+  width: 100%;
+}
+
+.budget-table {
+  width: 100%;
+  border-collapse: collapse;
+  border: 1px solid #cbd5e0;
+  table-layout: fixed;
+  font-size: 13px;
+}
+
+.budget-table th,
+.budget-table td {
+  border: 1px solid #cbd5e0 !important;
+  padding: 6px 6px;
+  vertical-align: middle;
+}
+
+/*
+   ความกว้างคอลัมน์ควบคุมด้วย <colgroup> ที่ script.js สร้างให้
+   จึงไม่ใช้ th:nth-child() ซึ่งคลาดเคลื่อนเมื่อหัวตารางมี rowspan/colspan
+*/
+.budget-table col.col-order {
+  width: var(--nb-col-order);
+}
+
+.budget-table col.col-short {
+  width: var(--nb-col-short);
+}
+
+.budget-table col.col-project {
+  width: var(--nb-col-project);
+}
+
+.budget-table col.col-money {
+  width: var(--nb-col-money);
+}
+
+.budget-table thead th {
+  text-align: center !important;
+  background-color: #f1f5f9;
+  border-bottom: 2px solid #cbd5e0 !important;
+  line-height: 1.25;
+}
+
+/* คอลัมน์ข้อความ */
+.budget-table tbody td:nth-child(1),
+.budget-table tbody td:nth-child(2),
+.budget-table tbody td:nth-child(3),
+.budget-table tbody tr.project-header-row td,
+.budget-table tbody td.project-title-cell {
+  text-align: left !important;
+}
+
+.budget-table tbody td:nth-child(1),
+.budget-table tbody td:nth-child(2) {
+  padding-left: 8px !important;
+}
+
+.budget-table tbody td:nth-child(3),
+.budget-table tbody td.project-title-cell {
+  padding-left: 10px !important;
+}
+
+.budget-table tbody tr.sub-item-row td.source-label {
+  text-align: left !important;
+  padding-left: 26px !important;
+}
+
+.budget-table tbody tr.sub-item-row td.source-label-secondary {
+  padding-left: 42px !important;
+}
+
+.budget-table tbody tr.summary-row td.project-subtotal-label {
+  text-align: center !important;
+  padding-left: 6px !important;
+  padding-right: 6px !important;
+}
+
+/* คอลัมน์ตัวเลข 4-12 */
+.budget-table
+  tbody
+  tr:not(.unbound-row)
+  td:nth-child(n + 4):nth-child(-n + 12) {
+  text-align: right !important;
+  padding-left: 2px !important;
+  padding-right: 4px !important;
+  white-space: nowrap;
+}
+
+/* Summary rows merge the label columns, so their numeric cells can start at td:nth-child(3). */
+.budget-table tbody td.editable-cell,
+.budget-table tbody td.read-only-cell {
+  text-align: right !important;
+}
+
+/* โครงการที่ไม่ผูกพัน */
+.budget-table tbody tr.unbound-row td,
+.budget-table tbody tr.unbound-header td,
+.budget-table tbody tr.unbound-summary td,
+.budget-table tfoot tr.unbound-footer td {
+  text-align: left;
+}
+
+/* น้ำหนักตัวอักษร */
+.budget-table tbody td {
+  font-weight: normal;
+}
+
+.budget-table tbody tr.project-header-row td,
+.budget-table tbody tr.subtotal-row td,
+.budget-table tbody tr.summary-row td,
+.budget-table tbody tr.summary-source-row td,
+.budget-table tbody tr.total-row td,
+.budget-table tbody tr:last-child td,
+.budget-table tfoot td {
+  font-weight: bold;
+}
+
+.project-header-row {
+  background-color: #edf2f7;
+}
+
+.project-title-cell {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.project-title-content {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.project-title-text {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.project-end-year {
+  font-size: 12px;
+  color: #718096;
+  margin-left: 6px;
+}
+
+.project-actions {
+  display: inline-flex;
+  gap: 4px;
+  flex: 0 0 auto;
+  vertical-align: middle;
+}
+
+/* ช่องกรอกตัวเลข */
+.editable-cell {
+  background-color: #fffaf0;
+  outline: none;
+  font-size: 12.5px;
+  font-weight: 600;
+  line-height: 1.35;
+  white-space: nowrap;
+  word-break: normal;
+  overflow-wrap: normal;
+}
+
+.editable-cell:focus {
+  background-color: #feebc8;
+  box-shadow: inset 0 0 0 2px #dd6b20;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+/* ช่องคำนวณอัตโนมัติ */
+.read-only-cell {
+  background-color: #f7fafc;
+  font-size: 12.5px;
+  font-weight: 500;
+  white-space: nowrap;
+  word-break: normal;
+  overflow-wrap: normal;
+}
+
+.sub-item-row td {
+  height: 28px;
+}
+
+.text-negative {
+  color: #e53e3e !important;
+}
+
+/* ==========================================
+   6. MASTER PROJECT SEARCH
+   ========================================== */
+.master-project-search-row {
+  display: grid;
+  grid-template-columns: auto minmax(180px, 1fr) auto minmax(140px, 170px) minmax(190px, 220px);
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 0;
+}
+.add-project-card .master-project-search-row > h3 {
+  margin: 0;
+  font-size: 15px;
+  white-space: nowrap;
+}
+
+.master-project-search-wrap {
+  position: relative;
+  min-width: 0;
+}
+
+#masterProjectSearch,
+#masterDivisionFilter,
+#budgetInvestmentFilter {
+  width: 100%;
+  height: 44px;
+  font-family: inherit;
+}
+
+.btn-add-master-project {
+  min-width: 180px;
+  white-space: nowrap;
+}
+
+.master-project-results {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  max-height: 360px;
+  overflow-y: auto;
+  background: #ffffff;
+  border: 1px solid #b8c6d8;
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.16);
+  z-index: 1000;
+}
+
+.master-project-result {
+  display: block;
+  width: 100%;
+  padding: 10px 12px;
+  border: 0;
+  border-bottom: 1px solid #e3e9f0;
+  background: #ffffff;
+  color: #222222;
+  text-align: left;
+  cursor: pointer;
+}
+
+.master-project-result:last-child {
+  border-bottom: 0;
+}
+
+.master-project-result:hover {
+  background: #eef6ff;
+}
+
+.master-project-result-main {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.master-project-result-main strong {
+  min-width: 90px;
+  color: #0b63b6;
+}
+
+.master-project-result-main span {
+  flex: 1;
+}
+
+.master-project-result-meta {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 5px;
+  padding-left: 102px;
+  font-size: 12px;
+  color: #667788;
+}
+
+.master-project-result.already-added {
+  opacity: 0.55;
+  cursor: default;
+}
+
+.master-project-added {
+  color: #15803d;
+}
+
+.master-project-empty {
+  padding: 14px;
+  text-align: center;
+  color: #777777;
+}
+
+/* ==========================================
+   7. RESPONSIVE
+   ========================================== */
+@media (max-width: 1100px) {
+  .budget-table {
+    font-size: 12px;
+  }
+
+  .budget-table th,
+  .budget-table td {
+    padding-left: 4px;
+    padding-right: 4px;
+  }
+
+  .editable-cell {
+    font-size: 12px;
+  }
+
+  .read-only-cell {
+    font-size: 11.5px;
+  }
+}
+
+@media (max-width: 900px) {
+  body {
+    margin: 10px;
+  }
+
+  .top-bar,
+  .form-group {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .master-project-search-row {
+    grid-template-columns: 1fr;
+  }
+
+  .master-project-result-main {
+    display: block;
+  }
+
+  .master-project-result-main strong {
+    display: block;
+    margin-bottom: 4px;
+  }
+
+  .master-project-result-meta {
+    padding-left: 0;
+  }
+
+  /* จอเล็กให้ยอมเลื่อนตาราง แทนการบีบตัวเลขจนอ่านไม่ได้ */
+  .budget-table {
+    min-width: 1000px;
+  }
+}
+
+/* ==========================================
+   8. PRINT
+   ========================================== */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+
+  body {
+    background: #ffffff !important;
+    margin: 0;
+    padding: 0;
+  }
+
+  .table-container,
+  .table-wrapper,
+  .main-container {
+    width: 100% !important;
+    max-width: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    box-shadow: none !important;
+    border: none !important;
+    overflow: visible !important;
+  }
+
+  .budget-table {
+    width: 100% !important;
+    font-size: 10px;
+  }
+
+  .budget-table th,
+  .budget-table td {
+    padding: 3px 4px !important;
+  }
+
+  .editable-cell,
+  .read-only-cell {
+    background-color: transparent !important;
+    font-size: 10px !important;
+  }
+
+  .project-header-row {
+    break-after: avoid;
+    page-break-after: avoid;
+  }
+
+  tr {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+}
+
+#planEditor { border: 0; padding: 0; margin: 0; min-width: 0; }
+
+/* Keep controls and the two header rows visible while the project list scrolls. */
+@media screen and (min-width: 901px) and (min-height: 650px) {
+  html {height:100%;overflow:hidden;}
+  body {height:calc(100dvh - 40px);display:flex;flex-direction:column;overflow:hidden;}
+  .storage-toolbar, #startYearSetup {flex-shrink:0;}
+  #planEditor {flex:1;min-height:0;}
+  .plan-layout {height:100%;min-height:0;display:flex;flex-direction:column;}
+  .plan-layout > .top-bar, .plan-layout > .year-tabs-container,
+  .plan-layout > .add-project-card {flex-shrink:0;}
+  .plan-layout > .table-container {flex:1;min-height:0;display:flex;flex-direction:column;overflow:hidden;}
+  #tableTitle {flex-shrink:0;}
+  .budget-table-scroll {flex:1;min-height:0;overflow:auto;}
+  .budget-table thead {position:sticky;top:0;z-index:5;}
+}
+.storage-toolbar { padding: 10px 16px; background: #edf5ff; color: #163452; }
+#storageStatus { display: block; margin-bottom: 8px; }
+.storage-toolbar button { margin: 2px 4px 2px 0; }
+html.embedded:not(.storage-error) .storage-toolbar { display: none; }
+@media screen and (min-width: 901px) and (min-height: 650px) {
+  html.embedded body { height: 100dvh; }
+}
+.start-year-setup { margin: 16px; padding: 20px; background: #edf5ff; color: #163452; border: 1px solid #aac8e5; border-radius: 10px; }
+.start-year-setup input { width: 110px; padding: 8px; margin: 8px; }
+.start-year-setup button { padding: 8px 12px; margin: 4px; }
+#startYearError { color: #a12020; }
+
+/* Match the total to the amounts in the project rows. */
+.budget-table tbody tr.unbound-section > td {
+  padding: 0 !important;
+  border: 0;
+}
+.budget-table .unbound-table {
+  width: 540px;
+  max-width: 100%;
+  table-layout: fixed;
+  border-collapse: collapse;
+  font-size: 16px;
+}
+.unbound-table .unbound-order { width: 48px; }
+.unbound-table .unbound-short { width: 300px; }
+.unbound-table .unbound-money { width: 192px; }
+.budget-table .unbound-table :is(th, td) {
+  padding: 8px 10px !important;
+  border: 1px solid #cdbda9;
+  background: #f7fafc;
+  color: #40352c;
+  white-space: normal;
+  text-align: left !important;
+}
+.budget-table .unbound-table thead th {
+  background: #e2e8f0;
+  font-size: 17px;
+}
+.budget-table .unbound-table td.unbound-amount {
+  text-align: right !important;
+  background: #feefc3;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+.unbound-table .unbound-note { color: #526985; font-size: 14px; }
+.budget-table .unbound-table .unbound-summary td {
+  background: #edf2f7;
+  font-weight: bold;
+}
+.budget-table .unbound-table .unbound-summary .unbound-total-label {
+  text-align: center !important;
+}
+.nine-dark .budget-table .unbound-table :is(th, td) {
+  background: #232325 !important;
+  color: #f3f3f3 !important;
+  border-color: #55555d;
+}
+.nine-dark .budget-table .unbound-table td.unbound-amount {
+  background: #514629 !important;
+  color: #fff4cc !important;
+}
+.nine-dark .unbound-table .unbound-note { color: #c0d0e8; }
+.nine-dark .budget-table .unbound-table :is(thead th, .unbound-summary td) {
+  background: #38383b !important;
+}
+
+.budget-table tbody tr.total-row td.unbound-total-label {
+  text-align: center !important;
+  padding-left: 6px !important;
+  padding-right: 6px !important;
+}
+
+.budget-table tbody tr.total-row td.unbound-summary-cell {
+  padding: 6px 4px !important;
+  text-align: right !important;
+  font-size: 14px;
+  font-variant-numeric: tabular-nums;
+}

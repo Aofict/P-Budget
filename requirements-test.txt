@@ -1,0 +1,2 @@
+# Browser tests use an already installed Chrome or Edge; no browser download needed.
+playwright==1.55.0

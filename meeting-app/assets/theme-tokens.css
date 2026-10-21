@@ -1,0 +1,153 @@
+/* Canonical tokens shared by the shell and meeting dashboard. */
+:root {
+  color-scheme: dark;
+  --bg: #0b0b0c;
+  --surface: #171719;
+  --surface2: #232325;
+  --border: #38383b;
+  --text: #f3f3f3;
+  --muted: #b1b1b7;
+  --blue: #2286ff;
+  --cyan: #04b9ed;
+  --green: #18d2aa;
+}
+body.light,
+html.meeting-dashboard:not(.meeting-dark) {
+  color-scheme: light;
+
+  /* พื้นหลัก */
+  --bg: #ebe6df;
+
+  /* การ์ด / Panel */
+  --surface: #fbf7f1;
+  --summary-card-background: radial-gradient(ellipse at 20% 0%, #ffffffdd, transparent 65%), linear-gradient(155deg, #fffefb 0%, #faf5ed 60%, #eee4d7 100%);
+  --summary-card-shadow: inset 0 1px 1px #ffffff, inset 0 -1px 2px #c6b59c26, 0 10px 24px #55412b14, 0 2px 5px #55412b0a;
+
+  /* พื้นรอง / input / badge / tabs */
+  --surface2: #e6ddd2;
+
+  /* เส้นขอบ */
+  --border: #cfc2b3;
+
+  /* ตัวอักษร */
+  --text: #40352c;
+  --muted: #78695c;
+
+  /* Accent ของ Light mode */
+  --blue: #8b5e3c;
+  --cyan: #a9794f;
+
+  /* สีสถานะยังเก็บเขียวไว้ */
+  --green: #15946f;
+
+  /* ปุ่มหลัก */
+  --action-fill: #8b5e3c;
+  --on-action: #ffffff;
+
+  /* Scrollbar */
+  --scroll-thumb: #a28f7d;
+  --scroll-track: #f5f0e9;
+  --scroll-hover: #756252;
+  --scroll-active: #8b5e3c;
+}
+:root {
+  --radius-panel: 12px;
+  --space-panel: 24px;
+  --action-fill: #1578cf;
+  --on-action: #ffffff;
+  --on-chart: #071426;
+  --scroll-thumb: var(--muted);
+  --scroll-track: var(--surface);
+  --scroll-hover: var(--text);
+  --scroll-active: var(--cyan);
+}
+html {
+  scrollbar-color: var(--scroll-thumb) var(--scroll-track);
+  scrollbar-width: auto;
+}
+*::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+*::-webkit-scrollbar-track {
+  background: var(--scroll-track);
+}
+*::-webkit-scrollbar-thumb {
+  background: var(--scroll-thumb);
+  border: 2px solid var(--scroll-track);
+  border-radius: 8px;
+}
+*::-webkit-scrollbar-thumb:hover {
+  background: var(--scroll-hover);
+}
+*::-webkit-scrollbar-thumb:active {
+  background: var(--scroll-active);
+}
+:root {
+  --font-ui: 'Noto Sans Thai', Tahoma, sans-serif;
+  --before-meeting: #087f78;
+  --after-meeting: #a76713;
+  --review-card-start: #fafafa;
+  --review-card-end: #eeeeef;
+  --review-card-border: #d2d3d6;
+  --review-card-text: #203750;
+  --review-card-muted: #61758c;
+  --review-row-before: #c8e6d6;
+  --review-row-after: #ffddb0;
+  --review-neutral: #e4e5e7;
+}
+html.meeting-dark {
+  --before-meeting: #18d2aa;
+  --after-meeting: #ffcb75;
+  --review-card-start: #172a3b;
+  --review-card-end: #102032;
+  --review-card-border: #35516d;
+  --review-card-text: #edf5ff;
+  --review-card-muted: #a3b8d0;
+  --review-row-before: #1c372f;
+  --review-row-after: #403022;
+  --review-neutral: #243a52;
+}
+/* daisyUI adapter: the existing theme remains the sole runtime color owner. */
+.allocation-view-tabs,
+.allocation-dashboard-layout {
+  --color-base-100: var(--surface);
+  --color-base-200: var(--surface2);
+  --color-base-300: var(--border);
+  --color-base-content: var(--text);
+  --color-primary: var(--action-fill);
+  --color-primary-content: var(--on-action);
+  --color-secondary: var(--green);
+  --color-secondary-content: var(--bg);
+  --color-accent: var(--cyan);
+  --color-accent-content: var(--bg);
+  --color-neutral: var(--text);
+  --color-neutral-content: var(--surface);
+  --color-info: var(--cyan);
+  --color-info-content: var(--bg);
+  --color-success: var(--before-meeting);
+  --color-success-content: var(--surface);
+  --color-warning: var(--after-meeting);
+  --color-warning-content: var(--bg);
+  --color-error: #c2410c;
+  --color-error-content: #ffffff;
+  --radius-selector: 0.5rem;
+  --radius-field: 0.5rem;
+  --radius-box: var(--radius-panel);
+  --size-selector: 0.25rem;
+  --size-field: 0.25rem;
+  --du-border-width: 1px;
+  --depth: 0;
+  --noise: 0;
+}
+@media (forced-colors: active) {
+  html {
+    scrollbar-color: auto;
+  }
+  *::-webkit-scrollbar-thumb {
+    background: ButtonText;
+  }
+  *::-webkit-scrollbar-track {
+    background: Canvas;
+  }
+}

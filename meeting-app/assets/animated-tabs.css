@@ -1,0 +1,160 @@
+/* Active tab indicator without a sliding transition. */
+.meeting-animated-tabs {
+  position: relative;
+  isolation: isolate;
+  border-radius: 10px;
+}
+.meeting-animated-tabs::before {
+  content: '';
+  position: absolute;
+  pointer-events: none;
+  left: 0;
+  top: 0;
+  width: var(--tab-width, 0px);
+  height: var(--tab-height, 0px);
+  transform: translate(var(--tab-x, 0px), var(--tab-y, 0px));
+  background: var(--tab-active-bg);
+  border-radius: 8px;
+  box-shadow: 0 2px 6px #0002;
+  transition: none;
+  z-index: -1;
+}
+html body .meeting-animated-tabs .nav-link,
+html body .meeting-animated-tabs .summary-table-tab {
+  position: relative;
+  background: transparent !important;
+  box-shadow: none !important;
+  border-radius: 8px;
+  transition: none;
+}
+html body .meeting-animated-tabs .nav-link.active,
+html body .meeting-animated-tabs .summary-table-tab.active {
+  background: transparent !important;
+  color: var(--tab-active-color) !important;
+}
+.meeting-animated-tabs button:focus-visible {
+  outline: 3px solid #38bdf8;
+  outline-offset: -3px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .meeting-animated-tabs::before,
+  .meeting-animated-tabs button {
+    transition: none !important;
+  }
+}
+/* Active tabs match the sidebar's blue surface and green/cyan/violet glow. */
+html.meeting-dashboard.meeting-dark body .meeting-animated-tabs::before,
+html.meeting-dashboard.meeting-dark
+  body
+  .summary-table-tabs:not(.meeting-animated-tabs)
+  .summary-table-tab.active {
+  box-sizing: border-box;
+  border: 2px solid transparent !important;
+  border-radius: 10px;
+
+  background:
+    linear-gradient(145deg, #173f6d, #123458) padding-box,
+    linear-gradient(135deg, #00f775 0%, #00c8ff 45%, #603cff 100%) border-box !important;
+
+  box-shadow:
+    0 0 8px rgba(0, 247, 117, 0.28),
+    0 0 14px rgba(0, 200, 255, 0.3),
+    0 0 24px rgba(96, 60, 255, 0.18) !important;
+}
+html.meeting-dashboard.meeting-dark body .meeting-animated-tabs::before,
+html.meeting-dashboard.meeting-dark
+  body
+  .summary-table-tabs:not(.meeting-animated-tabs)
+  .summary-table-tab.active {
+  box-sizing: border-box;
+  border: 2px solid transparent !important;
+  border-radius: 10px;
+
+  background:
+    linear-gradient(145deg, #173f6d, #123458) padding-box,
+    linear-gradient(135deg, #00f775 0%, #00c8ff 45%, #603cff 100%) border-box !important;
+
+  box-shadow:
+    0 0 8px rgba(0, 247, 117, 0.28),
+    0 0 14px rgba(0, 200, 255, 0.3),
+    0 0 24px rgba(96, 60, 255, 0.18) !important;
+}
+/* Light mode — Brown gradient active tabs */
+html.meeting-dashboard:not(.meeting-dark) body .meeting-animated-tabs::before,
+html.meeting-dashboard:not(.meeting-dark)
+  body
+  .summary-table-tabs:not(.meeting-animated-tabs)
+  .summary-table-tab.active {
+  box-sizing: border-box;
+  border: 2px solid transparent !important;
+  border-radius: 10px;
+
+  background:
+    linear-gradient(135deg, #906744, #604632) padding-box,
+    linear-gradient(135deg, #ac8662, #ac8662) border-box !important;
+
+  box-shadow:
+    0 4px 10px rgba(91, 67, 50, 0.22),
+    0 8px 18px rgba(91, 67, 50, 0.14),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2) !important;
+}
+html body .meeting-animated-tabs .nav-link.active,
+html body .meeting-animated-tabs .summary-table-tab.active {
+  color: #fff !important;
+  border-color: transparent !important;
+}
+html
+  body
+  .summary-table-tabs:not(.meeting-animated-tabs)
+  .summary-table-tab.active {
+  color: #fff !important;
+}
+.meeting-dashboard #summary-table-fullscreen > .summary-tabs-grouped {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: flex-start;
+  width: 100%;
+  box-sizing: border-box;
+  gap: 16px;
+  padding: 12px;
+  border: 0;
+  border-radius: 12px;
+  background: #34383e !important;
+}
+.summary-tabs-grouped .summary-tab-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  min-width: 0;
+}
+.summary-tabs-grouped .summary-tab-group-annual {
+  margin-left: auto;
+  justify-content: flex-end;
+}
+.summary-tabs-grouped .summary-tab-group-utility {
+  flex: 0 0 auto;
+}
+/* Give inactive tabs a slightly clearer outline in light mode. */
+html.meeting-dashboard:not(.meeting-dark)
+  body
+  :is(.summary-table-tab, .meeting-animated-tabs .nav-link):not(.active) {
+  background: linear-gradient(180deg, #e9edf1, #cbd2da) !important;
+  border-color: #9aa5b2 !important;
+  color: #303943 !important;
+  box-shadow: inset 0 1px 0 #ffffff, 0 2px 4px #3039431a;
+}
+html:not(.meeting-dark) body #projectTab .nav-link:not(.active) {
+  border-color: #9aa5b2 !important;
+}
+html.meeting-dashboard:not(.meeting-dark)
+  body
+  :is(.summary-table-tab, .meeting-animated-tabs .nav-link):not(.active):is(
+    :hover,
+    :focus-visible
+  ) {
+  background: #b9c3cf !important;
+  border-color: #778493 !important;
+  color: #303943 !important;
+}
+

@@ -1,0 +1,971 @@
+/* Meeting overview variant. Data, chart configuration and event handlers remain owned by index.html/bridge.js. */
+html.meeting-dashboard,
+html.meeting-dashboard body {
+  background: var(--bg) !important;
+  color: var(--text) !important;
+}
+html.meeting-dashboard:not(.meeting-dark),
+html.meeting-dashboard:not(.meeting-dark) body {
+  background: #f8f6f2 !important;
+}
+.meeting-dashboard body {
+  padding: 24px !important;
+  font: 14px/1.65 var(--font-ui);
+}
+.meeting-dashboard body *:not(.fa-solid):not(.fa-regular):not(.fas):not(.far) {
+  font-family: var(--font-ui);
+}
+.meeting-dashboard .dashboard-wrapper {
+  max-width: 1680px;
+  min-width: 0;
+}
+.meeting-dashboard .db-header {
+  background: var(--surface);
+  color: var(--text);
+  box-shadow: none;
+  border: 1px solid var(--border);
+  padding: 24px;
+}
+.meeting-dashboard .summary-section-head {
+  margin-bottom: 20px;
+  align-items: flex-start;
+  gap: 12px;
+}
+.meeting-dashboard .summary-section-head h2 {
+  font-size: 28px !important;
+  line-height: 1.45;
+  color: #102f4f !important;
+  font-weight: 800;
+  -webkit-text-stroke: 1.5px #e5ad52;
+  paint-order: stroke fill;
+  text-shadow: 0 2px 2px #102f4f26;
+}
+.meeting-dark .summary-section-head h2 {
+  color: #f3f8ff !important;
+  -webkit-text-stroke-color: #102337;
+}
+.meeting-dashboard .summary-section-meta {
+  gap: 8px;
+}
+.meeting-dashboard :is(.year-badge, .unit-badge) {
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.5;
+  padding: 8px 12px;
+  background: var(--surface2) !important;
+  color: var(--text) !important;
+  border-color: var(--border) !important;
+  border-radius: 8px;
+}
+.meeting-dashboard .comparison-cards-section {
+  gap: 20px;
+  margin-bottom: 24px;
+}
+.meeting-dashboard :is(.status-group-card, .chart-card, .table-card) {
+  min-width: 0;
+  padding: var(--space-panel);
+  background: var(--surface) !important;
+  color: var(--text) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: var(--radius-panel);
+  box-shadow: none;
+}
+/* Border light inspired by UI/Card/01 (Uiverse.io by ElSombrero2). */
+@property --meeting-border-angle {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
+.meeting-dashboard .status-group-card {
+  position: relative;
+  --meeting-border-light: var(--before-meeting);
+}
+.meeting-dashboard .post-meeting-box {
+  --meeting-border-light: var(--after-meeting);
+}
+.meeting-dashboard .status-group-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  width: auto;
+  height: auto;
+  border-radius: inherit;
+  padding: 3px;
+  pointer-events: none;
+  background: conic-gradient(
+    from var(--meeting-border-angle),
+    transparent 0deg 50deg,
+    var(--meeting-border-light) 115deg 150deg,
+    transparent 180deg 230deg,
+    var(--meeting-border-light) 295deg 330deg,
+    transparent 360deg
+  );
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  animation: meeting-border-light 5s linear infinite;
+}
+@keyframes meeting-border-light {
+  to {
+    --meeting-border-angle: 360deg;
+  }
+}
+@media print {
+  .meeting-dashboard .status-group-card::before {
+    display: none;
+  }
+}
+.meeting-dashboard .group-title-row {
+  flex-wrap: wrap;
+  margin: 0 0 20px;
+  gap: 8px;
+}
+.meeting-dashboard .group-title-row h2 {
+  font-size: 18px;
+  line-height: 1.5;
+  color: var(--text) !important;
+}
+.meeting-dashboard .pre-meeting-box .group-title-row i {
+  color: var(--before-meeting);
+}
+.meeting-dashboard .post-meeting-box .group-title-row i {
+  color: var(--after-meeting);
+}
+.meeting-dashboard .group-subtitle {
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--muted) !important;
+}
+.meeting-dashboard .mini-card-grid {
+  gap: 14px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+.meeting-dashboard .mini-card {
+  padding: 14px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface) !important;
+  color: var(--text) !important;
+  box-shadow: none;
+}
+.meeting-dashboard .mini-card:last-child,
+.meeting-dashboard.meeting-dark
+  :is(.pre-meeting-box, .post-meeting-box)
+  .mini-card:last-child {
+  grid-column: auto;
+  padding: 14px;
+  margin-top: 0;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface) !important;
+}
+.meeting-dashboard .status-group-card .mini-card .metric-label {
+  display: block;
+  width: 100%;
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1.5;
+  text-align: left;
+}
+/* เฉพาะการ์ด ตั้งงบประจำปี */
+.meeting-dashboard
+  .status-group-card
+  .mini-card-grid
+  .mini-card:nth-child(3)
+  .metric-label {
+  text-align: center !important;
+}
+
+.meeting-dashboard
+  .status-group-card
+  .mini-card-grid
+  .mini-card:nth-child(3)
+  .num {
+  text-align: center !important;
+}
+.meeting-dashboard .mini-card .num {
+  font-size: clamp(24px, 2.1vw, 34px);
+  line-height: 1.4;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.5px;
+  text-align: left;
+  margin: 8px 0 14px;
+  overflow-wrap: anywhere;
+}
+.meeting-dashboard .mini-card:last-child .num {
+  margin-bottom: 14px;
+}
+.meeting-dashboard .source-funds {
+  border-top: 1px solid var(--border);
+  padding-top: 12px;
+  margin-top: 0;
+}
+.meeting-dashboard .fund-row {
+  gap: 8px;
+  margin-bottom: 8px;
+  min-width: 0;
+}
+.meeting-dashboard .fund-row label {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--muted) !important;
+  white-space: nowrap;
+}
+.meeting-dashboard .fund-input {
+  width: 100%;
+  min-width: 0;
+  max-width: 180px;
+  min-height: 40px;
+  padding: 8px 10px;
+  border: 1px solid var(--border) !important;
+  border-radius: 7px;
+  background: var(--bg) !important;
+  color: var(--text) !important;
+  font-size: 13px;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+}
+.meeting-dashboard .fund-auto {
+  display: block;
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  max-width: 180px;
+  min-height: 40px;
+  border: 1px solid var(--border) !important;
+  border-radius: 7px;
+  text-align: right;
+  font-size: 13px;
+  font-weight: 500;
+  padding: 8px 10px;
+  color: var(--text) !important;
+  background: var(--bg) !important;
+  font-variant-numeric: tabular-nums;
+}
+.meeting-dashboard .fund-status {
+  font-size: 11px;
+  line-height: 1.6;
+  font-weight: 500;
+  min-height: 18px;
+  overflow-wrap: anywhere;
+}
+.meeting-dashboard .fund-status.warn {
+  color: var(--after-meeting);
+}
+.meeting-dashboard .fund-status.ok {
+  color: var(--before-meeting);
+}
+.meeting-dashboard .auto-note {
+  color: var(--muted) !important;
+  font-size: 11px;
+  font-weight: 400;
+  line-height: 1.6;
+}
+.meeting-dashboard .negative-val {
+  color: var(--after-meeting) !important;
+}
+.meeting-dashboard .chart-section {
+  margin-bottom: 24px;
+}
+.meeting-dashboard .table-toolbar h3 {
+  color: var(--text) !important;
+  font-size: 16px;
+  line-height: 1.6;
+}
+.meeting-dashboard .table-toolbar > div > span {
+  color: var(--muted) !important;
+  font-size: 12px !important;
+  line-height: 1.7;
+  display: block;
+  margin-top: 6px;
+}
+.meeting-dashboard .chart-container {
+  height: 300px;
+}
+.meeting-dashboard .summary-table-tabs {
+  background: var(--bg) !important;
+  border-color: var(--border) !important;
+  border-radius: 10px;
+  padding: 5px;
+  margin-bottom: 20px;
+  gap: 6px;
+}
+.meeting-dashboard .summary-table-tabs.allocation-view-tabs {
+  background: #34383e !important;
+  border-color: #53585f !important;
+}
+.meeting-dashboard .summary-table-tab {
+  font-size: 13px;
+  min-height: 44px;
+  padding: 10px 16px;
+  color: var(--muted) !important;
+  background: transparent !important;
+  font-weight: 500;
+}
+.meeting-dashboard .summary-table-tab.active {
+  background: var(--action-fill) !important;
+  color: var(--on-action) !important;
+  box-shadow: none;
+}
+.meeting-dashboard .table-toolbar {
+  align-items: flex-start;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+.meeting-dashboard .future-summary-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+.meeting-dashboard .future-summary-toolbar > div:first-child { min-width: 0; }
+.meeting-dashboard .future-summary-toolbar .action-btns {
+  width: auto;
+  flex: 0 0 auto;
+  margin-left: auto;
+}
+.meeting-dashboard .future-summary-toolbar p { margin-bottom: 0; }
+.meeting-dashboard .action-btns {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  width: 100%;
+}
+.meeting-dashboard :is(.btn, .presentation-btn) {
+  min-height: 40px;
+  font-size: 12px;
+  font-weight: 500;
+  padding: 9px 12px;
+  border-radius: 8px;
+  box-shadow: none;
+  line-height: 1.5;
+  white-space: normal;
+}
+.meeting-dashboard :is(.btn-secondary, .presentation-btn, .small-btn) {
+  color: var(--text) !important;
+  background: var(--surface) !important;
+  border: 1px solid var(--border) !important;
+}
+.meeting-dashboard .btn-primary {
+  color: var(--on-action);
+  background: var(--action-fill);
+  border: 1px solid var(--action-fill);
+}
+.meeting-dashboard .btn-success {
+  color: var(--on-action);
+  background: var(--before-meeting);
+  border: 1px solid var(--before-meeting);
+}
+.meeting-dashboard.meeting-dark .btn-success {
+  color: var(--on-chart);
+}
+.meeting-dashboard .file-indicator {
+  padding: 8px 12px;
+  border-radius: 8px;
+  background: var(--surface2) !important;
+  color: var(--muted) !important;
+  font-size: 11px;
+  overflow-wrap: anywhere;
+}
+.meeting-dashboard .table-responsive {
+  max-width: 100%;
+  overflow: auto;
+  scrollbar-gutter: auto;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+.meeting-dashboard :is(.excel-style-table, .change-summary-table) {
+  font-size: 12px;
+  line-height: 1.65;
+  font-variant-numeric: tabular-nums;
+}
+.meeting-dashboard :is(.excel-style-table, .change-summary-table) :is(th, td) {
+  padding: 10px 8px;
+}
+.meeting-dashboard .project-name-main {
+  line-height: 1.7;
+  overflow-wrap: anywhere;
+}
+.meeting-dashboard .sub-formula {
+  color: var(--muted) !important;
+  font-weight: 400;
+}
+.meeting-dashboard .project-row-action {
+  min-width: 28px;
+  min-height: 28px;
+}
+.meeting-dashboard button:not(:disabled),
+.meeting-dashboard a {
+  cursor: pointer;
+}
+.meeting-dashboard button:not(:disabled):hover {
+  filter: brightness(0.94);
+}
+.meeting-dashboard button:not(:disabled):active {
+  filter: brightness(0.88);
+}
+.meeting-dashboard button:disabled {
+  cursor: not-allowed;
+}
+.meeting-dashboard :is(button, a, input, select, [tabindex]):focus-visible {
+  outline: 3px solid var(--cyan);
+  outline-offset: 3px;
+}
+.meeting-dashboard :is(.app-modal-card, .form-control) {
+  max-width: 100%;
+}
+@media (max-width: 1100px) {
+  .meeting-dashboard .comparison-cards-section {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .meeting-dashboard .mini-card-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .meeting-dashboard .mini-card:last-child {
+    grid-column: auto;
+    margin-top: 0;
+  }
+}
+@media (max-width: 700px) {
+  .meeting-dashboard body {
+    padding: 16px !important;
+  }
+  .meeting-dashboard :is(.status-group-card, .chart-card, .table-card) {
+    padding: 16px;
+  }
+  .meeting-dashboard .summary-section-head h2 {
+    font-size: 24px !important;
+  }
+  .meeting-dashboard .mini-card-grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 20px;
+  }
+  .meeting-dashboard .mini-card .num {
+    font-size: 30px;
+  }
+  .meeting-dashboard .source-funds {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+  .meeting-dashboard .fund-row {
+    flex-direction: column;
+    align-items: stretch;
+    margin: 0;
+  }
+  .meeting-dashboard :is(.fund-input, .fund-auto) {
+    max-width: none;
+    min-height: 44px;
+  }
+  .meeting-dashboard .summary-table-tabs {
+    width: 100%;
+  }
+  .meeting-dashboard .summary-table-tab {
+    flex: 1;
+    padding: 8px;
+  }
+  .meeting-dashboard .action-btns > button {
+    flex: 1 1 130px;
+    min-height: 44px;
+  }
+  .meeting-dashboard .file-indicator {
+    flex-basis: 100%;
+  }
+  .meeting-dashboard .chart-container {
+    height: 280px;
+    min-width: 480px;
+  }
+  .meeting-dashboard .chart-card {
+    overflow-x: auto;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .meeting-dashboard *,
+  .meeting-dashboard *::before,
+  .meeting-dashboard *::after {
+    scroll-behavior: auto !important;
+    transition: none !important;
+    animation: none !important;
+  }
+}
+@media print {
+  .meeting-dashboard body {
+    padding: 0 !important;
+  }
+  .meeting-dashboard :is(.status-group-card, .chart-card) {
+    break-inside: avoid;
+  }
+}
+
+/* Toolbar buttons inspired by UI/Button/02 (Uiverse.io by reglobby). */
+.meeting-dashboard #summary-table-fullscreen .action-btns > button {
+  min-height: 51px;
+  padding: 12px 18px;
+  border: 2px solid transparent !important;
+  border-radius: 15px;
+  background:
+    linear-gradient(#1a1a1a, #1a1a1a) padding-box,
+    linear-gradient(to bottom right, #2e8eff 0%, rgba(46, 142, 255, 0.2) 30%)
+      border-box !important;
+  color: #fff !important;
+  font-weight: 600;
+  box-shadow: none;
+  transition:
+    box-shadow 0.3s ease,
+    background-color 0.3s ease;
+}
+.meeting-dashboard
+  #summary-table-fullscreen
+  .action-btns
+  > button:is(:hover, :focus-visible):not(:disabled) {
+  background:
+    linear-gradient(#1a1a1a, #1a1a1a) padding-box,
+    linear-gradient(to bottom right, #2e8eff 0%, rgba(46, 142, 255, 0.7) 30%)
+      border-box !important;
+  box-shadow: 0 0 10px rgba(46, 142, 255, 0.5);
+  filter: none;
+}
+.meeting-dashboard
+  #summary-table-fullscreen
+  .action-btns
+  > button:focus-visible {
+  outline: 3px solid #2e8eff;
+  outline-offset: 3px;
+}
+.meeting-dashboard #summary-table-fullscreen .action-btns > button:disabled {
+  opacity: 0.45;
+  box-shadow: none;
+  cursor: not-allowed;
+}
+@media (prefers-reduced-motion: reduce) {
+  .meeting-dashboard #summary-table-fullscreen .action-btns > button {
+    transition: none;
+  }
+}
+/* Light mode buttons — Brown / Cream */
+html.meeting-dashboard:not(.meeting-dark)
+  #summary-table-fullscreen
+  .action-btns
+  > button {
+  background:
+    linear-gradient(#f7f0e8, #f7f0e8) padding-box,
+    linear-gradient(to bottom right, #9a6b46, #c8aa8b) border-box !important;
+
+  color: #5b3d27 !important;
+}
+
+html.meeting-dashboard:not(.meeting-dark)
+  #summary-table-fullscreen
+  .action-btns
+  > button:is(:hover, :focus-visible):not(:disabled) {
+  background:
+    linear-gradient(#eadccb, #eadccb) padding-box,
+    linear-gradient(to bottom right, #795134, #a97b56) border-box !important;
+
+  color: #402918 !important;
+}
+/* Keep controls fixed and scroll the table body in fullscreen. Sticky thead
+   preserves both header rows and their rowspans as a single group. */
+.meeting-dashboard #summary-table-fullscreen:fullscreen {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.meeting-dashboard #summary-table-fullscreen:fullscreen .table-toolbar .action-btns {
+  display: none !important;
+}
+.meeting-dashboard
+  #summary-table-fullscreen:fullscreen
+  > :is(.summary-table-tabs, .table-toolbar) {
+  position: relative;
+  top: auto;
+  flex: 0 0 auto;
+}
+.meeting-dashboard
+  #summary-table-fullscreen:fullscreen
+  .summary-table-panel.active {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: hidden;
+}
+.meeting-dashboard #summary-table-fullscreen:fullscreen .table-responsive {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: auto;
+  scrollbar-gutter: auto;
+  overscroll-behavior: contain;
+}
+.meeting-dashboard #summary-table-fullscreen :is(#projectTable, #changeSummaryTable, #future-summary-panel table) {
+  border-collapse: separate;
+  border-spacing: 0;
+}
+.meeting-dashboard #summary-table-fullscreen :is(#projectTable, #changeSummaryTable, #future-summary-panel table) thead {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  isolation: isolate;
+  background: #20598f;
+  box-shadow: 0 2px 0 #557fa9;
+}
+.meeting-dashboard #summary-table-fullscreen :is(#projectTable, #changeSummaryTable, #future-summary-panel table) thead th {
+  position: relative;
+}
+/* =========================================================
+   LIGHT MODE — Match summary cards with chart palette
+   ก่อนประชุม = Emerald
+   หลังประชุม = Amber
+   ========================================================= */
+
+html.meeting-dashboard:not(.meeting-dark) .pre-meeting-box {
+  --meeting-border-light: #18d2aa;
+
+  background: linear-gradient(
+    180deg,
+    #ffffff 0%,
+    #f3fdf9 55%,
+    #ecfdf5 100%
+  ) !important;
+
+  border-color: #9fe8d2 !important;
+}
+
+html.meeting-dashboard:not(.meeting-dark) .post-meeting-box {
+  --meeting-border-light: #ffb347;
+
+  background: linear-gradient(
+    180deg,
+    #ffffff 0%,
+    #fffaf2 55%,
+    #fff7ed 100%
+  ) !important;
+
+  border-color: #f6d39b !important;
+}
+
+/* ---------- หัวข้อ ---------- */
+
+html.meeting-dashboard:not(.meeting-dark) .pre-meeting-box .group-title-row h2,
+html.meeting-dashboard:not(.meeting-dark) .pre-meeting-box .group-title-row i {
+  color: #059669 !important;
+}
+
+html.meeting-dashboard:not(.meeting-dark) .post-meeting-box .group-title-row h2,
+html.meeting-dashboard:not(.meeting-dark) .post-meeting-box .group-title-row i {
+  color: #d97706 !important;
+}
+
+/* ---------- การ์ดย่อย ก่อนประชุม ---------- */
+
+html.meeting-dashboard:not(.meeting-dark) .pre-meeting-box .mini-card {
+  background: linear-gradient(180deg, #ffffff 0%, #f5fdfa 100%) !important;
+
+  border-color: #c6eee2 !important;
+}
+
+/* ---------- การ์ดย่อย หลังประชุม ---------- */
+
+html.meeting-dashboard:not(.meeting-dark) .post-meeting-box .mini-card {
+  background: linear-gradient(180deg, #ffffff 0%, #fff9f0 100%) !important;
+
+  border-color: #f5ddb7 !important;
+}
+
+/* ---------- เส้นแบ่งภายในการ์ด ---------- */
+
+html.meeting-dashboard:not(.meeting-dark) .pre-meeting-box .source-funds {
+  border-top-color: #c6eee2 !important;
+}
+
+html.meeting-dashboard:not(.meeting-dark) .post-meeting-box .source-funds {
+  border-top-color: #f5ddb7 !important;
+}
+
+/* ---------- ช่องกรอก ---------- */
+
+html.meeting-dashboard:not(.meeting-dark) .pre-meeting-box .fund-input,
+html.meeting-dashboard:not(.meeting-dark) .pre-meeting-box .fund-auto {
+  background: #f3fdf9 !important;
+  border-color: #b9e8da !important;
+}
+
+html.meeting-dashboard:not(.meeting-dark) .post-meeting-box .fund-input,
+html.meeting-dashboard:not(.meeting-dark) .post-meeting-box .fund-auto {
+  background: #fff9ef !important;
+  border-color: #f1d6aa !important;
+}
+
+/* ---------- Focus ---------- */
+
+html.meeting-dashboard:not(.meeting-dark) .pre-meeting-box .fund-input:focus {
+  border-color: #18d2aa !important;
+  box-shadow: 0 0 0 3px rgba(24, 210, 170, 0.14) !important;
+}
+
+html.meeting-dashboard:not(.meeting-dark) .post-meeting-box .fund-input:focus {
+  border-color: #ffb347 !important;
+  box-shadow: 0 0 0 3px rgba(255, 179, 71, 0.16) !important;
+}
+
+/* =========================================================
+   LIGHT MODE — Before / After meeting cards
+   ========================================================= */
+
+/* ก่อนประชุม — เขียว */
+html.meeting-dashboard:not(.meeting-dark) .pre-meeting-box {
+  --meeting-border-light: #20b894;
+
+  background: linear-gradient(
+    145deg,
+    #edf9f5 0%,
+    #def4ec 55%,
+    #d2eee4 100%
+  ) !important;
+
+  border: 1.5px solid #7fd5bd !important;
+
+  box-shadow:
+    0 8px 18px rgba(20, 145, 110, 0.1),
+    0 2px 5px rgba(20, 145, 110, 0.08) !important;
+}
+
+/* หลังประชุม — ส้ม/ครีม */
+html.meeting-dashboard:not(.meeting-dark) .post-meeting-box {
+  --meeting-border-light: #e99a32;
+
+  background: linear-gradient(
+    145deg,
+    #fff7e9 0%,
+    #fcebd0 55%,
+    #f8dfb8 100%
+  ) !important;
+
+  border: 1.5px solid #e8bb77 !important;
+
+  box-shadow:
+    0 8px 18px rgba(190, 120, 35, 0.1),
+    0 2px 5px rgba(190, 120, 35, 0.08) !important;
+}
+/* Mini cards — ก่อนประชุม */
+html.meeting-dashboard:not(.meeting-dark) .pre-meeting-box .mini-card {
+  background: rgba(255, 255, 255, 0.58) !important;
+  border-color: #9edfcf !important;
+
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.65),
+    0 3px 8px rgba(20, 145, 110, 0.06) !important;
+}
+
+/* Mini cards — หลังประชุม */
+html.meeting-dashboard:not(.meeting-dark) .post-meeting-box .mini-card {
+  background: rgba(255, 252, 246, 0.72) !important;
+  border-color: #eccb98 !important;
+
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.7),
+    0 3px 8px rgba(190, 120, 35, 0.06) !important;
+}
+html.meeting-dashboard:not(.meeting-dark) .pre-meeting-box .status-group-title {
+  color: #087d61 !important;
+}
+
+html.meeting-dashboard:not(.meeting-dark)
+  .post-meeting-box
+  .status-group-title {
+  color: #b86612 !important;
+}
+
+/* Both budget-year tabs share the original allocation equation and bar chart. */
+html.meeting-dashboard:not(.meeting-dark) #meeting-dashboard-fullscreen {
+  background: #f8f6f2 !important;
+}
+#meeting-dashboard-fullscreen:fullscreen,
+.dashboard-fullscreen-fallback #meeting-dashboard-fullscreen {
+  box-sizing: border-box;
+  width: 100%;
+  height: 100%;
+  padding: var(--space-panel);
+  overflow: auto;
+  background: var(--bg);
+  color: var(--text);
+}
+.dashboard-fullscreen-fallback #meeting-dashboard-fullscreen {
+  position: fixed;
+  inset: 0;
+  z-index: 2147483646;
+  overscroll-behavior: contain;
+  padding-top: max(var(--space-panel), env(safe-area-inset-top));
+  padding-bottom: max(var(--space-panel), env(safe-area-inset-bottom));
+}
+#meeting-dashboard-fullscreen:fullscreen::backdrop { background: var(--bg); }
+#dashboard-fullscreen-status { font-size: 12px; color: var(--muted); }
+.allocation-matrix-scroll:focus-visible {
+  outline: 2px solid var(--cyan);
+  outline-offset: 3px;
+}
+.allocation-panel-title,
+.allocation-chart-title {
+  margin: 0 0 20px;
+  color: var(--text);
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.6;
+}
+.allocation-panel-title { margin-bottom: 6px; }
+.meeting-dashboard .allocation-dashboard-layout {
+  --text: var(--review-card-text);
+  --muted: var(--review-card-muted);
+  --border: var(--review-card-border);
+  display: grid;
+  grid-template-columns: minmax(0, 1.75fr) minmax(280px, 1fr);
+  align-items: stretch;
+  gap: 24px;
+  margin-bottom: 28px;
+}
+.meeting-dashboard #annual-allocation-cards.allocation-matrix-panel {
+  display: block;
+  min-width: 0;
+  padding: 24px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-panel);
+  background: var(--surface);
+  box-shadow: none;
+  --equation-line: var(--review-card-border);
+  --equation-cell: color-mix(in srgb, var(--surface2) 35%, var(--surface));
+  --equation-text: var(--text);
+}
+#annual-allocation-cards .allocation-matrix-scroll { overflow-x: auto; }
+#annual-allocation-cards .allocation-matrix {
+  width: 100%; min-width: 820px;
+  border-collapse: separate; border-spacing: 0 12px;
+  table-layout: fixed;
+}
+#annual-allocation-cards .allocation-matrix :is(th, td) {
+  border: 0; padding: 12px 7px; vertical-align: middle;
+  color: var(--equation-text);
+}
+#annual-allocation-cards .allocation-metric-heading {
+  width: calc((100% - 140px) / 5); padding: 18px 10px !important;
+  text-align: center; font-size: 19px; font-weight: 800;
+  border: 0 !important;
+  white-space: nowrap;
+}
+#annual-allocation-cards .allocation-stage-heading {
+  width: 140px;
+  border-radius: 8px 0 0 8px;
+}
+#annual-allocation-cards .allocation-matrix thead {
+  filter: drop-shadow(0 3px 4px rgba(16, 48, 85, 0.14));
+}
+#annual-allocation-cards :is(.allocation-stage-heading, .allocation-metric-heading) {
+  background: linear-gradient(180deg, #296bb0 0%, #205a96 45%, #174779 100%) !important;
+  color: #ffffff !important;
+  text-shadow: 0 1px 2px rgba(5, 24, 48, 0.45);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+#annual-allocation-cards .allocation-metric-heading { position: relative; }
+#annual-allocation-cards .allocation-metric-heading:nth-child(n + 3)::before {
+  position: absolute;
+  inset-inline-start: 0;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  color: #ffffff;
+  font-size: 24px;
+  font-weight: 800;
+  line-height: 1;
+}
+#annual-allocation-cards .allocation-metric-heading:nth-child(3)::before { content: '+'; }
+#annual-allocation-cards .allocation-metric-heading:nth-child(4)::before { content: '='; }
+#annual-allocation-cards .allocation-metric-heading:nth-child(5)::before { content: '−'; }
+#annual-allocation-cards .allocation-metric-heading:nth-child(6)::before { content: '='; }
+#annual-allocation-cards .allocation-metric-heading:last-child { border-radius: 0 8px 8px 0; }
+#annual-allocation-cards .allocation-stage-label {
+  white-space: nowrap; text-align: left; font-size: 17px; font-weight: 800;
+  padding-inline: 16px !important;
+}
+#annual-allocation-cards .allocation-stage-pre .allocation-stage-label { color: var(--before-meeting); }
+#annual-allocation-cards .allocation-stage-post .allocation-stage-label { color: var(--after-meeting); }
+#annual-allocation-cards .allocation-stage-pre > :is(th,td) {
+  background: var(--review-row-before) !important;
+}
+#annual-allocation-cards .allocation-stage-post > :is(th,td) {
+  background: var(--review-row-after) !important;
+}
+#annual-allocation-cards :is(.allocation-stage-pre,.allocation-stage-post) > :last-child {
+  font-weight: 900;
+  border-radius: 0 8px 8px 0;
+}
+#annual-allocation-cards :is(.allocation-stage-pre,.allocation-stage-post) > :first-child {
+  border-radius: 8px 0 0 8px;
+}
+#annual-allocation-cards .allocation-equation-number {
+  border: 0 !important;
+  text-align: center; font-size: clamp(18px, calc(1.65vw - 2px), 26px);
+  font-weight: 800; font-variant-numeric: tabular-nums;
+  white-space: nowrap; padding: 28px 8px !important;
+}
+#annual-allocation-cards .allocation-delta-row > :is(th,td) {
+  border-top: 1px solid var(--equation-line) !important;
+  padding-top: 24px !important;
+  background: transparent !important;
+}
+#annual-allocation-cards .allocation-delta-label {
+  padding-inline: 16px;
+  color: var(--text);
+  font-size: 20px;
+  font-weight: 700;
+  text-align: center;
+}
+#annual-allocation-cards .allocation-difference {
+  margin: 0; padding: 0; border: 0; gap: 0;
+  text-align: center;
+}
+#annual-allocation-cards .allocation-difference strong {
+  display: block;
+  font-size: 24px; text-align: center; padding: 12px 8px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.5;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--review-neutral);
+}
+#annual-allocation-cards .allocation-status { margin: 18px 0 0; line-height: 1.6; }
+.allocation-dashboard-layout > .chart-section { margin: 0; min-width: 0; }
+.meeting-dashboard .allocation-dashboard-layout .chart-card {
+  height: 100%; box-sizing: border-box; display: flex;
+  flex-direction: column; padding: 24px 16px;
+}
+html.meeting-dashboard #annual-allocation-cards.allocation-matrix-panel,
+html.meeting-dashboard .allocation-dashboard-layout .chart-card {
+  background: radial-gradient(ellipse at center, var(--review-card-start) 0%, var(--review-card-start) 28%, var(--review-card-end) 70%, var(--review-card-border) 100%) !important;
+  border-color: var(--review-card-border) !important;
+  box-shadow: 0 8px 22px rgba(24, 60, 94, 0.12), inset 0 0 36px rgba(24, 60, 94, 0.14), inset 0 1px 0 rgba(255, 255, 255, 0.18) !important;
+}
+.meeting-dashboard .allocation-dashboard-layout .chart-card .chart-container {
+  width: 100%; min-width: 0; height: 420px !important; min-height: 360px;
+  margin: 0;
+}
+.meeting-dashboard .allocation-dashboard-layout #meetingCompareChart {
+  background: transparent !important;
+}
+@media (max-width: 900px) {
+  .meeting-dashboard .allocation-dashboard-layout { grid-template-columns: 1fr; }
+  .meeting-dashboard .allocation-dashboard-layout .chart-card .chart-container {
+    flex: none; height: 360px !important;
+  }
+}
+@media (max-width: 640px) {
+  .meeting-dashboard #annual-allocation-cards.allocation-matrix-panel { padding: 16px; }
+  #annual-allocation-cards .allocation-metric-heading { font-size: 17px; }
+  #annual-allocation-cards .allocation-equation-number { font-size: 22px; }
+}

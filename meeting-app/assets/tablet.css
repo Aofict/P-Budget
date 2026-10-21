@@ -1,0 +1,31 @@
+/* Compact tablet density, independent of desktop styling and saved data. */
+@media (pointer: coarse) and (min-width: 600px) and (max-width: 1366px) {
+  html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+  html body { font-size: 14px; }
+  html body h1 { font-size: 24px !important; line-height: 1.5; }
+  html body h2 { font-size: 18px !important; }
+  html body h3 { font-size: 16px !important; }
+  .decision-group-head strong { font-size: 16px; }
+  .meeting-dashboard body { padding: 16px !important; }
+  .meeting-dashboard .allocation-dashboard-layout { gap: 16px; }
+  html.meeting-dashboard #annual-allocation-cards.allocation-matrix-panel,
+  html.meeting-dashboard .allocation-dashboard-layout .chart-card { padding: 16px; }
+  #annual-allocation-cards .allocation-matrix { min-width: 620px; }
+  #annual-allocation-cards .allocation-stage-heading { width: 116px; }
+  #annual-allocation-cards .allocation-metric-heading {
+    width: calc((100% - 116px) / 4); font-size: 15px; padding: 14px 6px !important;
+  }
+  #annual-allocation-cards .allocation-metric-heading::before { font-size: 18px; }
+  #annual-allocation-cards .allocation-stage-label { font-size: 13px; padding-inline: 10px !important; }
+  #annual-allocation-cards .allocation-equation-number { font-size: 19px; padding: 22px 6px !important; }
+  #annual-allocation-cards .allocation-delta-label { font-size: 17px; }
+  #annual-allocation-cards .allocation-difference strong { font-size: 20px; padding: 9px 6px; }
+  html body :is(.excel-style-table, .workflow-table) { font-size: 12px; }
+  html body :is(.excel-style-table, .workflow-table) :is(th, td) { font-size: 12px !important; }
+  html body :is(.project-info-sheet, .info-section-body) :is(input, textarea, select, label),
+  html body .input-budget { font-size: 14px !important; }
+}
+[data-pbudget-fullscreen] { padding: max(16px, env(safe-area-inset-top)) 16px max(16px, env(safe-area-inset-bottom)); }
+#summary-table-fullscreen[data-pbudget-fullscreen] { display: flex; flex-direction: column; }
+#summary-table-fullscreen[data-pbudget-fullscreen] > :is(.summary-table-tabs,.table-toolbar) { flex-shrink: 0; }
+#summary-table-fullscreen[data-pbudget-fullscreen] .table-responsive { flex: 1; min-height: 0; overflow: auto; }

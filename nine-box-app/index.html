@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="th">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>ระบบบริหารและประมาณการงบประมาณโครงการ</title>
+    <link rel="stylesheet" href="style.css?v=compact-project-toolbar" />
+    <link rel="stylesheet" href="theme.css?v=compact-excel-tabs" />
+    <script>if (window.parent !== window) document.documentElement.classList.add('embedded');</script>
+    <script src="vendor/exceljs.min.js"></script>
+    <script src="vendor/FileSaver.min.js"></script>
+      <link rel="stylesheet" href="/meeting-app/assets/tablet.css?v=1" />
+    <script src="/meeting-app/assets/fullscreen-compat.js?v=1"></script>
+  </head>
+  <body>
+    <aside class="storage-toolbar no-print">
+      <span id="storageStatus" role="status" aria-live="polite"
+        >กำลังโหลดข้อมูล…</span
+      >
+      <div id="planBackups" hidden></div>
+    </aside>
+    <form
+      id="startYearSetup"
+      class="start-year-setup no-print"
+      hidden
+      onsubmit="
+        event.preventDefault();
+        chooseStartYear();
+      "
+    >
+      <h2>เลือกปีงบประมาณเริ่มต้น</h2>
+      <p>
+        ค่าแนะนำคือปี พ.ศ. ปัจจุบัน
+        เลือกปีงบประมาณที่ต้องการจัดทำก่อนเริ่มใช้งาน
+      </p>
+      <label for="startYearInput">ปีงบประมาณ (พ.ศ.)</label>
+      <input
+        id="startYearInput"
+        type="number"
+        min="2500"
+        max="2700"
+        step="1"
+        required
+      />
+      <button id="startYearSubmit" type="submit">เริ่มใช้งานปีนี้</button>
+      <button type="button" onclick="openFile()">นำเข้าไฟล์ข้อมูลเดิม</button>
+      <p id="startYearError" role="alert"></p>
+    </form>
+    <fieldset id="planEditor" disabled inert>
+      <div class="plan-layout">
+        <!-- เมนูจัดการไฟล์ (File / Export) -->
+        <div class="top-bar no-print">
+          <div class="menu-group">
+            <button onclick="openFile()">📂 Open</button>
+            <button type="button" onclick="openExcelImport()">
+              📥 Import Excel
+            </button>
+            <button onclick="saveAsFile()">💾 Save As</button>
+            <button onclick="exportToCSV()">📊 Export CSV</button>
+            <button onclick="exportFullTableToExcel()" class="btn-export">
+              📊 Export Excel
+            </button>
+            <button
+              type="button"
+              id="fullscreenBtn"
+              class="btn-fullscreen no-print"
+              title="Fullscreen"
+            >
+              ⛶ Fullscreen
+            </button>
+          </div>
+          <div class="year-action-group">
+            <button type="button" onclick="editStartYear()">
+              แก้ไขปีเริ่มต้น
+            </button>
+            <button onclick="addNewYear()" class="btn-add-year">
+              ➕ เพิ่มปีงบประมาณ
+            </button>
+          </div>
+        </div>
+
+        <!-- ฟอร์มเพิ่มโครงการใหม่ -->
+        <div class="add-project-card no-print">
+          <div class="master-project-search-row">
+            <h3>➕ เพิ่มโครงการ</h3>
+            <div class="master-project-search-wrap">
+              <input
+                type="text"
+                id="masterProjectSearch"
+                aria-label="ค้นหาโครงการจากฐานข้อมูลหลัก"
+                placeholder="🔍 ค้นหาชื่อย่อ ชื่อโครงการ รหัส หรือสายงาน..."
+                autocomplete="off"
+                oninput="filterMasterProjects()"
+                onfocus="filterMasterProjects()"
+              />
+
+              <div
+                id="masterProjectResults"
+                class="master-project-results"
+                hidden
+              ></div>
+            </div>
+
+            <button
+              type="button"
+              class="btn-add-master-project"
+              onclick="submitMasterProject()"
+            >
+              ➕ เพิ่มเข้า 9 ช่อง
+            </button>
+
+            <select
+              id="masterDivisionFilter"
+              aria-label="เลือกสายงาน"
+              onchange="applyDivisionFilter()"
+            >
+              <option value="">ทุกสายงาน</option>
+            </select>
+            <select
+              id="budgetInvestmentFilter"
+              aria-label="วงเงินดำเนินการรวม"
+              title="กรองวงเงินดำเนินการรวมตามยอดลงทุน"
+              onchange="applyDivisionFilter()"
+            >
+              <option value="">วงเงินดำเนินการรวม: ทั้งหมด</option>
+              <option value="funded">ตั้งงบ</option>
+              <option value="unfunded">ไม่ตั้งงบ</option>
+            </select>
+          </div>
+
+          <input type="hidden" id="masterProjectId" />
+          <input type="hidden" id="newProjCode" />
+          <input type="hidden" id="newProjName" />
+          <input type="hidden" id="newProjEndYear" />
+        </div>
+
+        <!-- แท็บแสดงปีงบประมาณ -->
+        <div id="yearTabs" class="year-tabs-container no-print"></div>
+
+        <!-- ตารางแสดงข้อมูล -->
+        <div class="table-container">
+          <h2 id="tableTitle">งบลงทุนที่ทำเป็นโครงการ ประจำปี</h2>
+          <div class="budget-table-scroll">
+            <table class="budget-table">
+              <colgroup>
+                <col style="width: 60px" />
+                <!-- ลำดับ -->
+                <col style="width: 90px" />
+                <!-- ชื่อย่อ -->
+                <col style="width: 800px" />
+                <!--  โครงการ/รายการ  -->
+                <!-- คอลัมน์ตัวเลข 9 ช่อง ความกว้างเท่ากันทั้งหมด -->
+                <col style="width: calc((100% - 950px) / 9)" span="9" />
+              </colgroup>
+              <thead>
+                <tr>
+                  <th rowspan="2">ลำดับ</th>
+                  <th rowspan="2">ชื่อย่อ</th>
+                  <th rowspan="2">โครงการ / แหล่งเงิน</th>
+                  <th colspan="3" id="thHeader1">วงเงินดำเนินการปี 2568</th>
+                  <th colspan="3" id="thHeader2">เป้าหมายการเบิกจ่ายปี 2568</th>
+                  <th colspan="3">งบคงเหลือ</th>
+                </tr>
+                <tr>
+                  <th>ผูกพัน</th>
+                  <th>ลงทุน</th>
+                  <th>รวม</th>
+                  <th>ผูกพัน</th>
+                  <th>ลงทุน</th>
+                  <th>รวม</th>
+                  <th>ผูกพัน</th>
+                  <th>ลงทุน</th>
+                  <th>รวม</th>
+                </tr>
+              </thead>
+              <tbody id="tableBody">
+                <!-- ข้อมูลจะถูก Render ผ่าน script.js -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </fieldset>
+    <script src="dialogs.js?v=english-excel-labels"></script>
+    <script src="storage.js?v=import-without-backup-1"></script>
+    <script src="script.js?v=english-fullscreen"></script>
+    <script src="excel-import.js?v=english-excel-labels"></script>
+    <script src="theme.js?v=1"></script>
+  </body>
+</html>

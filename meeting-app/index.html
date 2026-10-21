@@ -1,0 +1,5449 @@
+﻿<!doctype html>
+<html lang="th" class="meeting-dashboard">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ระบบเปรียบเทียบแผนการเบิกจ่ายงบประมาณรายโครงการ</title>
+    <!-- Font Awesome -->
+    <link
+      rel="stylesheet"
+      href="/meeting-app/assets/vendor/fontawesome.min.css"
+    />
+    <!-- Chart.js -->
+    <script src="/meeting-app/assets/vendor/chart.umd.min.js"></script>
+    <style>
+      * {
+        box-sizing: border-box;
+        font-family: 'Sarabun', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        background-color: #f4f6f9;
+        color: #333;
+        padding: 20px;
+      }
+
+      .dashboard-wrapper {
+        max-width: 1400px;
+        margin: 0 auto;
+      }
+
+      /* Header */
+      .db-header {
+        background: linear-gradient(135deg, #4a154b, #6b1d6e);
+        color: white;
+        padding: 20px 25px;
+        border-radius: 10px;
+        margin-bottom: 25px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      }
+
+      .header-title h1 {
+        font-size: 22px;
+        margin-bottom: 5px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .header-title p {
+        font-size: 13px;
+        opacity: 0.85;
+      }
+
+      /* Section 1: Executive summary / Presentation cards */
+      .summary-section-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        margin: 0 0 12px;
+        flex-wrap: wrap;
+      }
+      .summary-section-head h2 {
+        font-size: 18px;
+        color: #0f172a;
+        display: flex;
+        align-items: center;
+        gap: 9px;
+      }
+      .summary-section-meta {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+      .unit-badge,
+      .year-badge {
+        border-radius: 999px;
+        padding: 6px 10px;
+        font-size: 11px;
+        font-weight: 800;
+        border: 1px solid #dbe3ee;
+        background: #fff;
+        color: #475569;
+      }
+      .presentation-btn {
+        border: 1px solid #cbd5e1;
+        background: #fff;
+        color: #334155;
+        border-radius: 8px;
+        padding: 7px 11px;
+        font-weight: 700;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .presentation-btn:hover {
+        background: #f8fafc;
+        border-color: #94a3b8;
+      }
+
+      .comparison-cards-section {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 18px;
+        margin-bottom: 24px;
+      }
+      .status-group-card {
+        position: relative;
+        overflow: hidden;
+        background: #fff;
+        border-radius: 16px;
+        padding: 18px;
+        box-shadow: 0 8px 28px rgba(15, 23, 42, 0.08);
+        border: 1px solid #e2e8f0;
+      }
+      .status-group-card::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0;
+        right: 0;
+        height: 5px;
+      }
+      .pre-meeting-box::before {
+        background: linear-gradient(90deg, #10b981, #34d399);
+      }
+      .post-meeting-box::before {
+        background: linear-gradient(90deg, #f59e0b, #fbbf24);
+      }
+      .group-title-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        margin: 2px 0 14px;
+      }
+      .group-title-row h2 {
+        font-size: 17px;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .pre-meeting-box .group-title-row h2 {
+        color: #047857;
+      }
+      .post-meeting-box .group-title-row h2 {
+        color: #a16207;
+      }
+      .group-subtitle {
+        font-size: 10.5px;
+        color: #94a3b8;
+        font-weight: 700;
+      }
+
+      .mini-card-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 12px;
+      }
+      .mini-card {
+        background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+        border: 1px solid #dbe3ee;
+        border-radius: 12px;
+        padding: 13px;
+        min-width: 0;
+      }
+      .mini-card.highlight {
+        background: linear-gradient(180deg, #fffbeb 0%, #fef3c7 100%);
+        border-color: #fde68a;
+      }
+      .mini-card.highlight-green {
+        background: linear-gradient(180deg, #f0fdf4 0%, #dcfce7 100%);
+        border-color: #bbf7d0;
+      }
+      .metric-label {
+        font-size: 15px;
+        line-height: 1.5;
+        color: #64748b;
+        font-weight: 800;
+        letter-spacing: 0.01em;
+        margin-bottom: 5px;
+      }
+      .mini-card .num {
+        font-size: 30px;
+        line-height: 1.15;
+        font-weight: 800;
+        color: #0f172a;
+        margin: 0 0 10px;
+        text-align: right;
+        font-variant-numeric: tabular-nums;
+        white-space: nowrap;
+      }
+      .source-funds {
+        border-top: 1px solid #dbe3ee;
+        padding-top: 8px;
+        display: grid;
+        gap: 6px;
+      }
+      .fund-row {
+        display: grid;
+        grid-template-columns: 62px minmax(0, 1fr);
+        align-items: center;
+        gap: 7px;
+        margin: 0;
+        color: #475569;
+      }
+      .fund-row label,
+      .fund-row .fund-label {
+        font-size: 10.5px;
+        font-weight: 800;
+        color: #64748b;
+      }
+      .fund-input {
+        width: 100%;
+        min-width: 0;
+        border: 1px solid #cbd5e1;
+        border-radius: 7px;
+        background: #fff;
+        color: #0f172a;
+        padding: 6px 7px;
+        text-align: right;
+        font-size: 11px;
+        font-weight: 800;
+        font-variant-numeric: tabular-nums;
+      }
+      .fund-input:hover {
+        border-color: #94a3b8;
+      }
+      .fund-input:focus {
+        outline: none;
+        border-color: #2563eb;
+        box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.12);
+      }
+      .fund-auto {
+        text-align: right;
+        font-size: 11px;
+        font-weight: 800;
+        color: #334155;
+        font-variant-numeric: tabular-nums;
+        padding: 6px 7px;
+        border-radius: 7px;
+        background: rgba(255, 255, 255, 0.58);
+      }
+      .fund-status {
+        min-height: 16px;
+        margin-top: 7px;
+        text-align: right;
+        font-size: 9.5px;
+        font-weight: 800;
+      }
+      .fund-status.ok {
+        color: #15803d;
+      }
+      .fund-status.warn {
+        color: #b45309;
+      }
+      .auto-note {
+        font-size: 9px;
+        color: #94a3b8;
+        margin-top: 3px;
+        text-align: right;
+      }
+
+      @media (max-width: 1050px) {
+        .comparison-cards-section {
+          grid-template-columns: 1fr;
+        }
+      }
+      @media (max-width: 680px) {
+        .mini-card-grid {
+          grid-template-columns: 1fr;
+        }
+        .mini-card .num {
+          font-size: 28px;
+        }
+      }
+
+      /* Presentation mode: larger dashboard and minimal chrome */
+      body.presentation-mode {
+        padding: 10px;
+        background: #eef2f7;
+      }
+      body.presentation-mode .dashboard-wrapper {
+        max-width: 1680px;
+      }
+      body.presentation-mode .db-header {
+        margin-bottom: 14px;
+        padding: 14px 20px;
+      }
+      body.presentation-mode .header-title p,
+      body.presentation-mode .cycle-toolbar {
+        display: none;
+      }
+      body.presentation-mode .summary-section-head h2 {
+        font-size: 21px;
+      }
+      body.presentation-mode .status-group-card {
+        padding: 20px;
+      }
+      body.presentation-mode .mini-card .num {
+        font-size: 36px;
+      }
+      body.presentation-mode .metric-label {
+        font-size: 17px;
+      }
+      body.presentation-mode .chart-container {
+        height: 330px;
+      }
+
+      /* Project detail overlay used while Presentation Mode is active.
+                 Keeping the project inside the same document prevents browser fullscreen
+                 from being lost when the user drills into a project. */
+      .presentation-project-overlay {
+        position: fixed;
+        inset: 0;
+        z-index: 20000;
+        background: #eef2f7;
+        display: none;
+      }
+      .presentation-project-overlay.show {
+        display: block;
+      }
+      .presentation-project-frame {
+        width: 100%;
+        height: 100%;
+        border: 0;
+        background: #eef2f7;
+      }
+      .presentation-project-close {
+        position: absolute;
+        top: 12px;
+        right: 16px;
+        z-index: 20002;
+        border: 0;
+        border-radius: 10px;
+        padding: 9px 14px;
+        background: #0f172a;
+        color: #fff;
+        font-weight: 800;
+        cursor: pointer;
+        box-shadow: 0 6px 20px rgba(15, 23, 42, 0.22);
+      }
+      .presentation-project-close:hover {
+        background: #1e293b;
+      }
+
+      /* Section 2: Chart Section */
+      .chart-section {
+        margin-bottom: 25px;
+      }
+
+      .chart-card {
+        background: white;
+        border-radius: 10px;
+        padding: 20px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        border: 1px solid #e1e4e8;
+      }
+
+      .chart-container {
+        position: relative;
+        height: 280px;
+        width: 100%;
+      }
+
+      /* Summary table tabs — layout only */
+      .summary-table-tabs {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        margin: 0 0 12px;
+        padding: 5px;
+        border-radius: 10px;
+        width: max-content;
+        max-width: 100%;
+      }
+
+      .summary-table-tab {
+        border-radius: 8px;
+        padding: 8px 14px;
+        font-size: 12px;
+        font-weight: 800;
+        cursor: pointer;
+      }
+      .summary-table-panel {
+        display: none;
+      }
+      .summary-table-panel.active {
+        display: block;
+      }
+
+      .change-summary-table {
+        width: 1519px;
+        border-collapse: collapse;
+        font-size: 14px;
+        table-layout: fixed;
+      }
+      .change-summary-table th,
+      .change-summary-table td {
+        border: 1px solid #0d0d0e;
+        padding: 6px 6px;
+        vertical-align: middle;
+        font-size: 13px !important;
+        font-weight: 800 !important;
+      }
+      .change-summary-table .header-note-input {
+        box-sizing: border-box;
+        min-width: 0;
+      }
+      .change-summary-table thead th {
+        text-align: center;
+        font-weight: 800;
+      }
+      .change-summary-table .change-budget-group {
+        font-size: 14px !important;
+        font-weight: 800 !important;
+      }
+      .change-summary-table .change-target-group {
+        font-size: 14px !important;
+        font-weight: 800 !important;
+      }
+      .change-summary-table .sub-red {
+        color: #ef4444;
+        font-size: 12px;
+        font-weight: 700;
+      }
+      .editable-header-note {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 2px;
+        margin-top: 4px;
+      }
+
+      .header-note-input {
+        width: 100%;
+        min-width: 100px;
+
+        padding: 2px 4px;
+
+        border: 1px dashed transparent;
+        border-radius: 4px;
+
+        background: transparent;
+
+        color: #ef4444;
+        font: inherit;
+        font-weight: 700;
+        text-align: center;
+
+        outline: none;
+      }
+
+      .header-note-input:hover {
+        border-color: #e8b5a8;
+        background: rgba(255, 255, 255, 0.35);
+      }
+
+      .header-note-input:focus {
+        border-color: #b87949;
+        background: #fff8ef;
+        box-shadow: 0 0 0 2px rgba(184, 121, 73, 0.12);
+      }
+      .change-summary-table td.num {
+        text-align: right;
+        font-variant-numeric: tabular-nums;
+      }
+      .change-summary-table td.center {
+        text-align: center;
+      }
+      .change-summary-table .change-total-row td {
+        background: #f5f8e8;
+        font-weight: 900;
+        border-top: 2px solid #111827;
+      }
+      .change-summary-table .project-cell {
+        text-align: left;
+        font-weight: 600;
+        line-height: 1.35;
+      }
+      .change-summary-table .project-cell a {
+        margin-right: 5px;
+        color: #0284c7;
+        text-decoration: none;
+      }
+      .change-summary-note {
+        margin: 8px 0 0;
+        color: #64748b;
+        font-size: 14px;
+      }
+
+      /* Section 3: Table Section */
+      .table-section {
+        margin-top: 25px;
+      }
+
+      .table-card {
+        background: rgb(29, 187, 244);
+        border-radius: 10px;
+        padding: 20px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        border: 1px solid #e1e4e8;
+      }
+
+      .table-toolbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 18px;
+        flex-wrap: wrap;
+        gap: 12px;
+      }
+
+      .table-toolbar h3 {
+        font-size: 16px;
+        color: #1e293b;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .action-btns {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+
+      .btn {
+        padding: 9px 16px;
+        border: none;
+        border-radius: 6px;
+        font-weight: 600;
+        font-size: 13px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        transition: all 0.2s ease;
+      }
+
+      .btn-success {
+        background-color: #2e7d32;
+        color: white;
+      }
+      .btn-success:hover {
+        background-color: #1b5e20;
+      }
+      .btn-primary {
+        background-color: #0284c7;
+        color: white;
+      }
+      .btn-primary:hover {
+        background-color: #0369a1;
+      }
+      .btn-secondary {
+        background-color: #64748b;
+        color: white;
+      }
+      .btn-secondary:hover {
+        background-color: #475569;
+      }
+      .btn-danger {
+        background-color: #dc2626;
+        color: white;
+        padding: 4px 8px;
+        font-size: 11px;
+      }
+      .btn-danger:hover {
+        background-color: #991b1b;
+      }
+
+      .table-responsive {
+        overflow-x: auto;
+      }
+
+      /* Excel-Style Table Styling */
+      .excel-style-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 16px;
+        background: #f8f2ea;
+      }
+
+      .excel-style-table th,
+      .excel-style-table td {
+        border: 1px solid #cbd5e1;
+        padding: 6px 8px;
+        vertical-align: middle;
+        font-size: 16px !important;
+      }
+
+      .excel-style-table th {
+        text-align: center;
+        font-weight: 700;
+        }
+
+      
+
+      
+
+      
+
+      .sub-formula {
+        font-weight: normal;
+        font-size: 12.5px;
+        color: #475569;
+        display: block;
+      }
+
+      /* Interactive Editable Inputs */
+      .editable-input {
+        width: 100%;
+        border: 1px solid transparent;
+        background: transparent;
+        text-align: right;
+        font-size: 16px;
+        padding: 3px 4px;
+        border-radius: 4px;
+        transition: all 0.15s ease;
+        font-family: inherit;
+      }
+
+      .editable-input:hover {
+        border-color: #cbd5e1;
+        background-color: #f8f2ea;
+      }
+
+      .editable-input:focus {
+        outline: none;
+        border-color: #0284c7;
+        background-color: #ffffff;
+        box-shadow: 0 0 0 2px rgba(2, 132, 199, 0.2);
+      }
+
+      .editable-text {
+        text-align: left;
+      }
+
+      .linked-value {
+        display: block;
+        width: 100%;
+        padding: 3px 4px;
+        text-align: right;
+        background: #f8fafc;
+        border-radius: 4px;
+        color: #334155;
+      }
+
+      /* Row Types */
+      .row-section-header {
+        background-color: #d9d2e9;
+        font-weight: bold;
+      }
+
+      .row-subsection-header {
+        background-color: #f8fafc;
+        font-weight: bold;
+        color: #334155;
+      }
+
+      .row-summary {
+        background-color: #e2efda;
+        font-weight: bold;
+        border-top: 2px solid #475569 !important;
+        border-bottom: 2px solid #475569 !important;
+      }
+
+      .row-grand-total {
+        background-color: #c6e0b4;
+        font-weight: bold;
+        border-top: 2px solid #0f172a !important;
+        border-bottom: 4px double #0f172a !important;
+      }
+
+      .text-center {
+        text-align: center;
+      }
+      .text-right {
+        text-align: right;
+      }
+      .text-left {
+        text-align: left;
+      }
+
+      .negative-val {
+        color: #dc2626;
+        font-weight: 600;
+      }
+
+      .hidden-file-input {
+        display: none;
+      }
+      /* Meeting-cycle controls */
+      .cycle-toolbar {
+        margin-top: 14px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+        background: rgba(255, 255, 255, 0.1);
+        padding: 10px 12px;
+        border-radius: 8px;
+      }
+      .cycle-toolbar label {
+        font-size: 12px;
+        font-weight: 700;
+      }
+      .cycle-toolbar input {
+        width: 92px;
+        padding: 7px 8px;
+        border: 1px solid rgba(255, 255, 255, 0.35);
+        border-radius: 6px;
+        font-weight: 700;
+      }
+      .cycle-toolbar button {
+        border: 0;
+        border-radius: 6px;
+        padding: 7px 11px;
+        cursor: pointer;
+        font-weight: 700;
+      }
+      .cycle-info {
+        font-size: 12px;
+        opacity: 0.92;
+      }
+      .file-indicator {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        max-width: 260px;
+        padding: 7px 10px;
+        border: 1px solid #cbd5e1;
+        border-radius: 6px;
+        background: #f8fafc;
+        color: #475569;
+        font-size: 12px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      /* ===== Master Project management ===== */
+      .master-project-btn {
+        white-space: nowrap;
+      }
+      .project-name-wrap {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        min-width: 0;
+      }
+      .project-name-main {
+        font-weight: 600;
+        color: #1e293b;
+      }
+      .project-name-wrap > .project-link {
+        flex: 1;
+        min-width: 0;
+        color: #1e293b;
+        text-decoration: none;
+        cursor: pointer;
+      }
+      .project-name-wrap > .project-link:hover {
+        color: #0284c7;
+        text-decoration: underline;
+      }
+      .project-name-wrap > .project-link:focus-visible {
+        outline: 2px solid #0284c7;
+        outline-offset: 3px;
+        border-radius: 3px;
+      }
+      .project-name-with-short {
+        display: grid;
+        grid-template-columns: 84px minmax(0, 1fr);
+        column-gap: 8px;
+        align-items: start;
+      }
+      .project-name-with-short .project-full-name {
+        overflow-wrap: anywhere;
+      }
+      .project-name-with-short .project-short-name {
+        display: inline-block;
+        box-sizing: border-box;
+        width: 84px;
+        padding: 3px 6px;
+        border: 1px solid #cdb99f;
+        border-radius: 6px;
+        background: #eee2d2;
+        color: #58432e;
+        font-size: calc(0.9em + 2px);
+        line-height: 1.35;
+        text-align: center;
+        overflow-wrap: anywhere;
+      }
+      html.meeting-dark .project-name-with-short .project-short-name {
+        border-color: #66615a;
+        background: #3b3936;
+        color: #f1e5d5 !important;
+      }
+      .project-code-note {
+        display: block;
+        margin-top: 2px;
+        font-size: 10.5px;
+        color: #94a3b8;
+      }
+      .icon-action-btn {
+        border: none;
+        background: #eef2ff;
+        color: #4338ca;
+        width: 30px;
+        height: 30px;
+        border-radius: 6px;
+        cursor: pointer;
+      }
+      .icon-action-btn:hover {
+        background: #e0e7ff;
+      }
+
+      /* Minimal project row actions: hidden until the row is hovered/focused. */
+      .project-item-row .project-name-wrap {
+        position: relative;
+      }
+      .project-row-actions {
+        display: inline-flex;
+        align-items: center;
+        gap: 2px;
+        margin-left: auto;
+        opacity: 0;
+        transform: translateX(4px);
+        transition: 0.15s ease;
+        pointer-events: none;
+        white-space: nowrap;
+      }
+      .project-item-row:hover .project-row-actions,
+      .project-item-row:focus-within .project-row-actions {
+        opacity: 1;
+        transform: translateX(0);
+        pointer-events: auto;
+      }
+      .project-row-action {
+        width: 25px;
+        height: 25px;
+        display: inline-grid;
+        place-items: center;
+        border: 0;
+        border-radius: 7px;
+        background: transparent;
+        color: #64748b;
+        cursor: pointer;
+        padding: 0;
+        font-size: 11px;
+        transition: 0.12s ease;
+      }
+      .project-row-action:hover {
+        background: #eef2f7;
+        color: #0f172a;
+      }
+      .project-row-action.edit:hover {
+        background: #eef2ff;
+        color: #4338ca;
+      }
+      .project-row-action.add:hover {
+        background: #ecfdf5;
+        color: #047857;
+      }
+      .project-row-action.delete:hover {
+        background: #fef2f2;
+        color: #dc2626;
+      }
+      .project-row-action:disabled {
+        opacity: 0.25;
+        cursor: default;
+        background: transparent;
+        color: #94a3b8;
+      }
+      .project-row-drag-handle {
+        width: 25px;
+        height: 25px;
+        display: inline-grid;
+        place-items: center;
+        border-radius: 7px;
+        color: #94a3b8;
+        cursor: grab;
+        font-size: 12px;
+        transition: 0.12s ease;
+        user-select: none;
+        touch-action: none;
+      }
+      .project-row-drag-handle:hover {
+        background: #f1f5f9;
+        color: #334155;
+      }
+      .project-row-drag-handle:active {
+        cursor: grabbing;
+      }
+      .project-item-row.dragging {
+        opacity: 0.42;
+        background: #f8fafc !important;
+      }
+      .project-item-row.drag-over-before td {
+        box-shadow: inset 0 2px 0 #0b74de;
+      }
+      .project-item-row.drag-over-after td {
+        box-shadow: inset 0 -2px 0 #0b74de;
+      }
+      .summary-inline-add {
+        margin-left: 8px;
+        width: 24px;
+        height: 24px;
+        display: inline-grid;
+        place-items: center;
+        border: 1px solid transparent;
+        border-radius: 7px;
+        background: transparent;
+        color: #64748b;
+        cursor: pointer;
+        font-size: 11px;
+      }
+      .summary-inline-add:hover {
+        background: #ecfdf5;
+        color: #047857;
+        border-color: #bbf7d0;
+      }
+      .summary-subheader-content {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+      }
+      .project-row-actions {
+        display: inline-flex;
+        align-items: center;
+        gap: 2px;
+        margin-left: auto;
+
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+
+        transform: translateX(4px);
+
+        transition:
+          opacity 0.15s ease,
+          transform 0.15s ease,
+          visibility 0.15s ease;
+
+        white-space: nowrap;
+      }
+
+      .project-item-row:hover .project-row-actions,
+      .project-item-row:focus-within .project-row-actions {
+        opacity: 1;
+        visibility: visible;
+        pointer-events: auto;
+        transform: translateX(0);
+      }
+
+      /* Compact picker for bringing an existing project back into the current summary. */
+      .summary-picker-hint {
+        font-size: 12px;
+        color: #64748b;
+        margin-bottom: 10px;
+        line-height: 1.45;
+      }
+      .summary-picker-list {
+        display: grid;
+        gap: 7px;
+      }
+      .summary-picker-item {
+        width: 100%;
+        border: 1px solid #e2e8f0;
+        background: #fff;
+        border-radius: 9px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 9px 11px;
+        cursor: pointer;
+        text-align: left;
+        color: #334155;
+        transition: 0.12s ease;
+      }
+      .summary-picker-item:hover {
+        background: #f8fafc;
+        border-color: #cbd5e1;
+        transform: translateY(-1px);
+      }
+      .summary-picker-plus {
+        width: 27px;
+        height: 27px;
+        border-radius: 8px;
+        background: #ecfdf5;
+        color: #047857;
+        display: grid;
+        place-items: center;
+        flex: none;
+        font-size: 11px;
+      }
+      .summary-picker-name {
+        font-size: 13px;
+        font-weight: 700;
+        color: #1e293b;
+        line-height: 1.35;
+      }
+      .summary-picker-meta {
+        font-size: 10.5px;
+        color: #94a3b8;
+        margin-top: 2px;
+      }
+      .summary-picker-empty {
+        padding: 18px;
+        text-align: center;
+        color: #94a3b8;
+        border: 1px dashed #cbd5e1;
+        border-radius: 9px;
+        background: #f8fafc;
+      }
+
+      .app-modal {
+        position: fixed;
+        inset: 0;
+        background: rgba(15, 23, 42, 0.48);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+        padding: 24px;
+      }
+      .app-modal.show {
+        display: flex;
+      }
+      .app-modal-card {
+        width: min(720px, 96vw);
+        max-height: 88vh;
+        overflow: auto;
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 24px 60px rgba(15, 23, 42, 0.28);
+      }
+      .app-modal-card.wide {
+        width: min(1050px, 96vw);
+      }
+      .app-modal-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 18px 20px;
+        border-bottom: 1px solid #e2e8f0;
+      }
+      .app-modal-head h3 {
+        font-size: 17px;
+        color: #0f172a;
+      }
+      .modal-close {
+        border: none;
+        background: transparent;
+        font-size: 22px;
+        cursor: pointer;
+        color: #64748b;
+      }
+      .app-modal-body {
+        padding: 20px;
+      }
+      .form-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 14px 16px;
+      }
+      .project-form-layout {
+        display: grid;
+        gap: 16px;
+      }
+      .project-form-identity {
+        display: grid;
+        grid-template-columns: minmax(0, 0.8fr) minmax(0, 2fr);
+        gap: 16px;
+      }
+      .project-form-summary {
+        display: grid;
+        gap: 14px;
+      }
+      .form-field.full {
+        grid-column: 1/-1;
+      }
+      .form-field label {
+        display: block;
+        margin-bottom: 5px;
+        font-size: 12px;
+        font-weight: 700;
+        color: #475569;
+      }
+      .form-control {
+        width: 100%;
+        border: 1px solid #cbd5e1;
+        border-radius: 7px;
+        padding: 9px 10px;
+        font: inherit;
+        background: #fff;
+      }
+      .form-control:focus {
+        outline: none;
+        border-color: #0284c7;
+        box-shadow: 0 0 0 2px rgba(2, 132, 199, 0.12);
+      }
+      .form-control:disabled {
+        background: #f1f5f9;
+        color: #64748b;
+      }
+      .app-modal-foot {
+        display: flex;
+        justify-content: flex-end;
+        gap: 8px;
+        padding: 14px 20px 20px;
+      }
+      .manager-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 12px;
+      }
+      .manager-table th,
+      .manager-table td {
+        border: 1px solid #e2e8f0;
+        padding: 8px;
+        vertical-align: middle;
+      }
+      .manager-table th {
+        background: #f8fafc;
+        color: #334155;
+        text-align: left;
+      }
+      .manager-table tr.inactive {
+        opacity: 0.55;
+        background: #f8fafc;
+      }
+      .status-pill {
+        display: inline-block;
+        border-radius: 999px;
+        padding: 3px 8px;
+        font-size: 10.5px;
+        font-weight: 700;
+      }
+      .status-pill.active {
+        background: #dcfce7;
+        color: #166534;
+      }
+      .status-pill.inactive {
+        background: #e2e8f0;
+        color: #475569;
+      }
+      .manager-actions {
+        display: flex;
+        gap: 6px;
+        flex-wrap: wrap;
+      }
+      .small-btn {
+        border: none;
+        border-radius: 5px;
+        padding: 5px 8px;
+        cursor: pointer;
+        font-size: 11px;
+        font-weight: 600;
+      }
+      .small-btn.edit {
+        background: #dbeafe;
+        color: #1d4ed8;
+      }
+      .small-btn.archive {
+        background: #fee2e2;
+        color: #b91c1c;
+      }
+      .small-btn.restore {
+        background: #dcfce7;
+        color: #166534;
+      }
+      @media (max-width: 700px) {
+        .form-grid {
+          grid-template-columns: 1fr;
+        }
+        .project-form-identity {
+          grid-template-columns: 1fr;
+        }
+        .form-field.full {
+          grid-column: auto;
+        }
+      }
+
+      /* =========================================================
+                 UI THEME — coherent meeting dashboard palette
+                 Semantic colors:
+                 ก่อนประชุม = Emerald | หลังประชุม = Amber | ส่วนต่าง = Blue
+                 ========================================================= */
+      :root {
+        --ui-navy: #16324f;
+        --ui-blue: #2563eb;
+        --ui-blue-soft: #eff6ff;
+        --ui-amber: #d97706;
+        --ui-amber-soft: #fff7ed;
+        --ui-green: #059669;
+        --ui-green-soft: #ecfdf5;
+        --ui-red: #dc2626;
+        --ui-slate: #64748b;
+        --ui-border: #d8e1ec;
+        --ui-bg: #000102;
+        --ui-card: #ffffff;
+        --ui-section: #eaf0f7;
+      }
+
+      /* เพิ่มตั้งแต่ตรงนี้ */
+      html.meeting-dashboard:not(.meeting-dark) {
+        --ui-navy: #4d3e32;
+
+        --ui-blue: #8b5e3c;
+        --ui-blue-soft: #f3ece4;
+
+        --ui-amber: #b26d20;
+        --ui-amber-soft: #fff3e3;
+
+        --ui-green: #168764;
+        --ui-green-soft: #edf7f2;
+
+        --ui-red: #c85a5a;
+
+        --ui-slate: #78695c;
+        --ui-border: #cfc2b3;
+
+        --ui-bg: #ebe6df;
+        --ui-card: #fbf7f1;
+        --ui-section: #e5ddd3;
+      }
+
+      body {
+        background: var(--ui-bg);
+        color: #243447;
+      }
+
+      .db-header {
+        background: linear-gradient(
+          135deg,
+          #153a5b 0%,
+          #1d5f8f 58%,
+          #287eaa 100%
+        );
+        border: 1px solid rgba(255, 255, 255, 0.16);
+        box-shadow: 0 8px 24px rgba(21, 58, 91, 0.18);
+      }
+
+      .summary-section-head h2,
+      .table-toolbar h3 {
+        color: var(--ui-navy);
+      }
+
+      .status-group-card,
+      .chart-card,
+      .table-card {
+        border: 1px solid var(--ui-border);
+        border-radius: 14px;
+        box-shadow: 0 6px 20px rgba(30, 55, 80, 0.07);
+      }
+
+      .status-group-card {
+        padding: 18px;
+      }
+
+      .pre-meeting-box {
+        background: linear-gradient(180deg, #fff 0%, #f4fdf8 100%);
+      }
+      .post-meeting-box {
+        background: linear-gradient(180deg, #fff 0%, #fff9f2 100%);
+      }
+      .pre-meeting-box::before {
+        background: linear-gradient(90deg, #059669, #34d399);
+      }
+      .post-meeting-box::before {
+        background: linear-gradient(90deg, #d97706, #f59e0b);
+      }
+      .pre-meeting-box .group-title-row h2 {
+        color: #047857;
+      }
+      .post-meeting-box .group-title-row h2 {
+        color: #a75505;
+      }
+
+      .mini-card {
+        border-color: #dfe6ef;
+        background: linear-gradient(180deg, #fff 0%, #f8fafc 100%);
+        box-shadow: 0 2px 6px rgba(30, 55, 80, 0.035);
+      }
+      .pre-meeting-box .mini-card.highlight {
+        background: linear-gradient(180deg, #f3fdf8 0%, #e8faf1 100%);
+        border-color: #b7ebd0;
+      }
+      .post-meeting-box .mini-card.highlight-green {
+        background: linear-gradient(180deg, #fffaf2 0%, #fff3df 100%);
+        border-color: #fed7aa;
+      }
+
+      .metric-label {
+        color: #52657a;
+      }
+      .mini-card .num {
+        color: #14263a;
+      }
+
+      .fund-input {
+        border-color: #ccd7e4;
+        background: #fff;
+      }
+      .pre-meeting-box .fund-input:focus {
+        border-color: var(--ui-green);
+        box-shadow: 0 0 0 2px rgba(5, 150, 105, 0.12);
+      }
+      .post-meeting-box .fund-input:focus {
+        border-color: var(--ui-amber);
+        box-shadow: 0 0 0 2px rgba(217, 119, 6, 0.12);
+      }
+
+      .chart-card {
+        border-top: 3px solid #c8d4e2;
+        background: #fff;
+      }
+
+      /* =========================================================
+   TAB THEME — single source of truth
+   ========================================================= */
+
+      .summary-table-tabs {
+        background: #eef5fc;
+        border: 1px solid #c9dced;
+        padding: 4px;
+      }
+
+      /* Inactive */
+      .summary-table-tab {
+        background: #f2f7fd;
+        color: #244f7c;
+        border: 1px solid #a9c8e8;
+        box-shadow: none;
+      }
+
+      .summary-table-tab:hover:not(.active) {
+        filter: brightness(0.97);
+      }
+
+      /* ---------- ภาพรวม ---------- */
+
+      .allocation-view-tabs .summary-table-tab:nth-child(1).active {
+        background: #0f766e;
+        color: #fff;
+        border-color: #14b8a6;
+        box-shadow: 0 0 0 2px rgba(20, 184, 166, 0.18);
+      }
+
+      /* ---------- ตั้งงบประจำปี ---------- */
+
+      .allocation-view-tabs .summary-table-tab:nth-child(2).active {
+        background: #d97706;
+        color: #fff;
+        border-color: #f59e0b;
+        box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.18);
+      }
+
+      /* ---------- Tab กราฟ ---------- */
+
+      /* ภาพรวม */
+      .chart-card > .summary-table-tabs .summary-table-tab:nth-child(1).active {
+        background: #0f766e;
+        color: #fff;
+        border-color: #14b8a6;
+      }
+
+      /* ตั้งงบ + เป้าจ่าย */
+      .chart-card > .summary-table-tabs .summary-table-tab:nth-child(2).active {
+        background: #d97706;
+        color: #fff;
+        border-color: #f59e0b;
+      }
+
+      /* ภาพรวมรายปี */
+      .chart-card > .summary-table-tabs .summary-table-tab:nth-child(3).active {
+        background: #2563eb;
+        color: #fff;
+        border-color: #3b82f6;
+      }
+
+      /* ---------- ตารางสรุป ---------- */
+
+      /* เปลี่ยนแปลงงบ */
+      #summary-tab-change.active {
+        background: #0f766e;
+        color: #fff;
+        border-color: #14b8a6;
+        box-shadow: 0 0 0 2px rgba(20, 184, 166, 0.18);
+      }
+
+      /* ตั้งงบ */
+      #summary-tab-set.active {
+        background: #d97706;
+        color: #fff;
+        border-color: #f59e0b;
+        box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.18);
+      }
+
+      /* ผลการพิจารณา */
+      .summary-tab-group-primary .summary-table-tab:nth-child(3).active {
+        background: #7c3aed;
+        color: #fff;
+        border-color: #8b5cf6;
+        box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.18);
+      }
+
+      /* สรุปรายปี */
+      .summary-tab-group-annual .summary-table-tab.active {
+        background: #2563eb;
+        color: #fff;
+        border-color: #3b82f6;
+        box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.18);
+      }
+
+      .btn {
+        border-radius: 8px;
+        box-shadow: 0 1px 2px rgba(15, 23, 42, 0.06);
+      }
+      .btn-primary {
+        background: #1677b8;
+      }
+      .btn-primary:hover {
+        background: #0f649e;
+      }
+      .btn-success {
+        background: #27823d;
+      }
+      .btn-success:hover {
+        background: #1f6b32;
+      }
+      .btn-secondary {
+        background: #64748b;
+      }
+      .btn-secondary:hover {
+        background: #526276;
+      }
+
+      .file-indicator {
+        background: #f8fafc;
+        border-color: #d8e1ec;
+        color: #52657a;
+      }
+
+      /* Main set-budget table : Light warm theme */
+      .excel-style-table {
+        background: #fbf7f1;
+      }
+
+      .excel-style-table th,
+      .excel-style-table td {
+        border-color: #cdbda9;
+      }
+
+      /* หัวหลัก: ที่ / โครงการ / ผู้รับผิดชอบ */
+      
+
+      /* กลุ่มวงเงินดำเนินการ */
+      
+
+      /* กลุ่มเป้าหมายเบิกจ่าย */
+      
+
+      /* หัวหมวด 1. โครงการต่อเนื่อง / 2. โครงการใหม่ */
+      .row-section-header {
+        background: #e9dfd3 !important;
+        color: #493628 !important;
+        border-top: 2px solid #c0ad99 !important;
+      }
+
+      /* หัวย่อย */
+      .row-subsection-header {
+        background: #eee6dc !important;
+        color: #604c3b !important;
+      }
+
+      /* แถวรวม */
+      .row-summary {
+        background: #e5ebdf !important;
+        color: #3f4938;
+        border-top: 2px solid #8f9d7e !important;
+        border-bottom: 1px solid #b4bea8 !important;
+      }
+
+      /* รวมทั้งหมด */
+      .row-grand-total {
+        background: #d5ddca !important;
+        color: #30402d;
+        border-top: 2px solid #78876c !important;
+        border-bottom: 3px double #78876c !important;
+      }
+
+      /* ช่องข้อมูลที่เชื่อมมา */
+      .linked-value {
+        background: #f2ede6;
+      }
+
+      /* ตอน focus ช่องกรอก */
+      .editable-input:focus {
+        border-color: #9a6b46;
+        box-shadow: 0 0 0 2px rgba(154, 107, 70, 0.16);
+      }
+      /* =========================================================
+   สีคอลัมน์ข้อมูล — LIGHT MODE ONLY
+   ========================================================= */
+
+      /* วงเงินดำเนินการ : คอลัมน์ 3 - 5 */
+      html.meeting-dashboard:not(.meeting-dark)
+        body
+        .excel-style-table
+        tbody
+        .project-item-row
+        td:nth-child(3),
+      html.meeting-dashboard:not(.meeting-dark)
+        body
+        .excel-style-table
+        tbody
+        .project-item-row
+        td:nth-child(4),
+      html.meeting-dashboard:not(.meeting-dark)
+        body
+        .excel-style-table
+        tbody
+        .project-item-row
+        td:nth-child(5) {
+        background: #f0f5ef !important;
+      }
+
+      /* เป้าหมายเบิกจ่าย : คอลัมน์ 6 - 8 */
+      html.meeting-dashboard:not(.meeting-dark)
+        body
+        .excel-style-table
+        tbody
+        .project-item-row
+        td:nth-child(6),
+      html.meeting-dashboard:not(.meeting-dark)
+        body
+        .excel-style-table
+        tbody
+        .project-item-row
+        td:nth-child(7),
+      html.meeting-dashboard:not(.meeting-dark)
+        body
+        .excel-style-table
+        tbody
+        .project-item-row
+        td:nth-child(8) {
+        background: #fbf2e3 !important;
+      }
+
+      /* ช่องกรอกฝั่งวงเงิน */
+      html.meeting-dashboard:not(.meeting-dark)
+        body
+        .excel-style-table
+        tbody
+        .project-item-row
+        td:nth-child(3)
+        input,
+      html.meeting-dashboard:not(.meeting-dark)
+        body
+        .excel-style-table
+        tbody
+        .project-item-row
+        td:nth-child(4)
+        input,
+      html.meeting-dashboard:not(.meeting-dark)
+        body
+        .excel-style-table
+        tbody
+        .project-item-row
+        td:nth-child(5)
+        input,
+      html.meeting-dashboard:not(.meeting-dark)
+        body
+        .excel-style-table
+        tbody
+        .project-item-row
+        td:nth-child(3)
+        .linked-value,
+      html.meeting-dashboard:not(.meeting-dark)
+        body
+        .excel-style-table
+        tbody
+        .project-item-row
+        td:nth-child(4)
+        .linked-value,
+      html.meeting-dashboard:not(.meeting-dark)
+        body
+        .excel-style-table
+        tbody
+        .project-item-row
+        td:nth-child(5)
+        .linked-value {
+        background: #e7efe6 !important;
+      }
+
+      /* ช่องกรอกฝั่งเป้าหมาย */
+      html.meeting-dashboard:not(.meeting-dark)
+        body
+        .excel-style-table
+        tbody
+        .project-item-row
+        td:nth-child(6)
+        input,
+      html.meeting-dashboard:not(.meeting-dark)
+        body
+        .excel-style-table
+        tbody
+        .project-item-row
+        td:nth-child(7)
+        input,
+      html.meeting-dashboard:not(.meeting-dark)
+        body
+        .excel-style-table
+        tbody
+        .project-item-row
+        td:nth-child(8)
+        input,
+      html.meeting-dashboard:not(.meeting-dark)
+        body
+        .excel-style-table
+        tbody
+        .project-item-row
+        td:nth-child(6)
+        .linked-value,
+      html.meeting-dashboard:not(.meeting-dark)
+        body
+        .excel-style-table
+        tbody
+        .project-item-row
+        td:nth-child(7)
+        .linked-value,
+      html.meeting-dashboard:not(.meeting-dark)
+        body
+        .excel-style-table
+        tbody
+        .project-item-row
+        td:nth-child(8)
+        .linked-value {
+        background: #f7e9d2 !important;
+      }
+      /* Change-budget summary table */
+      .change-summary-table th,
+      .change-summary-table td {
+        border-color: #cfd9e6;
+      }
+      
+      
+
+      
+
+      .change-summary-table .change-total-row td {
+        background: #edf8f1;
+        border-top: 2px solid #6f9b80;
+        color: #234433;
+      }
+
+      .negative-val {
+        color: var(--ui-red);
+        font-weight: 700;
+      }
+
+      .icon-action-btn {
+        background: #eef4ff;
+        color: #3157b7;
+      }
+      .icon-action-btn:hover {
+        background: #dfe9ff;
+      }
+
+      .unit-badge,
+      .year-badge {
+        background: #f8fafc;
+        border-color: #d8e1ec;
+        color: #52657a;
+      }
+
+      .presentation-btn {
+        border-color: #d1dbe7;
+        color: #41566d;
+      }
+      .presentation-btn:hover {
+        background: #f3f6fa;
+        border-color: #aebdce;
+      }
+
+      #summary-table-fullscreen:fullscreen {
+        width: 100vw;
+        height: 100vh;
+        max-width: none;
+        margin: 0;
+        padding: 16px;
+        border-radius: 0;
+
+        background: #eee3d6;
+
+        overflow: auto;
+        box-sizing: border-box;
+      }
+
+      /* แถบ Tab ด้านบน */
+      #summary-table-fullscreen:fullscreen .summary-table-tabs {
+        position: sticky;
+        top: 0;
+        z-index: 30;
+
+        background: #f3eadf;
+        border-bottom: 1px solid #cfbea9;
+      }
+
+      /* แถบปุ่ม เพิ่มโครงการ / บันทึก / Export */
+      #summary-table-fullscreen:fullscreen .table-toolbar {
+        position: sticky;
+        top: 42px;
+        z-index: 29;
+
+        background: #f8f2ea;
+        border-bottom: 1px solid #d6c5b2;
+
+        padding-top: 10px;
+        padding-bottom: 10px;
+      }
+      #summary-table-fullscreen:fullscreen .table-responsive {
+        width: 100%;
+        max-height: calc(100vh - 220px);
+        overflow-x: auto;
+        overflow-y: auto;
+        scrollbar-gutter: auto;
+      }
+
+      /* scrollbar โหมดสว่าง */
+      #summary-table-fullscreen:fullscreen
+        .table-responsive::-webkit-scrollbar {
+        width: 10px;
+        height: 10px;
+      }
+
+      #summary-table-fullscreen:fullscreen
+        .table-responsive::-webkit-scrollbar-track {
+        background: #f3eadf;
+      }
+
+      #summary-table-fullscreen:fullscreen
+        .table-responsive::-webkit-scrollbar-thumb {
+        background: #a9825f;
+        border: 2px solid #f3eadf;
+        border-radius: 8px;
+      }
+
+      #summary-table-fullscreen:fullscreen
+        .table-responsive::-webkit-scrollbar-thumb:hover {
+        background: #8f6847;
+      }
+      #summary-table-fullscreen:fullscreen table {
+        width: 100%;
+      }
+    </style>
+    <link
+      rel="stylesheet"
+      href="/meeting-app/assets/integration.css?v=20261016-blue-review-status"
+    />
+    <link rel="stylesheet" href="/meeting-app/assets/theme-tokens.css?v=20261016-stronger-review-rows" />
+    <link rel="stylesheet" href="/meeting-app/assets/daisyui.css?v=1" />
+    <link
+      rel="stylesheet"
+      href="/meeting-app/assets/dashboard.css?v=20261020-hide-actions-fullscreen"
+    />
+    <link
+      rel="stylesheet"
+      href="/meeting-app/assets/animated-tabs.css?v=20261020-fullscreen-top-row"
+    />
+
+    <style>
+      html.meeting-loading .dashboard-wrapper {
+        visibility: hidden;
+      }
+      #meeting-load-state {
+        position: fixed;
+        inset: 0;
+        z-index: 99999;
+        display: grid;
+        place-content: center;
+        text-align: center;
+        gap: 16px;
+        padding: 24px;
+        background: var(--bg, #171719);
+        color: var(--text, #f3f3f3);
+        font: 16px/1.6 sans-serif;
+      }
+      #meeting-load-state button {
+        padding: 12px 20px;
+        border: 1px solid #4788bb;
+        border-radius: 8px;
+        background: #153b67;
+        color: #fff;
+        cursor: pointer;
+      }
+    </style>
+    <script>
+      (() => {
+        const root = document.documentElement;
+        root.classList.add('meeting-loading');
+        try {
+          root.classList.toggle(
+            'meeting-dark',
+            !window.top.document.body.classList.contains('light'),
+          );
+          if (window.frameElement?.id === 'meeting-workspace-frame')
+            root.classList.add('meeting-shell-dashboard');
+        } catch (_) {}
+        let failed = false;
+        const showFailure = () => {
+          failed = true;
+          const state = document.getElementById('meeting-load-state');
+          if (!state) return;
+          state.replaceChildren();
+          const text = document.createElement('div');
+          text.textContent =
+            'โหลดหน้าประชุมไม่สำเร็จ กรุณาโหลดใหม่ (ยังไม่แสดงยอดจนกว่าข้อมูลจะพร้อม)';
+          const retry = document.createElement('button');
+          retry.textContent = 'โหลดใหม่';
+          retry.onclick = () => location.reload();
+          state.append(text, retry);
+        };
+        window.addEventListener('DOMContentLoaded', () => {
+          const state = document.createElement('div');
+          state.id = 'meeting-load-state';
+          state.setAttribute('role', 'status');
+          state.textContent = 'กำลังโหลดข้อมูลรอบประชุม…';
+          document.body.append(state);
+          if (!window.meetingBridgeReady) {
+            showFailure();
+            return;
+          }
+          const started = Date.now();
+          const timer = setInterval(() => {
+            if (window.meetingInitialLoadComplete) {
+              clearInterval(timer);
+              root.classList.remove('meeting-loading');
+              state.remove();
+            } else if (failed || Date.now() - started > 30000) {
+              clearInterval(timer);
+              showFailure();
+            }
+          }, 100);
+        });
+        window.addEventListener('unhandledrejection', () => {
+          if (!window.meetingInitialLoadComplete) showFailure();
+        });
+        window.addEventListener('error', () => {
+          if (!window.meetingInitialLoadComplete) showFailure();
+        });
+      })();
+    </script>
+    <link rel="stylesheet" href="/meeting-app/assets/decision-project-table.css?v=15-content-fit-money-columns" />
+    <link rel="stylesheet" href="/meeting-app/assets/tablet.css?v=3-larger-delta-label" />
+    <script src="/meeting-app/assets/fullscreen-compat.js?v=1"></script>
+  </head>
+  <body>
+    <div class="dashboard-wrapper">
+      <!-- Header -->
+      <header class="db-header">
+        <div class="header-title">
+          <h1>
+            <i class="fa-solid fa-chart-column"></i>
+            ระบบเปรียบเทียบแผนการเบิกจ่ายงบประมาณรายโครงการ
+          </h1>
+          <p>
+            วิเคราะห์และแก้ไขข้อมูลสด: วงเงินดำเนินการ • เป้าจ่าย •
+            งบประมาณคงเหลือ (คำนวณอัตโนมัติ Real-Time)
+          </p>
+          <div class="cycle-toolbar">
+            <label for="meeting-year-input"
+              ><i class="fa-regular fa-calendar"></i> ปีประชุม</label
+            >
+            <input
+              id="meeting-year-input"
+              type="number"
+              min="2500"
+              max="2700"
+              value="2569"
+            />
+            <button type="button" onclick="changeMeetingYear()">
+              <i class="fa-solid fa-rotate"></i> เปิดรอบปี
+            </button>
+            <span class="cycle-info" id="cycle-info"
+              >กำลังโหลดข้อมูลรอบปี...</span
+            >
+          </div>
+        </div>
+      </header>
+
+      <!-- Section 1: Summary Cards -->
+      <div class="summary-section-head">
+        <h2>
+          ภาพรวมงบประมาณและเป้าหมายการเบิกจ่าย <span id="summary-heading-year">ปี 2571</span>
+        </h2>
+        <div class="summary-section-meta">
+          <span class="year-badge" id="summary-year-badge">ปีตั้งงบ 2571</span>
+          <span class="unit-badge">หน่วย : ล้านบาท</span>
+          <button
+            id="dashboard-fullscreen-btn"
+            class="presentation-btn"
+            type="button"
+            aria-controls="meeting-dashboard-fullscreen"
+            aria-pressed="false"
+            onclick="togglePresentationMode()"
+          >
+            <i class="fa-solid fa-expand" aria-hidden="true"></i> Fullscreen
+          </button>
+          <span id="dashboard-fullscreen-status" role="status"></span>
+        </div>
+      </div>
+
+      <section class="comparison-cards-section">
+        <div class="status-group-card pre-meeting-box">
+          <div class="group-title-row">
+            <h2><i class="fa-regular fa-clock"></i> ก่อนประชุม</h2>
+            <span class="group-subtitle">ข้อมูลตั้งต้นก่อนพิจารณา</span>
+          </div>
+          <div class="mini-card-grid">
+            <div class="mini-card">
+              <div class="metric-label">วงเงินดำเนินการ</div>
+              <p class="num" id="card-pre-total">0.000</p>
+              <div class="source-funds">
+                <div class="fund-row">
+                  <label for="fund-pre-budget-loan">เงินกู้</label>
+                  <input
+                    class="fund-input"
+                    id="fund-pre-budget-loan"
+                    inputmode="decimal"
+                    data-fund-key="pre_budget_loan"
+                    placeholder="0.000"
+                  />
+                </div>
+                <div class="fund-row">
+                  <label for="fund-pre-budget-revenue">เงินรายได้</label>
+                  <input
+                    class="fund-input"
+                    id="fund-pre-budget-revenue"
+                    inputmode="decimal"
+                    data-fund-key="pre_budget_revenue"
+                    placeholder="0.000"
+                  />
+                </div>
+              </div>
+              <div
+                class="fund-status"
+                role="status"
+                id="fund-status-pre-budget"
+              ></div>
+            </div>
+
+            <div class="mini-card">
+              <div class="metric-label">เป้าจ่าย</div>
+              <p class="num" id="card-pre-target">0.000</p>
+              <div class="source-funds">
+                <div class="fund-row">
+                  <label for="fund-pre-target-loan">เงินกู้</label>
+                  <input
+                    class="fund-input"
+                    id="fund-pre-target-loan"
+                    inputmode="decimal"
+                    data-fund-key="pre_target_loan"
+                    placeholder="0.000"
+                  />
+                </div>
+                <div class="fund-row">
+                  <label for="fund-pre-target-revenue">เงินรายได้</label>
+                  <input
+                    class="fund-input"
+                    id="fund-pre-target-revenue"
+                    inputmode="decimal"
+                    data-fund-key="pre_target_revenue"
+                    placeholder="0.000"
+                  />
+                </div>
+              </div>
+              <div
+                class="fund-status"
+                role="status"
+                id="fund-status-pre-target"
+              ></div>
+            </div>
+
+            <div class="mini-card highlight">
+              <div class="metric-label">คงเหลือ</div>
+              <p class="num" id="card-pre-rem">0.000</p>
+              <div class="source-funds">
+                <div class="fund-row">
+                  <span class="fund-label">เงินกู้</span>
+                  <span class="fund-auto" id="card-pre-rem-loan">0.000</span>
+                </div>
+                <div class="fund-row">
+                  <span class="fund-label">เงินรายได้</span>
+                  <span class="fund-auto" id="card-pre-rem-rev">0.000</span>
+                </div>
+              </div>
+              <div class="auto-note">คำนวณจากวงเงิน − เป้าจ่าย</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="status-group-card post-meeting-box">
+          <div class="group-title-row">
+            <h2><i class="fa-regular fa-circle-check"></i> หลังประชุม</h2>
+            <span class="group-subtitle">มติและตัวเลขล่าสุดหลังพิจารณา</span>
+          </div>
+          <div class="mini-card-grid">
+            <div class="mini-card">
+              <div class="metric-label">วงเงินดำเนินการ</div>
+              <p class="num" id="card-post-total">0.000</p>
+              <div class="source-funds">
+                <div class="fund-row">
+                  <label for="fund-post-budget-loan">เงินกู้</label>
+                  <input
+                    class="fund-input"
+                    id="fund-post-budget-loan"
+                    inputmode="decimal"
+                    data-fund-key="post_budget_loan"
+                    placeholder="0.000"
+                  />
+                </div>
+                <div class="fund-row">
+                  <label for="fund-post-budget-revenue">เงินรายได้</label>
+                  <input
+                    class="fund-input"
+                    id="fund-post-budget-revenue"
+                    inputmode="decimal"
+                    data-fund-key="post_budget_revenue"
+                    placeholder="0.000"
+                  />
+                </div>
+              </div>
+              <div
+                class="fund-status"
+                role="status"
+                id="fund-status-post-budget"
+              ></div>
+            </div>
+
+            <div class="mini-card">
+              <div class="metric-label">เป้าจ่าย</div>
+              <p class="num" id="card-post-target">0.000</p>
+              <div class="source-funds">
+                <div class="fund-row">
+                  <label for="fund-post-target-loan">เงินกู้</label>
+                  <input
+                    class="fund-input"
+                    id="fund-post-target-loan"
+                    inputmode="decimal"
+                    data-fund-key="post_target_loan"
+                    placeholder="0.000"
+                  />
+                </div>
+                <div class="fund-row">
+                  <label for="fund-post-target-revenue">เงินรายได้</label>
+                  <input
+                    class="fund-input"
+                    id="fund-post-target-revenue"
+                    inputmode="decimal"
+                    data-fund-key="post_target_revenue"
+                    placeholder="0.000"
+                  />
+                </div>
+              </div>
+              <div
+                class="fund-status"
+                role="status"
+                id="fund-status-post-target"
+              ></div>
+            </div>
+
+            <div class="mini-card highlight-green">
+              <div class="metric-label">คงเหลือ</div>
+              <p class="num" id="card-post-rem">0.000</p>
+              <div class="source-funds">
+                <div class="fund-row">
+                  <span class="fund-label">เงินกู้</span>
+                  <span class="fund-auto" id="card-post-rem-loan">0.000</span>
+                </div>
+                <div class="fund-row">
+                  <span class="fund-label">เงินรายได้</span>
+                  <span class="fund-auto" id="card-post-rem-rev">0.000</span>
+                </div>
+              </div>
+              <div class="auto-note">คำนวณจากวงเงิน − เป้าจ่าย</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section 2: Chart -->
+      <section class="chart-section">
+        <div class="chart-card">
+          <div class="chart-container">
+            <canvas
+              id="meetingCompareChart"
+              role="img"
+              aria-label="แผนภูมิเปรียบเทียบงบประมาณและเป้าจ่ายก่อนและหลังประชุม ตัวเลขแสดงในส่วนสรุปก่อนและหลังประชุมด้านบน"
+            ></canvas>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section 3: Table -->
+      <section class="table-section">
+        <div class="table-card" id="summary-table-fullscreen">
+          <div class="summary-table-tabs">
+            <button
+              id="summary-tab-change"
+              class="summary-table-tab"
+              type="button"
+              onclick="switchSummaryTable('change')"
+            >
+              เปลี่ยนแปลงงบปี <span id="summary-tab-change-year">2570</span>
+            </button>
+            <button
+              id="summary-tab-set"
+              class="summary-table-tab active"
+              type="button"
+              onclick="switchSummaryTable('set')"
+            >
+              ตั้งงบปี <span id="summary-tab-set-year">2571</span>
+            </button>
+            <button
+              class="summary-table-tab"
+              id="summary-fullscreen-btn"
+              type="button"
+              onclick="toggleSummaryFullscreen()"
+              title="Fullscreen"
+              aria-controls="summary-table-fullscreen"
+              aria-pressed="false"
+            >
+              <i class="fa-solid fa-expand" aria-hidden="true"></i> Fullscreen
+            </button>
+          </div>
+          <div class="table-toolbar">
+            <div>
+              <h3>
+                <i class="fa-solid fa-table-cells"></i>
+                สรุปงบลงทุนที่ทำเป็นโครงการประจำปี
+                <span id="set-year-title">2571</span>
+              </h3>
+              <span style="font-size: 12px; color: #64748b"
+                >* ตัวเลขงบประมาณและเป้าหมายเบิกจ่ายดึงจาก Tab “แผนงบประมาณ”
+                ของแต่ละโครงการอัตโนมัติ
+                เมื่อบันทึกโครงการแล้วหน้าสรุปจะอัปเดตทันที</span
+              >
+            </div>
+
+            <div class="action-btns">
+              <button
+                class="btn btn-primary master-project-btn"
+                onclick="openProjectForm(null, ACTIVE_SUMMARY_TAB)"
+                title="เพิ่มโครงการในการประชุมรอบนี้"
+              >
+                <i class="fa-solid fa-plus"></i> เพิ่มโครงการ
+              </button>
+              <button
+                class="btn btn-secondary master-project-btn"
+                onclick="openProjectManager()"
+                title="แก้ไข ย้ายหมวด หรือปิดโครงการไม่ให้แสดงในการประชุมรอบนี้"
+              >
+                <i class="fa-solid fa-list-check"></i> จัดการโครงการ
+              </button>
+              <button
+                class="btn btn-secondary"
+                onclick="openWorkbook()"
+                title="เปิดไฟล์ข้อมูลรอบประชุม .mbg"
+              >
+                <i class="fa-regular fa-folder-open"></i> Open
+              </button>
+
+              <button
+                class="btn btn-success"
+                onclick="saveWorkbook(false)"
+                title="บันทึกทับไฟล์ปัจจุบัน"
+              >
+                <i class="fa-solid fa-floppy-disk"></i> Save
+              </button>
+
+              <button
+                class="btn btn-primary"
+                onclick="saveWorkbook(true)"
+                title="บันทึกเป็นไฟล์ใหม่"
+              >
+                <i class="fa-regular fa-file-lines"></i> Save As
+              </button>
+              <button
+                class="btn btn-secondary"
+                onclick="exportMeetingExcel(this)"
+                title="ส่งออกทุกแท็บเป็นชีทในไฟล์ Excel"
+              >
+                <i class="fa-solid fa-file-excel"></i> Export Excel
+              </button>
+            </div>
+          </div>
+
+          <div id="set-summary-panel" class="summary-table-panel active">
+            <div
+              class="table-responsive"
+              tabindex="0"
+              role="region"
+              aria-label="ตารางสรุปงบประมาณ เลื่อนแนวนอนเพื่อดูทุกคอลัมน์"
+            >
+              <table class="excel-style-table" id="projectTable">
+                <colgroup>
+                  <col style="width: 45px" />
+                  <col style="min-width: 220px" />
+
+                  <!-- 8 คอลัมน์ตัวเลข กว้างเท่ากัน -->
+                  <col style="width: 115px" />
+                  <col style="width: 115px" />
+                  <col style="width: 115px" />
+                  <col style="width: 115px" />
+                  <col style="width: 115px" />
+                  <col style="width: 115px" />
+                  <col style="width: 115px" />
+                  <col style="width: 115px" />
+
+                  <col style="width: 100px" />
+                </colgroup>
+
+                <thead>
+                  <tr>
+                    <th rowspan="2" style="width: 45px" class="th-main">ที่</th>
+
+                    <th rowspan="2" style="min-width: 220px" class="th-main">
+                      โครงการ
+                    </th>
+
+                    <th colspan="5" class="th-group-budget">
+                      วงเงินดำเนินการ (ผูกพัน+ลงทุน)
+                    </th>
+
+                    <th colspan="3" class="th-group-estimate">
+                      เป้าหมายเบิกจ่าย (ผูกพัน+ลงทุน)
+                    </th>
+
+                    <th rowspan="2" style="width: 100px" class="th-main">
+                      ผอ.โครงการ
+                    </th>
+                  </tr>
+
+                  <tr>
+                    <th class="th-budget">ผูกพัน<br /><span class="sub-formula"><span class="header-formula">(1)</span></span></th>
+                    <th class="th-budget">
+                      ตั้งงบลงทุน
+                      <br />
+                      <span class="sub-formula">
+                        (ก่อนประชุม)<span class="header-formula"
+                          >(2)</span
+                        ></span
+                      >
+                    </th>
+
+                    <th class="th-budget">
+                      เพิ่ม(ลด)
+                      <br />
+                      <span class="sub-formula">
+                        <span class="header-formula">(3)</span></span
+                      >
+                    </th>
+
+                    <th class="th-budget">
+                      คงเหลือ
+                      <br />
+                      <span class="sub-formula">
+                        (หลังประชุม)<span class="header-formula"
+                          >(4)=(2)+(3)</span
+                        ></span
+                      >
+                    </th>
+
+                    <th class="th-budget">รวม<br /><span class="sub-formula"><span class="header-formula">(5)=(1)+(4)</span></span></th>
+                    <th class="th-estimate">
+                      ตาม ผอ. โครงการ
+                      <br />
+                      <span class="sub-formula">
+                        (ก่อนประชุม)<span class="header-formula"
+                          >(6)</span
+                        ></span
+                      >
+                    </th>
+
+                    <th class="th-estimate">
+                      เพิ่ม(ลด)
+                      <br />
+                      <span class="sub-formula">
+                        <span class="header-formula">(7)</span></span
+                      >
+                    </th>
+
+                    <th class="th-estimate">
+                      คงเหลือ
+                      <br />
+                      <span class="sub-formula">
+                        (หลังประชุม)<span class="header-formula"
+                          >(8)=(6)+(7)</span
+                        ></span
+                      >
+                    </th>
+                  </tr>
+                </thead>
+
+                <tbody id="table-body">
+                  <!-- JS Will Render Rows -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div id="change-summary-panel" class="summary-table-panel">
+            <div
+              class="table-responsive"
+              tabindex="0"
+              role="region"
+              aria-label="ตารางสรุปงบประมาณ เลื่อนแนวนอนเพื่อดูทุกคอลัมน์"
+            >
+              <table class="change-summary-table" id="changeSummaryTable">
+                <colgroup>
+                  <col style="width: 44px" />
+                  <col style="width: 150px" />
+                  <col style="width: 95px" />
+                  <col style="width: 95px" />
+                  <col style="width: 95px" />
+                  <col style="width: 115px" />
+                  <col style="width: 95px" />
+                  <col style="width: 95px" />
+                  <col style="width: 95px" />
+                  <col style="width: 115px" />
+                  <col style="width: 115px" />
+                  <col style="width: 95px" />
+                  <col style="width: 95px" />
+                  <col style="width: 115px" />
+                  <col style="width: 105px" />
+                </colgroup>
+                <thead>
+                  <tr>
+                    <th rowspan="3">ที่</th>
+                    <th rowspan="3">โครงการ</th>
+                    <th colspan="7" class="change-budget-group">
+                      วงเงินดำเนินการ (ผูกพัน+ลงทุน)
+                    </th>
+                    <th colspan="5" class="change-target-group">
+                      เป้าหมายเบิกจ่าย (ผูกพัน+ลงทุน)
+                    </th>
+                    <th rowspan="3">
+                      ผอ.โครงการ
+                    </th>
+                  </tr>
+                  <tr>
+                    <th rowspan="2" class="budget-core-outline-left budget-core-outline-top">
+                      ผูกพัน<br /><small>(1)</small>
+                    </th>
+                    <th rowspan="2" class="budget-core-outline-top">
+                      ตั้งงบประจำปี<br />
+
+                      <span class="sub-red editable-header-note">
+                        <input
+                          id="change-budget-status"
+                          class="header-note-input"
+                          type="text"
+                          value="รอ ครม.อนุมัติ"
+                        />
+
+                        <input
+                          id="change-budget-date"
+                          class="header-note-input"
+                          type="text"
+                          value="- 29 ก.ย. 2569"
+                        />
+                      </span>
+
+                      <br /><small>(2)</small>
+                    </th>
+                    <th rowspan="2" class="change-budget-total-column budget-core-outline-right budget-core-outline-top">
+                      รวม<br /><small>(3)=(1)+(2)</small>
+                    </th>
+                    <th rowspan="2">
+                      เปลี่ยนแปลงงบ<br />ระหว่างปี<br />(ก่อนประชุม)<br /><small
+                        >(4)</small
+                      >
+                    </th>
+                    <th rowspan="2">
+                      เพิ่ม(ลด)<br /><small>(5)</small>
+                    </th>
+                    <th rowspan="2">
+                      คงเหลือ<br />(หลังประชุม)<br /><small>(6)=(4)+(5)</small>
+                    </th>
+                    <th rowspan="2" class="change-budget-total-column budget-core-outline-left budget-core-outline-right budget-core-outline-top">
+                      รวมทั้งสิ้น<br /><small>(7)=(3)+(6)</small>
+                    </th>
+                    <th rowspan="2">
+                      ตาม มติ ครม.<br />
+
+                      <span class="sub-red editable-header-note">
+                        <input
+                          id="change-target-status"
+                          class="header-note-input"
+                          type="text"
+                          value="รอ ครม.อนุมัติ"
+                        />
+
+                        <input
+                          id="change-target-date"
+                          class="header-note-input"
+                          type="text"
+                          value="- 29 ก.ย. 2569"
+                        />
+                      </span>
+
+                      <br /><small>(8)</small>
+                    </th>
+                    <th rowspan="2">
+                      ตาม ผอ. โครงการ<br />(ก่อนประชุม)<br /><small>(9)</small>
+                    </th>
+                    <th rowspan="2">
+                      เพิ่ม(ลด)<br /><small>(10)</small>
+                    </th>
+                    <th rowspan="2">
+                      คงเหลือ<br />(หลังประชุม)<br /><small>(11)=(9)+(10)</small>
+                    </th>
+                    <th rowspan="2">
+                      สูง(ต่ำ)กว่า<br />เป้าหมายเบิกจ่าย<br />ตามมติ ครม.<br /><small
+                        >(12)=(11)-(8)</small
+                      >
+                    </th>
+                  </tr>
+                  <tr></tr>
+                </thead>
+                <tbody id="change-summary-body"></tbody>
+                <tfoot>
+                  <tr class="change-total-row" id="change-summary-total-row" data-summary-group="continuing">
+                    <td></td>
+                    <td style="text-align: right">รวมโครงการต่อเนื่อง</td>
+                    <td class="num budget-core-outline-left" id="change-gt-1">-</td>
+                    <td class="num" id="change-gt-2">-</td>
+                    <td class="num change-budget-total-column budget-core-outline-right budget-core-outline-bottom" id="change-gt-3">-</td>
+                    <td class="num" id="change-gt-4">-</td>
+                    <td class="num" id="change-gt-5">-</td>
+                    <td class="num" id="change-gt-6">-</td>
+                    <td class="num change-budget-total-column budget-core-outline-left budget-core-outline-right budget-core-outline-bottom" id="change-gt-7">-</td>
+                    <td class="num" id="change-gt-8">-</td>
+                    <td class="num" id="change-gt-9">-</td>
+                    <td class="num" id="change-gt-10">-</td>
+                    <td class="num" id="change-gt-11">-</td>
+                    <td class="num" id="change-gt-12">-</td>
+                    <td></td>
+                  </tr>
+                </tfoot>
+              </table>
+            </div>
+            <div class="change-summary-note">
+              * แสดงเฉพาะโครงการที่เลือก “แสดงในสรุปเปลี่ยนแปลงงบ” •
+              ตัวเลขดึงจาก Tab “แผนงบประมาณ” ของโครงการนั้นอัตโนมัติ
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- Choose an existing project to show in the current summary -->
+    <div
+      class="app-modal"
+      id="summary-project-picker-modal"
+      onclick="modalBackdropClose(event, 'summary-project-picker-modal')"
+    >
+      <div class="app-modal-card" style="width: min(560px, 96vw)">
+        <div class="app-modal-head">
+          <h3 id="summary-project-picker-title">
+            <i class="fa-solid fa-plus"></i> นำโครงการมาแสดงในหน้าสรุป
+          </h3>
+          <button
+            class="modal-close"
+            onclick="closeModal('summary-project-picker-modal')"
+          >
+            &times;
+          </button>
+        </div>
+        <div class="app-modal-body">
+          <div
+            class="summary-picker-hint"
+            id="summary-project-picker-hint"
+          ></div>
+          <div
+            class="summary-picker-list"
+            id="summary-project-picker-list"
+          ></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Project master form -->
+    <div
+      class="app-modal"
+      id="project-form-modal"
+      onclick="modalBackdropClose(event, 'project-form-modal')"
+    >
+      <div class="app-modal-card">
+        <div class="app-modal-head">
+          <h3 id="project-form-title">
+            <i class="fa-solid fa-folder-plus"></i> เลือกโครงการจาก Master DB
+          </h3>
+          <button
+            class="modal-close"
+            onclick="closeModal('project-form-modal')"
+          >
+            &times;
+          </button>
+        </div>
+        <div class="app-modal-body">
+          <div class="project-form-layout">
+            <div class="project-form-identity">
+              <div class="form-field">
+                <label for="master-code"
+                  >รหัสโครงการ
+                  <span style="font-size: 10px; color: #64748b"
+                    >(สร้างอัตโนมัติ)</span
+                  ></label
+                >
+                <input
+                  id="master-code"
+                  class="form-control"
+                  placeholder="A0001"
+                  readonly
+                />
+              </div>
+              <div class="form-field">
+                <label for="master-name">ชื่อโครงการ *</label>
+                <input
+                  id="master-name"
+                  class="form-control"
+                  placeholder="ชื่อโครงการ"
+                />
+              </div>
+            </div>
+            <div class="project-form-summary">
+              <div class="form-field">
+                <label for="master-group">หมวดในหน้าสรุป *</label>
+                <select id="master-group" class="form-control">
+                  <option value="continuing_no_budget">โครงการต่อเนื่อง</option>
+                  <option value="new_project">โครงการใหม่</option>
+                </select>
+              </div>
+              <div class="form-field">
+                <label for="master-show-change"
+                  >แสดงในสรุปเปลี่ยนแปลงงบ
+                  <span id="master-change-year-label">2570</span></label
+                >
+                <select id="master-show-change" class="form-control">
+                  <option value="1">แสดง</option>
+                  <option value="0">ไม่แสดง</option>
+                </select>
+              </div>
+              <div class="form-field">
+                <label for="master-show-set"
+                  >แสดงในสรุปตั้งงบ
+                  <span id="master-set-year-label">2571</span></label
+                >
+                <select id="master-show-set" class="form-control">
+                  <option value="1">แสดง</option>
+                  <option value="0">ไม่แสดง</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="app-modal-foot">
+          <button
+            class="btn btn-secondary"
+            onclick="closeModal('project-form-modal')"
+          >
+            ยกเลิก
+          </button>
+          <button class="btn btn-success" onclick="saveProjectMasterForm()">
+            <i class="fa-solid fa-floppy-disk"></i> บันทึกโครงการ
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Project manager -->
+    <div
+      class="app-modal"
+      id="project-manager-modal"
+      onclick="modalBackdropClose(event, 'project-manager-modal')"
+    >
+      <div class="app-modal-card wide">
+        <div class="app-modal-head">
+          <h3><i class="fa-solid fa-list-check"></i> จัดการฐานข้อมูลโครงการ</h3>
+          <button
+            class="modal-close"
+            onclick="closeModal('project-manager-modal')"
+          >
+            &times;
+          </button>
+        </div>
+        <div class="app-modal-body">
+          <div style="overflow: auto">
+            <table class="manager-table">
+              <thead>
+                <tr>
+                  <th>ชื่อย่อ</th>
+                  <th>ชื่อโครงการ</th>
+                  <th>หมวด</th>
+                  <th>
+                    เปลี่ยนแปลง <span id="manager-change-year">2570</span>
+                  </th>
+                  <th>ตั้งงบ <span id="manager-set-year">2571</span></th>
+                  <th>จัดการ</th>
+                </tr>
+              </thead>
+              <tbody id="project-manager-body"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Presentation-mode project viewer: stays in the same page/fullscreen -->
+    <div class="presentation-project-overlay" id="presentation-project-overlay">
+      <button
+        class="presentation-project-close"
+        type="button"
+        onclick="closePresentationProject()"
+      >
+        <i class="fa-solid fa-arrow-left"></i> กลับหน้าสรุป
+      </button>
+      <iframe
+        id="presentation-project-frame"
+        class="presentation-project-frame"
+        title="รายละเอียดโครงการ"
+      >
+      </iframe>
+    </div>
+
+    <!-- Script Section -->
+    <script>
+      const ROUND_ID = location.pathname.split('/')[2];
+      const API_BASE_URL =
+        '/api/meeting-workspaces/' + encodeURIComponent(ROUND_ID);
+      function inlineCode(value) {
+        return String(value)
+          .split('')
+          .map((c) => '\\u' + c.charCodeAt(0).toString(16).padStart(4, '0'))
+          .join('');
+      }
+      let MEETING_YEAR = 2569;
+      let CHANGE_YEAR = 2570;
+      let SET_YEAR = 2571;
+      let PLAN_YEARS = [2569, 2570, 2571, 2572, 2573, 2574, 2575];
+      let ACTIVE_SUMMARY_TAB = 'set';
+      let changeSummaryData = [];
+      let pendingInsertAfterCode = null;
+      let pendingInsertGroup = null;
+
+      async function loadCycleConfig() {
+        try {
+          const response = await fetch(`${API_BASE_URL}/api/config`);
+          if (!response.ok) throw new Error('อ่านค่าปีประชุมไม่สำเร็จ');
+          const cfg = await response.json();
+          MEETING_YEAR = Number(cfg.meeting_year) || 2569;
+          CHANGE_YEAR = Number(cfg.change_budget_year) || MEETING_YEAR + 1;
+          SET_YEAR = Number(cfg.set_budget_year) || MEETING_YEAR + 2;
+          PLAN_YEARS = Array.isArray(cfg.plan_years)
+            ? cfg.plan_years.map(Number)
+            : Array.from({ length: 7 }, (_, i) => MEETING_YEAR + i);
+        } catch (e) {
+          console.warn('ใช้ค่าเริ่มต้นปีประชุม 2569:', e.message);
+        }
+        applyCycleLabels();
+      }
+
+      function applyCycleLabels() {
+        const input = document.getElementById('meeting-year-input');
+        if (input) input.value = MEETING_YEAR;
+        const summaryHeadingYear = document.getElementById('summary-heading-year');
+        if (summaryHeadingYear) summaryHeadingYear.textContent = `ปี ${SET_YEAR}`;
+        const info = document.getElementById('cycle-info');
+        if (info)
+          info.textContent = `เปลี่ยนแปลงงบปี ${CHANGE_YEAR} • ตั้งงบปี ${SET_YEAR} • แผน ${PLAN_YEARS[0]}-${PLAN_YEARS[PLAN_YEARS.length - 1]}`;
+        const setTitle = document.getElementById('set-year-title');
+        if (setTitle) setTitle.textContent = SET_YEAR;
+        const summaryYearBadge = document.getElementById('summary-year-badge');
+        if (summaryYearBadge)
+          summaryYearBadge.textContent =
+            ACTIVE_SUMMARY_TAB === 'change'
+              ? `ปีเปลี่ยนแปลงงบ ${CHANGE_YEAR}`
+              : `ปีตั้งงบ ${SET_YEAR}`;
+        const tabSetYear = document.getElementById('summary-tab-set-year');
+        const tabChangeYear = document.getElementById(
+          'summary-tab-change-year',
+        );
+        if (tabSetYear) tabSetYear.textContent = SET_YEAR;
+        if (tabChangeYear) tabChangeYear.textContent = CHANGE_YEAR;
+
+        const masterSetYear = document.getElementById('master-set-year-label');
+        const masterChangeYear = document.getElementById(
+          'master-change-year-label',
+        );
+        const managerSetYear = document.getElementById('manager-set-year');
+        const managerChangeYear = document.getElementById(
+          'manager-change-year',
+        );
+        if (masterSetYear) masterSetYear.textContent = SET_YEAR;
+        if (masterChangeYear) masterChangeYear.textContent = CHANGE_YEAR;
+        if (managerSetYear) managerSetYear.textContent = SET_YEAR;
+        if (managerChangeYear) managerChangeYear.textContent = CHANGE_YEAR;
+      }
+
+      function storageKey() {
+        return `budget_project_data_${ROUND_ID}_${MEETING_YEAR}`;
+      }
+      /* =========================================================
+         SAVE / LOAD — ข้อความหัวตารางเปลี่ยนแปลงงบ
+         ========================================================= */
+
+      function changeHeaderNoteStorageKey() {
+        return `meetingBudget.changeHeaderNotes.${ROUND_ID}`;
+      }
+
+      function saveChangeHeaderNotes() {
+        const data = {
+          budgetStatus:
+            document.getElementById('change-budget-status')?.value ?? '',
+          budgetDate:
+            document.getElementById('change-budget-date')?.value ?? '',
+          targetStatus:
+            document.getElementById('change-target-status')?.value ?? '',
+          targetDate:
+            document.getElementById('change-target-date')?.value ?? '',
+        };
+
+        localStorage.setItem(
+          changeHeaderNoteStorageKey(),
+          JSON.stringify(data),
+        );
+      }
+
+      function loadChangeHeaderNotes() {
+        try {
+          const raw = localStorage.getItem(changeHeaderNoteStorageKey());
+          if (!raw) return;
+
+          const data = JSON.parse(raw);
+
+          const budgetStatus = document.getElementById('change-budget-status');
+          const budgetDate = document.getElementById('change-budget-date');
+          const targetStatus = document.getElementById('change-target-status');
+          const targetDate = document.getElementById('change-target-date');
+
+          if (budgetStatus && data.budgetStatus !== undefined) {
+            budgetStatus.value = data.budgetStatus;
+          }
+
+          if (budgetDate && data.budgetDate !== undefined) {
+            budgetDate.value = data.budgetDate;
+          }
+
+          if (targetStatus && data.targetStatus !== undefined) {
+            targetStatus.value = data.targetStatus;
+          }
+
+          if (targetDate && data.targetDate !== undefined) {
+            targetDate.value = data.targetDate;
+          }
+        } catch (e) {
+          console.warn('โหลดข้อความหัวตารางไม่สำเร็จ:', e);
+        }
+      }
+
+      function setupChangeHeaderNoteAutosave() {
+        const ids = [
+          'change-budget-status',
+          'change-budget-date',
+          'change-target-status',
+          'change-target-date',
+        ];
+
+        ids.forEach((id) => {
+          const input = document.getElementById(id);
+          if (!input) return;
+
+          input.addEventListener('input', saveChangeHeaderNotes);
+          input.addEventListener('change', saveChangeHeaderNotes);
+        });
+
+        loadChangeHeaderNotes();
+      }
+
+      async function changeMeetingYear() {
+        const input = document.getElementById('meeting-year-input');
+        const newYear = Number(input?.value);
+        if (!Number.isInteger(newYear) || newYear < 2500 || newYear > 2700) {
+          alert('กรุณาระบุปีประชุมให้ถูกต้อง');
+          return;
+        }
+        if (newYear === MEETING_YEAR) return;
+        if (
+          !confirm(
+            `เปลี่ยนรอบการประชุมจากปี ${MEETING_YEAR} เป็นปี ${newYear} หรือไม่?\n\nข้อมูลของปีเดิมจะยังคงถูกเก็บไว้`,
+          )
+        )
+          return;
+        try {
+          const response = await fetch(
+            `${API_BASE_URL}/api/config/meeting-year`,
+            {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ meeting_year: newYear }),
+            },
+          );
+          const result = await response.json();
+          if (!response.ok)
+            throw new Error(result.message || 'เปลี่ยนปีประชุมไม่สำเร็จ');
+          location.reload();
+        } catch (e) {
+          alert('เปลี่ยนปีประชุมไม่สำเร็จ\n\n' + e.message);
+        }
+      }
+
+      let projectData = [];
+      let projectOptions = [];
+      let masterProjects = [];
+      let editingProjectCode = null;
+
+      let chartInstance = null;
+      let hasUnsavedDashboardChanges = false;
+      let HAS_CURRENT_FILE = false;
+      let dashboardReady = false;
+      let dashboardSyncInProgress = false;
+      let allProjectDashboardTotals = null;
+      let dashboardSyncChannel = null;
+
+      const FUND_KEYS = [
+        'pre_budget_loan',
+        'pre_budget_revenue',
+        'pre_target_loan',
+        'pre_target_revenue',
+        'post_budget_loan',
+        'post_budget_revenue',
+        'post_target_loan',
+        'post_target_revenue',
+      ];
+      let fundSourceState = Object.fromEntries(FUND_KEYS.map((k) => [k, 0]));
+      let summaryTotals = {
+        preBudget: 0,
+        postBudget: 0,
+        preTarget: 0,
+        postTarget: 0,
+      };
+
+      function parseMoney(value) {
+        const cleaned = String(value ?? '')
+          .replace(/,/g, '')
+          .trim();
+        const n = Number.parseFloat(cleaned);
+        return Number.isFinite(n) ? n : 0;
+      }
+
+      function formatMoney(value) {
+        const n = Number(value) || 0;
+        return n.toLocaleString('en-US', {
+          minimumFractionDigits: 3,
+          maximumFractionDigits: 3,
+        });
+      }
+
+      function setFundInputValue(key) {
+        const el = document.querySelector(`[data-fund-key="${key}"]`);
+        if (el && document.activeElement !== el) {
+          el.value = formatMoney(fundSourceState[key] || 0);
+        }
+      }
+
+      function renderFundInputs() {
+        FUND_KEYS.forEach(setFundInputValue);
+      }
+
+      function validateSourcePair(prefix, expectedTotal) {
+        const loan = Number(fundSourceState[`${prefix}_loan`]) || 0;
+        const revenue = Number(fundSourceState[`${prefix}_revenue`]) || 0;
+        const actual = loan + revenue;
+        const diff = expectedTotal - actual;
+        const statusEl = document.getElementById(
+          `fund-status-${prefix.replace('_', '-')}`,
+        );
+        if (!statusEl) return;
+        if (Math.abs(diff) < 0.0005) {
+          statusEl.textContent = '✓ ยอดแหล่งเงินตรงกับยอดรวม';
+          statusEl.className = 'fund-status ok';
+        } else {
+          statusEl.textContent = `ต่างจากยอดรวม ${formatMoney(diff)}`;
+          statusEl.className = 'fund-status warn';
+        }
+      }
+
+      function renderFundSummary() {
+        const preBudgetLoan = Number(fundSourceState.pre_budget_loan) || 0;
+        const preBudgetRev = Number(fundSourceState.pre_budget_revenue) || 0;
+        const preTargetLoan = Number(fundSourceState.pre_target_loan) || 0;
+        const preTargetRev = Number(fundSourceState.pre_target_revenue) || 0;
+        const postBudgetLoan = Number(fundSourceState.post_budget_loan) || 0;
+        const postBudgetRev = Number(fundSourceState.post_budget_revenue) || 0;
+        const postTargetLoan = Number(fundSourceState.post_target_loan) || 0;
+        const postTargetRev = Number(fundSourceState.post_target_revenue) || 0;
+
+        document.getElementById('card-pre-rem-loan').textContent = formatMoney(
+          preBudgetLoan - preTargetLoan,
+        );
+        document.getElementById('card-pre-rem-rev').textContent = formatMoney(
+          preBudgetRev - preTargetRev,
+        );
+        document.getElementById('card-post-rem-loan').textContent = formatMoney(
+          postBudgetLoan - postTargetLoan,
+        );
+        document.getElementById('card-post-rem-rev').textContent = formatMoney(
+          postBudgetRev - postTargetRev,
+        );
+
+        validateSourcePair('pre_budget', summaryTotals.preBudget);
+        validateSourcePair('pre_target', summaryTotals.preTarget);
+        validateSourcePair('post_budget', summaryTotals.postBudget);
+        validateSourcePair('post_target', summaryTotals.postTarget);
+      }
+
+      async function loadFundSourceState() {
+        try {
+          const response = await fetch(
+            `${API_BASE_URL}/api/dashboard-fund-sources/${MEETING_YEAR}`,
+          );
+          const result = await response.json();
+          if (!response.ok)
+            throw new Error(result.message || 'โหลดข้อมูลแหล่งเงินไม่สำเร็จ');
+          const data =
+            result.data && typeof result.data === 'object' ? result.data : {};
+          FUND_KEYS.forEach(
+            (key) => (fundSourceState[key] = Number(data[key]) || 0),
+          );
+        } catch (e) {
+          console.warn('โหลดข้อมูลแหล่งเงินไม่สำเร็จ:', e.message);
+        }
+        renderFundInputs();
+        renderFundSummary();
+      }
+
+      async function saveFundSourceState() {
+        const response = await fetch(
+          `${API_BASE_URL}/api/dashboard-fund-sources/${MEETING_YEAR}`,
+          {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ data: fundSourceState }),
+          },
+        );
+        const result = await response.json();
+        if (!response.ok)
+          throw new Error(result.message || 'บันทึกข้อมูลแหล่งเงินไม่สำเร็จ');
+      }
+
+      function setupFundInputs() {
+        document.querySelectorAll('[data-fund-key]').forEach((el) => {
+          const key = el.dataset.fundKey;
+          let autoSaveTimer = null;
+
+          el.addEventListener('focus', () => {
+            el.value = String(fundSourceState[key] || 0);
+            el.select();
+          });
+
+          el.addEventListener('input', () => {
+            fundSourceState[key] = parseMoney(el.value);
+
+            // คำนวณตัวเลขบนการ์ดทันที
+            renderFundSummary();
+
+            // ยกเลิกการบันทึกรอบก่อน ถ้ายังพิมพ์อยู่
+            clearTimeout(autoSaveTimer);
+
+            // หยุดพิมพ์ 600 ms แล้วบันทึกอัตโนมัติ
+            autoSaveTimer = setTimeout(async () => {
+              try {
+                await saveFundSourceState();
+              } catch (e) {
+                console.error('บันทึกแหล่งเงินอัตโนมัติไม่สำเร็จ:', e);
+                hasUnsavedDashboardChanges = true;
+              }
+            }, 600);
+          });
+
+          el.addEventListener('blur', async () => {
+            clearTimeout(autoSaveTimer);
+
+            fundSourceState[key] = parseMoney(el.value);
+            el.value = formatMoney(fundSourceState[key]);
+
+            renderFundSummary();
+
+            // ออกจากช่อง = บันทึกทันที
+            try {
+              await saveFundSourceState();
+            } catch (e) {
+              console.error('บันทึกแหล่งเงินอัตโนมัติไม่สำเร็จ:', e);
+              hasUnsavedDashboardChanges = true;
+            }
+          });
+        });
+      }
+
+      function presentationModeActive() {
+        return document.body.classList.contains('presentation-mode');
+      }
+
+      function captureViewScroll() {
+        const windows = [window];
+        try {
+          if (window.frameElement?.id === 'meeting-workspace-frame')
+            windows.push(parent);
+        } catch (_) {}
+        return {
+          windows: windows.map((view) => ({
+            view,
+            x: view.scrollX,
+            y: view.scrollY,
+          })),
+          tables: [...document.querySelectorAll('.table-responsive')].map(
+            (node) => ({ node, x: node.scrollLeft, y: node.scrollTop }),
+          ),
+        };
+      }
+      function restoreViewScroll(state) {
+        if (!state) return;
+        const restore = () => {
+          state.windows.forEach(({ view, x, y }) =>
+            view.scrollTo({ left: x, top: y, behavior: 'instant' }),
+          );
+          state.tables.forEach(({ node, x, y }) => {
+            node.scrollLeft = x;
+            node.scrollTop = y;
+          });
+        };
+        requestAnimationFrame(() => requestAnimationFrame(restore));
+        setTimeout(restore, 150);
+      }
+      let presentationScrollState = null;
+      let summaryFullscreenScrollState = null;
+      let previousFullscreenElement = null;
+      document.addEventListener('fullscreenchange', () => {
+        const previous = previousFullscreenElement;
+        previousFullscreenElement = document.fullscreenElement;
+        if (
+          previous?.id === 'summary-table-fullscreen' &&
+          previous !== document.fullscreenElement
+        ) {
+          restoreViewScroll(summaryFullscreenScrollState);
+          summaryFullscreenScrollState = null;
+        } else if (!document.fullscreenElement && presentationScrollState) {
+          restoreViewScroll(presentationScrollState);
+        }
+      });
+
+      const SUMMARY_SCROLL_STATE_KEY =
+        'meetingBudget.summaryScrollState.' + ROUND_ID;
+
+      function rememberSummaryScrollPosition() {
+        try {
+          let scrollView = window;
+
+          // ถ้าอยู่ในหน้า Meetings ของโปรแกรมหลัก
+          // ตัวที่ scroll จริงคือหน้าหลักด้านนอก iframe
+          if (window.frameElement?.id === 'meeting-workspace-frame') {
+            scrollView = parent;
+          }
+
+          sessionStorage.setItem(
+            SUMMARY_SCROLL_STATE_KEY,
+            JSON.stringify({
+              meetingYear: Number(MEETING_YEAR),
+              scrollY: Math.max(
+                0,
+                Math.round(
+                  scrollView.scrollY ||
+                    scrollView.document.documentElement.scrollTop ||
+                    0,
+                ),
+              ),
+              savedAt: Date.now(),
+            }),
+          );
+        } catch (e) {
+          console.warn('บันทึกตำแหน่งหน้าสรุปไม่สำเร็จ:', e);
+        }
+      }
+
+      function restoreSummaryScrollPosition() {
+        const params = new URLSearchParams(window.location.search);
+        if (params.get('restore_scroll') !== '1') return;
+
+        try {
+          const raw = sessionStorage.getItem(SUMMARY_SCROLL_STATE_KEY);
+          if (!raw) return;
+
+          const state = JSON.parse(raw);
+          if (Number(state.meetingYear) !== Number(MEETING_YEAR)) return;
+
+          const y = Math.max(0, Number(state.scrollY) || 0);
+
+          let scrollView = window;
+
+          if (window.frameElement?.id === 'meeting-workspace-frame') {
+            scrollView = parent;
+          }
+
+          const restore = () => {
+            scrollView.scrollTo({
+              top: y,
+              left: 0,
+              behavior: 'auto',
+            });
+          };
+
+          requestAnimationFrame(() => {
+            requestAnimationFrame(restore);
+          });
+
+          setTimeout(restore, 150);
+          setTimeout(restore, 400);
+        } catch (e) {
+          console.warn('คืนตำแหน่งหน้าสรุปไม่สำเร็จ:', e);
+        } finally {
+          sessionStorage.removeItem(SUMMARY_SCROLL_STATE_KEY);
+
+          params.delete('restore_scroll');
+          const query = params.toString();
+
+          history.replaceState(
+            null,
+            '',
+            `${window.location.pathname}${query ? `?${query}` : ''}${window.location.hash}`,
+          );
+        }
+      }
+      function openProjectFromSummary(event, code, name) {
+        event.preventDefault();
+
+        const baseUrl =
+          `project_detail.html?id=${encodeURIComponent(code)}` +
+          `&name=${encodeURIComponent(name)}` +
+          `&meeting_year=${MEETING_YEAR}`;
+
+        if (!presentationModeActive() && !document.fullscreenElement) {
+          // โหมดปกติ: จำตำแหน่ง scroll ก่อนออกจากหน้าสรุป
+          rememberSummaryScrollPosition();
+          window.location.href = baseUrl;
+          return false;
+        }
+
+        // Keep detail navigation inside the current fullscreen document.
+        const overlay = document.getElementById('presentation-project-overlay');
+        const frame = document.getElementById('presentation-project-frame');
+        if (!overlay || !frame) return false;
+
+        const host = document.fullscreenElement || document.body;
+        if (overlay.parentElement !== host) host.appendChild(overlay);
+        frame.src = `${baseUrl}&embedded=1&presentation=1`;
+        overlay.classList.add('show');
+        document.body.style.overflow = 'hidden';
+        return false;
+      }
+
+      function closePresentationProject() {
+        const overlay = document.getElementById('presentation-project-overlay');
+        const frame = document.getElementById('presentation-project-frame');
+        if (overlay) overlay.classList.remove('show');
+        if (frame) frame.src = 'about:blank';
+        document.body.style.overflow = '';
+        // Refresh summary after returning, in case the project was edited/saved.
+        refreshDashboardFromProjects();
+      }
+
+      window.closePresentationProject = closePresentationProject;
+
+      let dashboardFullscreenScrollState = null;
+      let dashboardWasFullscreen = false;
+      let dashboardFallbackRestore = null;
+      function setDashboardFallback(active) {
+        if (active && !dashboardFallbackRestore) {
+          const bodyOverflow = document.body.style.overflow;
+          const frame = window.frameElement;
+          const frameStyle = frame?.style.cssText;
+          const parentBody = frame?.ownerDocument.body;
+          const parentOverflow = parentBody?.style.overflow;
+          dashboardFallbackRestore = () => {
+            document.body.style.overflow = bodyOverflow;
+            if (frame) frame.style.cssText = frameStyle;
+            if (parentBody) parentBody.style.overflow = parentOverflow;
+          };
+          document.body.style.overflow = 'hidden';
+          if (parentBody) parentBody.style.overflow = 'hidden';
+          if (frame) {
+            frame.style.cssText += ';position:fixed!important;inset:0!important;width:100%!important;height:100%!important;max-width:none!important;max-height:none!important;z-index:2147483646!important;background:var(--bg);';
+          }
+        }
+        document.body.classList.toggle('dashboard-fullscreen-fallback', active);
+        if (!active && dashboardFallbackRestore) {
+          dashboardFallbackRestore();
+          dashboardFallbackRestore = null;
+          restoreViewScroll(dashboardFullscreenScrollState);
+          dashboardFullscreenScrollState = null;
+        }
+        syncDashboardFullscreenButton();
+        requestAnimationFrame(() => chartInstance?.resize());
+      }
+      function syncDashboardFullscreenButton() {
+        const active = document.fullscreenElement?.id === 'meeting-dashboard-fullscreen' || Boolean(dashboardFallbackRestore);
+        const button = document.getElementById('dashboard-fullscreen-btn');
+        if (button) {
+          button.innerHTML = active
+            ? '<i class="fa-solid fa-compress" aria-hidden="true"></i> Exit Fullscreen'
+            : '<i class="fa-solid fa-expand" aria-hidden="true"></i> Fullscreen';
+          button.setAttribute('aria-pressed', String(active));
+        }
+      }
+      async function togglePresentationMode() {
+        const target = document.getElementById('meeting-dashboard-fullscreen');
+        const button = document.getElementById('dashboard-fullscreen-btn');
+        const status = document.getElementById('dashboard-fullscreen-status');
+        if (!target || !button || button.disabled) return;
+        button.disabled = true;
+        button.setAttribute('aria-busy', 'true');
+        status.textContent = '';
+        try {
+          if (dashboardFallbackRestore) {
+            setDashboardFallback(false);
+          } else if (document.fullscreenElement === target) {
+            await document.exitFullscreen();
+          } else {
+            if (!target.requestFullscreen) throw new Error('Fullscreen unavailable');
+            dashboardFullscreenScrollState = captureViewScroll();
+            await target.requestFullscreen();
+          }
+        } catch (error) {
+          setDashboardFallback(true);
+        } finally {
+          button.disabled = false;
+          button.removeAttribute('aria-busy');
+        }
+      }
+
+      document.addEventListener('fullscreenchange', () => {
+        const active = document.fullscreenElement?.id === 'meeting-dashboard-fullscreen';
+        const button = document.getElementById('dashboard-fullscreen-btn');
+        if (button) {
+          button.innerHTML = active
+            ? '<i class="fa-solid fa-compress" aria-hidden="true"></i> Exit Fullscreen'
+            : '<i class="fa-solid fa-expand" aria-hidden="true"></i> Fullscreen';
+          button.setAttribute('aria-pressed', String(active));
+        }
+        if (dashboardWasFullscreen && !active) {
+          restoreViewScroll(dashboardFullscreenScrollState);
+          dashboardFullscreenScrollState = null;
+        }
+        dashboardWasFullscreen = active;
+      });
+
+      document.addEventListener('fullscreenchange', () => {
+        if (!document.fullscreenElement && presentationModeActive()) {
+          document.body.classList.remove('presentation-mode');
+          if (
+            document
+              .getElementById('presentation-project-overlay')
+              ?.classList.contains('show')
+          ) {
+            closePresentationProject();
+          }
+          restoreViewScroll(presentationScrollState);
+          presentationScrollState = null;
+        }
+        setTimeout(() => chartInstance?.resize(), 100);
+      });
+      document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape' && dashboardFallbackRestore) {
+          event.preventDefault();
+          setDashboardFallback(false);
+          return;
+        }
+        if (
+          event.key === 'Escape' &&
+          presentationModeActive() &&
+          !document.fullscreenElement
+        ) {
+          togglePresentationMode();
+        }
+      });
+
+      async function loadFileStatus() {
+        try {
+          const response = await fetch(`${API_BASE_URL}/api/file/status`);
+          const result = await response.json();
+          HAS_CURRENT_FILE = Boolean(result.has_file);
+          const el = document.getElementById('current-file-name');
+          if (el) {
+            el.innerHTML = `<i class="fa-regular fa-file"></i> ${escapeText(result.name || 'ยังไม่ได้บันทึกเป็นไฟล์')}`;
+            el.title = result.path || 'ยังไม่ได้บันทึกเป็นไฟล์';
+          }
+        } catch (e) {
+          console.warn('อ่านสถานะไฟล์ไม่สำเร็จ:', e.message);
+        }
+      }
+
+      function escapeText(value) {
+        return String(value ?? '').replace(
+          /[&<>"']/g,
+          (ch) =>
+            ({
+              '&': '&amp;',
+              '<': '&lt;',
+              '>': '&gt;',
+              '"': '&quot;',
+              "'": '&#039;',
+            })[ch],
+        );
+      }
+
+      const GROUP_LABELS = {
+        continuing_budget: 'โครงการต่อเนื่อง',
+        continuing_no_budget: 'โครงการต่อเนื่อง',
+        new_project: 'โครงการใหม่',
+      };
+
+      function projectDisplayNameHtml(project) {
+        const shortName = String(project.short_name || '').trim();
+        const fullName = String(project.name || '').trim();
+        if (!fullName) return escapeText(shortName);
+        const displayShortName = /^[-–—\s]+$/.test(shortName) || shortName === fullName
+          ? ''
+          : shortName;
+        return `<span class="project-name-with-short"><span class="project-short-name">${escapeText(displayShortName || '—')}</span><span class="project-full-name">${escapeText(fullName)}</span></span>`;
+      }
+
+      function closeModal(id) {
+        document.getElementById(id)?.classList.remove('show');
+      }
+
+      function modalBackdropClose(event, id) {
+        if (event.target?.id === id) closeModal(id);
+      }
+
+      function buildDashboardLayout() {
+        const active = masterProjects.filter(
+          (p) =>
+            Number(p.is_active) === 1 && Number(p.show_set_summary ?? 1) === 1,
+        );
+
+        const makeRows = (groups) =>
+          active
+            .filter((p) => groups.includes(String(p.summary_group || '')))
+            .sort(
+              (a, b) =>
+                (Number(a.display_order) || 0) -
+                  (Number(b.display_order) || 0) || Number(a.id) - Number(b.id),
+            )
+            .map((p) => ({
+              type: 'item',
+              code: String(p.code),
+              name: p.name || '',
+              short_name: p.short_name || '',
+              owner: p.owner || '',
+              summary_group: p.summary_group,
+              col1: 0,
+              col2: 0,
+              col4: 0,
+              col5: 0,
+            }));
+
+        projectData = [
+          {
+            type: 'header',
+            text: 'โครงการต่อเนื่อง',
+            id: '1',
+          },
+
+          ...makeRows(['continuing_budget', 'continuing_no_budget']),
+
+          {
+            type: 'summary',
+            text: 'รวมโครงการต่อเนื่อง',
+          },
+
+          {
+            type: 'header',
+            text: 'โครงการใหม่',
+            id: '2',
+          },
+
+          ...makeRows(['new_project']),
+
+          {
+            type: 'summary',
+            text: 'รวมโครงการใหม่',
+          },
+
+          {
+            type: 'grand_total',
+            text: 'รวมทุกโครงการ',
+          },
+        ];
+
+        projectOptions = masterProjects
+          .filter((p) => Number(p.is_active) === 1)
+          .map((p) => ({
+            code: String(p.code),
+            name: p.name,
+          }));
+      }
+
+      async function loadProjectMaster(includeInactive = true) {
+        const response = await fetch(
+          `${API_BASE_URL}/api/project-master?meeting_year=${MEETING_YEAR}&include_inactive=${includeInactive ? 1 : 0}`,
+        );
+        const result = await response.json();
+        if (!response.ok || !result.success)
+          throw new Error(result.message || 'โหลดฐานข้อมูลโครงการไม่สำเร็จ');
+        masterProjects = Array.isArray(result.data) ? result.data : [];
+        buildDashboardLayout();
+      }
+
+      async function openProjectForm(
+        code = null,
+        summaryContext = null,
+        presetGroup = null,
+        insertAfterCode = null,
+      ) {
+        // ถ้าเปิดฟอร์มจากหน้าต่าง "จัดการโครงการ" ให้ปิดหน้าต่างเดิมก่อน
+        // เพื่อไม่ให้ Modal ซ้อนกันและบังหน้าจอ
+        closeModal('project-manager-modal');
+        editingProjectCode = code;
+        pendingInsertAfterCode = code ? null : insertAfterCode || null;
+        pendingInsertGroup = code ? null : presetGroup || null;
+        const project = code
+          ? masterProjects.find((p) => String(p.code) === String(code))
+          : null;
+        document.getElementById('project-form-title').innerHTML = project
+          ? '<i class="fa-solid fa-pen-to-square"></i> แก้ไขข้อมูลโครงการ'
+          : '<i class="fa-solid fa-folder-plus"></i> เลือกโครงการจาก Master DB';
+        const codeEl = document.getElementById('master-code');
+        if (project) {
+          codeEl.value = project.code || '';
+        } else {
+          codeEl.value = 'กำลังสร้างรหัส...';
+          try {
+            const nextResponse = await fetch(
+              `${API_BASE_URL}/api/project-master/next-code`,
+            );
+            const nextResult = await nextResponse.json();
+            codeEl.value =
+              nextResponse.ok && nextResult.success ? nextResult.code : '';
+          } catch (e) {
+            codeEl.value = '';
+            console.warn('สร้างรหัสโครงการอัตโนมัติไม่สำเร็จ:', e.message);
+          }
+        }
+        codeEl.readOnly = true;
+        document.getElementById('master-name').value = project?.name || '';
+        document.getElementById('master-group').value =
+          project?.summary_group || pendingInsertGroup || 'continuing_budget';
+        // Membership in the two summary tabs is independent.
+        // For a new project, default to the tab from which "เพิ่มโครงการ" was clicked.
+        let defaultShowSet = 1;
+        let defaultShowChange = 0;
+        if (!project && summaryContext === 'change') {
+          defaultShowSet = 0;
+          defaultShowChange = 1;
+        }
+        document.getElementById('master-show-set').value = String(
+          project ? Number(project.show_set_summary ?? 1) : defaultShowSet,
+        );
+        document.getElementById('master-show-change').value = String(
+          project
+            ? Number(project.show_change_summary ?? 0)
+            : defaultShowChange,
+        );
+
+        document.getElementById('project-form-modal').classList.add('show');
+        setTimeout(
+          () =>
+            (project ? document.getElementById('master-name') : codeEl).focus({
+              preventScroll: true,
+            }),
+          50,
+        );
+      }
+
+      let summaryPickerContext = { group: null, summaryType: 'set' };
+
+      function summaryTypeLabel(summaryType = 'set') {
+        return summaryType === 'change'
+          ? `สรุปเปลี่ยนแปลงงบปี ${CHANGE_YEAR}`
+          : `สรุปตั้งงบปี ${SET_YEAR}`;
+      }
+
+      function openSummaryProjectPicker(group, summaryType = null) {
+        const type = summaryType === 'change' ? 'change' : 'set';
+        summaryPickerContext = {
+          group: String(group || ''),
+          summaryType: type,
+        };
+        const title = document.getElementById('summary-project-picker-title');
+        if (title)
+          title.innerHTML = `<i class="fa-solid fa-plus"></i> นำโครงการมาแสดงใน${summaryTypeLabel(type)}`;
+        renderSummaryProjectPicker();
+        document
+          .getElementById('summary-project-picker-modal')
+          ?.classList.add('show');
+      }
+
+      function renderSummaryProjectPicker() {
+        const list = document.getElementById('summary-project-picker-list');
+        const hint = document.getElementById('summary-project-picker-hint');
+        if (!list) return;
+        const { group, summaryType } = summaryPickerContext;
+        const flag =
+          summaryType === 'change' ? 'show_change_summary' : 'show_set_summary';
+        const fallback = summaryType === 'change' ? 0 : 1;
+        const candidates = masterProjects
+          .filter(
+            (p) =>
+              Number(p.is_active) === 1 &&
+              String(p.summary_group || '') === String(group || '') &&
+              Number(p[flag] ?? fallback) !== 1,
+          )
+          .sort(
+            (a, b) =>
+              (Number(a.display_order) || 0) - (Number(b.display_order) || 0) ||
+              Number(a.id) - Number(b.id),
+          );
+
+        if (hint) {
+          const groupLabel = GROUP_LABELS[group] || group || '';
+          hint.textContent = `เลือกโครงการที่มีอยู่ในฐานข้อมูลเพื่อนำกลับมาแสดง • ${groupLabel}`;
+        }
+        if (!candidates.length) {
+          list.innerHTML =
+            '<div class="summary-picker-empty">ไม่มีโครงการที่ซ่อนอยู่ในหมวดนี้</div>';
+          return;
+        }
+        list.innerHTML = candidates
+          .map((p) => {
+            const safeCode = inlineCode(p.code || '');
+            return `<button type="button" class="summary-picker-item" onclick="addProjectToSummary('${safeCode}')">
+                          <span class="summary-picker-plus"><i class="fa-solid fa-plus"></i></span>
+                          <span><div class="summary-picker-name">${escapeText(p.name || '')}</div>
+                          <div class="summary-picker-meta">${escapeText(p.owner || p.responsible_unit || '')}</div></span>
+                      </button>`;
+          })
+          .join('');
+      }
+
+      async function addProjectToSummary(code) {
+        const ok = await setProjectSummaryVisibility(
+          code,
+          summaryPickerContext.summaryType,
+          true,
+          true,
+        );
+        if (ok) closeModal('summary-project-picker-modal');
+      }
+
+      async function hideProjectFromSummary(code, summaryType = 'set') {
+        return setProjectSummaryVisibility(code, summaryType, false, false);
+      }
+
+      function visibleProjectsInGroup(group, summaryType = 'set') {
+        const flag =
+          summaryType === 'change' ? 'show_change_summary' : 'show_set_summary';
+        const fallback = summaryType === 'change' ? 0 : 1;
+        return masterProjects
+          .filter(
+            (p) =>
+              Number(p.is_active) === 1 &&
+              String(p.summary_group) === String(group) &&
+              Number(p[flag] ?? fallback) === 1,
+          )
+          .sort(
+            (a, b) =>
+              (Number(a.display_order) || 0) - (Number(b.display_order) || 0) ||
+              Number(a.id) - Number(b.id),
+          );
+      }
+      /* =========================================================
+         PROJECT DRAG & DROP
+         - ลากได้ทั้งแถว
+         - continuing_budget + continuing_no_budget = โครงการต่อเนื่อง
+         - ลากข้าม โครงการต่อเนื่อง <-> โครงการใหม่ ได้
+         ========================================================= */
+
+      let projectDragState = null;
+      let projectOrderSaving = false;
+
+      /* แปลงกลุ่มเก่าให้เป็นหมวดที่มองเห็นบนหน้าจอ */
+      function projectVisualCategory(group) {
+        return String(group || '') === 'new_project'
+          ? 'new_project'
+          : 'continuing';
+      }
+
+      /* กลุ่มจริงที่จะบันทึกเมื่อย้ายหมวด */
+      function canonicalGroupForCategory(category) {
+        return category === 'new_project'
+          ? 'new_project'
+          : 'continuing_no_budget';
+      }
+
+      /* ตรวจว่าโครงการแสดงอยู่ใน Tab ปัจจุบันหรือไม่ */
+      function projectVisibleInSummary(project, summaryType = 'set') {
+        if (!project) return false;
+        if (Number(project.is_active) !== 1) return false;
+
+        if (summaryType === 'change') {
+          return Number(project.show_change_summary ?? 0) === 1;
+        }
+
+        return Number(project.show_set_summary ?? 1) === 1;
+      }
+
+      /* โครงการที่มองเห็นในหมวดเดียวกัน */
+      function visibleProjectsInCategory(category, summaryType = 'set') {
+        return masterProjects
+          .filter(
+            (p) =>
+              projectVisibleInSummary(p, summaryType) &&
+              projectVisualCategory(p.summary_group) === category,
+          )
+          .sort(
+            (a, b) =>
+              (Number(a.display_order) || 0) - (Number(b.display_order) || 0) ||
+              Number(a.id) - Number(b.id),
+          );
+      }
+
+      /* ใช้แสดงสถานะใต้ Tab */
+      function setProjectOrderStatus(message) {
+        let status = document.getElementById('project-order-status');
+
+        if (!status) {
+          status = document.createElement('p');
+          status.id = 'project-order-status';
+          status.setAttribute('role', 'status');
+
+          const tabs = document.querySelector(
+            '#summary-table-fullscreen .summary-table-tabs',
+          );
+
+          if (tabs) {
+            tabs.after(status);
+          }
+        }
+
+        if (status) {
+          status.textContent = message || '';
+        }
+      }
+
+      /* ล้างเส้น/สีตอนลาก */
+      function clearProjectDragIndicators() {
+        document
+          .querySelectorAll(
+            '.project-item-row.dragging,' +
+              '.project-item-row.drag-over-before,' +
+              '.project-item-row.drag-over-after,' +
+              '.row-section-header.drag-category-over',
+          )
+          .forEach((row) => {
+            row.classList.remove(
+              'dragging',
+              'drag-over-before',
+              'drag-over-after',
+              'drag-category-over',
+            );
+          });
+      }
+
+      /* เริ่มลาก */
+      function startProjectDrag(event, code, group, summaryType = 'set') {
+        if (projectOrderSaving) {
+          event.preventDefault();
+          return;
+        }
+
+        const project = masterProjects.find(
+          (p) => String(p.code) === String(code),
+        );
+
+        const sourceGroup = String(project?.summary_group || group || '');
+
+        projectDragState = {
+          code: String(code || ''),
+          sourceGroup,
+          sourceCategory: projectVisualCategory(sourceGroup),
+          summaryType: summaryType === 'change' ? 'change' : 'set',
+        };
+
+        const row = event.target.closest('.project-item-row');
+
+        if (row) {
+          row.classList.add('dragging');
+        }
+
+        try {
+          event.dataTransfer.effectAllowed = 'move';
+          event.dataTransfer.setData('text/plain', projectDragState.code);
+        } catch (_) {}
+      }
+
+      /* ลากผ่านแถวอื่น */
+      function projectDragOver(
+        event,
+        targetCode,
+        targetGroup,
+        summaryType = 'set',
+      ) {
+        if (!projectDragState || projectOrderSaving) return;
+
+        const type = summaryType === 'change' ? 'change' : 'set';
+
+        /* ต้องอยู่ Tab เดียวกันเท่านั้น */
+        if (projectDragState.summaryType !== type) return;
+
+        if (String(projectDragState.code) === String(targetCode)) {
+          return;
+        }
+
+        /* สำคัญ:
+           ไม่ตรวจ sourceGroup === targetGroup แล้ว
+           จึงลากข้าม continuing / new_project ได้
+        */
+        event.preventDefault();
+
+        if (event.dataTransfer) {
+          event.dataTransfer.dropEffect = 'move';
+        }
+
+        const row = event.currentTarget;
+
+        document
+          .querySelectorAll(
+            '.project-item-row.drag-over-before,' +
+              '.project-item-row.drag-over-after',
+          )
+          .forEach((el) => {
+            if (el !== row) {
+              el.classList.remove('drag-over-before', 'drag-over-after');
+            }
+          });
+
+        const rect = row.getBoundingClientRect();
+
+        const after = event.clientY > rect.top + rect.height / 2;
+
+        row.classList.toggle('drag-over-before', !after);
+
+        row.classList.toggle('drag-over-after', after);
+      }
+
+      /* Drop ลงบนโครงการอื่น */
+      async function dropProjectDrag(
+        event,
+        targetCode,
+        targetGroup,
+        summaryType = 'set',
+      ) {
+        if (!projectDragState || projectOrderSaving) return;
+
+        const type = summaryType === 'change' ? 'change' : 'set';
+
+        if (projectDragState.summaryType !== type) {
+          clearProjectDragIndicators();
+          projectDragState = null;
+          return;
+        }
+
+        event.preventDefault();
+        event.stopPropagation();
+
+        const row = event.currentTarget;
+        const rect = row.getBoundingClientRect();
+
+        const position =
+          event.clientY > rect.top + rect.height / 2 ? 'after' : 'before';
+
+        const draggedCode = String(projectDragState.code);
+
+        const sourceGroup = String(projectDragState.sourceGroup || '');
+
+        const sourceCategory = projectDragState.sourceCategory;
+
+        const targetProject = masterProjects.find(
+          (p) => String(p.code) === String(targetCode),
+        );
+
+        const realTargetGroup = String(
+          targetProject?.summary_group || targetGroup || '',
+        );
+
+        const targetCategory = projectVisualCategory(realTargetGroup);
+
+        clearProjectDragIndicators();
+        projectDragState = null;
+
+        if (!draggedCode || draggedCode === String(targetCode)) {
+          return;
+        }
+
+        /* Tab เปลี่ยนแปลงงบ:
+   เปลี่ยนเฉพาะลำดับ ไม่เปลี่ยนหมวดโครงการ */
+        if (type === 'change') {
+          await reorderChangeProjectsByDrag(
+            draggedCode,
+            String(targetCode),
+            position,
+          );
+
+          return;
+        }
+
+        /* Tab ตั้งงบ:
+        รองรับลากข้ามหมวด */
+        await moveProjectByDrag(
+          draggedCode,
+          String(targetCode),
+          position,
+          sourceGroup,
+          sourceCategory,
+          targetCategory,
+          type,
+        );
+      }
+
+      /* จบการลาก */
+      function endProjectDrag() {
+        clearProjectDragIndicators();
+        projectDragState = null;
+      }
+
+      /* =========================================================
+         บันทึกการย้าย + ลำดับ
+         ========================================================= */
+      async function reorderChangeProjectsByDrag(
+        draggedCode,
+        targetCode,
+        position,
+      ) {
+        if (projectOrderSaving) return;
+
+        projectOrderSaving = true;
+        setProjectOrderStatus('กำลังบันทึกลำดับโครงการ…');
+
+        try {
+          /*
+           * รายการที่แสดงใน Tab เปลี่ยนแปลงงบ
+           */
+          const visibleProjects = masterProjects
+            .filter(
+              (p) =>
+                Number(p.is_active) === 1 &&
+                Number(p.show_change_summary ?? 0) === 1,
+            )
+            .sort(
+              (a, b) =>
+                (Number(a.display_order) || 0) -
+                  (Number(b.display_order) || 0) ||
+                (Number(a.id) || 0) - (Number(b.id) || 0),
+            );
+
+          let visibleCodes = visibleProjects
+            .map((p) => String(p.code))
+            .filter((code) => code !== String(draggedCode));
+
+          let targetIndex = visibleCodes.indexOf(String(targetCode));
+
+          if (targetIndex < 0) {
+            throw new Error('ไม่พบตำแหน่งโครงการปลายทาง');
+          }
+
+          if (position === 'after') {
+            targetIndex += 1;
+          }
+
+          visibleCodes.splice(targetIndex, 0, String(draggedCode));
+
+          /*
+           * เก็บโครงการที่ไม่ได้แสดงใน Tab ไว้ด้วย
+           * เพื่อไม่ให้ display_order ชนกัน
+           */
+          const allProjects = [...masterProjects].sort(
+            (a, b) =>
+              (Number(a.display_order) || 0) - (Number(b.display_order) || 0) ||
+              (Number(a.id) || 0) - (Number(b.id) || 0),
+          );
+
+          const visibleSet = new Set(visibleCodes);
+          let visibleIndex = 0;
+
+          const fullOrder = allProjects.map((p) => {
+            const code = String(p.code);
+
+            if (!visibleSet.has(code)) {
+              return code;
+            }
+
+            return visibleCodes[visibleIndex++];
+          });
+
+          const targetProject = masterProjects.find(
+            (p) => String(p.code) === String(targetCode),
+          );
+
+          const validGroup =
+            String(targetProject?.summary_group || '') ||
+            'continuing_no_budget';
+
+          const response = await fetch(
+            `${API_BASE_URL}/api/project-master/reorder`,
+            {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                summary_group: validGroup,
+                ordered_codes: fullOrder,
+              }),
+            },
+          );
+
+          const result = await response.json();
+
+          if (!response.ok || !result.success) {
+            throw new Error(result.message || 'จัดลำดับโครงการไม่สำเร็จ');
+          }
+
+          await loadProjectMaster(true);
+          await refreshChangeSummaryFromProjects();
+
+          setProjectOrderStatus('บันทึกลำดับโครงการอัตโนมัติแล้ว');
+        } catch (e) {
+          console.error('Change summary drag failed:', e);
+
+          setProjectOrderStatus('บันทึกลำดับไม่สำเร็จ');
+
+          alert('จัดลำดับโครงการไม่สำเร็จ\n\n' + e.message);
+        } finally {
+          projectOrderSaving = false;
+          clearProjectDragIndicators();
+        }
+      }
+      async function moveProjectByDrag(
+        draggedCode,
+        targetCode,
+        position,
+        sourceGroup,
+        sourceCategory,
+        targetCategory,
+        summaryType = 'set',
+      ) {
+        if (projectOrderSaving) return;
+
+        projectOrderSaving = true;
+        setProjectOrderStatus('กำลังบันทึกลำดับโครงการ…');
+
+        try {
+          /* -----------------------------------------
+             1. ถ้าย้ายข้ามหมวด ให้เปลี่ยน summary_group ก่อน
+             ----------------------------------------- */
+
+          if (sourceCategory !== targetCategory) {
+            const newGroup = canonicalGroupForCategory(targetCategory);
+
+            const response = await fetch(
+              `${API_BASE_URL}/api/project-master/${encodeURIComponent(draggedCode)}`,
+              {
+                method: 'PUT',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                  summary_group: newGroup,
+                }),
+              },
+            );
+
+            const result = await response.json();
+
+            if (!response.ok || !result.success) {
+              throw new Error(result.message || 'ย้ายหมวดโครงการไม่สำเร็จ');
+            }
+
+            /*
+             * PUT ทำให้ version ของโครงการเปลี่ยน
+             * โหลด master ใหม่ก่อน reorder
+             */
+            await loadProjectMaster(true);
+          }
+
+          /* -----------------------------------------
+             2. หาโครงการในหมวดปลายทางใหม่
+             ----------------------------------------- */
+
+          const visible = visibleProjectsInCategory(
+            targetCategory,
+            summaryType,
+          );
+
+          let orderedCodes = visible
+            .map((p) => String(p.code))
+            .filter((code) => code !== draggedCode);
+
+          let targetIndex = orderedCodes.indexOf(targetCode);
+
+          if (targetIndex < 0) {
+            throw new Error('ไม่พบตำแหน่งโครงการปลายทาง');
+          }
+
+          if (position === 'after') {
+            targetIndex += 1;
+          }
+
+          orderedCodes.splice(targetIndex, 0, draggedCode);
+
+          /* -----------------------------------------
+             3. รักษาตำแหน่งโครงการที่ถูกซ่อนจาก Tab
+             ----------------------------------------- */
+
+          const allCategoryProjects = masterProjects
+            .filter(
+              (p) =>
+                Number(p.is_active) === 1 &&
+                projectVisualCategory(p.summary_group) === targetCategory,
+            )
+            .sort(
+              (a, b) =>
+                (Number(a.display_order) || 0) -
+                  (Number(b.display_order) || 0) || Number(a.id) - Number(b.id),
+            );
+
+          const visibleSet = new Set(orderedCodes);
+
+          let visibleIndex = 0;
+
+          const fullOrder = allCategoryProjects.map((p) => {
+            const code = String(p.code);
+
+            if (!visibleSet.has(code)) {
+              return code;
+            }
+
+            return orderedCodes[visibleIndex++];
+          });
+
+          /*
+           * กรณี draggedCode เพิ่งย้ายหมวด
+           * และยังไม่ได้อยู่ใน allCategoryProjects
+           */
+          if (!fullOrder.includes(draggedCode)) {
+            const targetFullIndex = fullOrder.indexOf(targetCode);
+
+            const insertIndex =
+              position === 'after' ? targetFullIndex + 1 : targetFullIndex;
+
+            fullOrder.splice(Math.max(0, insertIndex), 0, draggedCode);
+          }
+
+          /* -----------------------------------------
+             4. บันทึกลำดับ
+             ----------------------------------------- */
+
+          const reorderGroup = canonicalGroupForCategory(targetCategory);
+
+          const reorderResponse = await fetch(
+            `${API_BASE_URL}/api/project-master/reorder`,
+            {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                summary_group: reorderGroup,
+                ordered_codes: fullOrder,
+              }),
+            },
+          );
+
+          const contentType = reorderResponse.headers.get('content-type') || '';
+
+          if (!contentType.includes('application/json')) {
+            const raw = await reorderResponse.text();
+
+            throw new Error(
+              `Backend ไม่รองรับการจัดลำดับ (HTTP ${reorderResponse.status})` +
+                (raw ? `\n${raw.slice(0, 150)}` : ''),
+            );
+          }
+
+          const reorderResult = await reorderResponse.json();
+
+          if (!reorderResponse.ok || !reorderResult.success) {
+            throw new Error(reorderResult.message || 'จัดลำดับไม่สำเร็จ');
+          }
+
+          /* -----------------------------------------
+             5. โหลดข้อมูลใหม่
+             ----------------------------------------- */
+
+          await reloadMasterAndDashboard(false);
+
+          if (ACTIVE_SUMMARY_TAB === 'change') {
+            await refreshChangeSummaryFromProjects();
+          }
+
+          setProjectOrderStatus('บันทึกลำดับโครงการอัตโนมัติแล้ว');
+        } catch (e) {
+          console.error('Project drag failed:', e);
+
+          setProjectOrderStatus('บันทึกลำดับไม่สำเร็จ');
+
+          alert('จัดลำดับโครงการไม่สำเร็จ\n\n' + e.message);
+        } finally {
+          projectOrderSaving = false;
+          clearProjectDragIndicators();
+        }
+      }
+
+      async function saveProjectMasterForm() {
+        const code = document.getElementById('master-code').value.trim();
+        const name = document.getElementById('master-name').value.trim();
+        if (!name) {
+          alert('กรุณาระบุชื่อโครงการ');
+          return;
+        }
+        const payload = {
+          code,
+          name,
+          summary_group: document.getElementById('master-group').value,
+          show_set_summary:
+            document.getElementById('master-show-set').value === '1',
+          show_change_summary:
+            document.getElementById('master-show-change').value === '1',
+          meeting_year: MEETING_YEAR,
+          insert_after_code: editingProjectCode ? null : pendingInsertAfterCode,
+        };
+        try {
+          const editing = Boolean(editingProjectCode);
+          const url = editing
+            ? `${API_BASE_URL}/api/project-master/${encodeURIComponent(editingProjectCode)}`
+            : `${API_BASE_URL}/api/project-master`;
+          const response = await fetch(url, {
+            method: editing ? 'PUT' : 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload),
+          });
+          const result = await response.json();
+          if (!response.ok || !result.success)
+            throw new Error(result.message || 'บันทึกโครงการไม่สำเร็จ');
+          closeModal('project-form-modal');
+          pendingInsertAfterCode = null;
+          pendingInsertGroup = null;
+          await reloadMasterAndDashboard();
+          if (
+            document
+              .getElementById('project-manager-modal')
+              .classList.contains('show')
+          )
+            renderProjectManager();
+        } catch (e) {
+          alert('บันทึกโครงการไม่สำเร็จ\n\n' + e.message);
+        }
+      }
+
+      async function setProjectActive(code, active) {
+        const project = masterProjects.find(
+          (p) => String(p.code) === String(code),
+        );
+        if (!project) return;
+        const action = active ? 'เปิดใช้งาน' : 'ปิดและซ่อน';
+        if (
+          !confirm(
+            `${action}โครงการ “${project.name}” หรือไม่?\n\nข้อมูลเดิมจะไม่ถูกลบ`,
+          )
+        )
+          return;
+        try {
+          const response = await fetch(
+            `${API_BASE_URL}/api/project-master/${encodeURIComponent(code)}`,
+            {
+              method: 'PUT',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                is_active: active,
+                meeting_year: MEETING_YEAR,
+              }),
+            },
+          );
+          const result = await response.json();
+          if (!response.ok || !result.success)
+            throw new Error(result.message || 'ดำเนินการไม่สำเร็จ');
+          await reloadMasterAndDashboard();
+          renderProjectManager();
+        } catch (e) {
+          alert('ดำเนินการไม่สำเร็จ\n\n' + e.message);
+        }
+      }
+
+      async function setProjectSummaryVisibility(
+        code,
+        summaryType,
+        visible,
+        skipConfirm = false,
+      ) {
+        const project = masterProjects.find(
+          (p) => String(p.code) === String(code),
+        );
+        if (!project) return false;
+        const isSet = summaryType === 'set';
+        const label = isSet
+          ? `สรุปตั้งงบปี ${SET_YEAR}`
+          : `สรุปเปลี่ยนแปลงงบปี ${CHANGE_YEAR}`;
+        const action = visible ? 'นำมาแสดงใน' : 'นำออกจาก';
+        if (
+          !skipConfirm &&
+          !confirm(
+            `${action}${label}หรือไม่?\n\nโครงการ: ${project.name}\n\nข้อมูลโครงการยังคงอยู่ในฐานข้อมูลและสามารถนำกลับมาแสดงได้ภายหลัง`,
+          )
+        )
+          return false;
+
+        const payload = {
+          meeting_year: MEETING_YEAR,
+          show_set_summary: isSet
+            ? visible
+            : Number(project.show_set_summary ?? 1) === 1,
+          show_change_summary: isSet
+            ? Number(project.show_change_summary ?? 0) === 1
+            : visible,
+        };
+        try {
+          const response = await fetch(
+            `${API_BASE_URL}/api/project-master/${encodeURIComponent(code)}`,
+            {
+              method: 'PUT',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(payload),
+            },
+          );
+          const result = await response.json();
+          if (!response.ok || !result.success)
+            throw new Error(result.message || 'ปรับการแสดงผลไม่สำเร็จ');
+          await reloadMasterAndDashboard();
+          if (ACTIVE_SUMMARY_TAB === 'change')
+            await refreshChangeSummaryFromProjects();
+          if (
+            document
+              .getElementById('project-manager-modal')
+              ?.classList.contains('show')
+          )
+            renderProjectManager();
+          return true;
+        } catch (e) {
+          alert('ปรับการแสดงผลไม่สำเร็จ\n\n' + e.message);
+          return false;
+        }
+      }
+
+      async function deleteAllProjectDatabase() {
+        if (!masterProjects.length) {
+          alert('ไม่มีข้อมูลโครงการให้ลบ');
+          return;
+        }
+
+        const first = confirm(
+          `ต้องการลบฐานข้อมูลโครงการทั้งหมดหรือไม่?\n\n` +
+            `จำนวนโครงการปัจจุบัน: ${masterProjects.length} โครงการ\n\n` +
+            `ระบบจะลบข้อมูลโครงการทุก Tab และทุกปีประชุม\n` +
+            `และจะสร้าง Backup ของฐานข้อมูลก่อนลบ`,
+        );
+        if (!first) return;
+
+        const typed = prompt(
+          'การดำเนินการนี้เป็นการลบถาวร\n\n' +
+            'กรุณาพิมพ์คำว่า:\nDELETE ALL PROJECTS',
+        );
+        if (typed === null) return;
+        if (typed.trim() !== 'DELETE ALL PROJECTS') {
+          alert('ข้อความยืนยันไม่ตรง จึงยกเลิกการลบ');
+          return;
+        }
+
+        try {
+          const response = await fetch(`${API_BASE_URL}/api/project-master`, {
+            method: 'DELETE',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ confirm_text: 'DELETE ALL PROJECTS' }),
+          });
+
+          const contentType = response.headers.get('content-type') || '';
+          if (!contentType.includes('application/json')) {
+            const raw = await response.text();
+            throw new Error(
+              `Server ไม่ได้ส่ง JSON กลับมา (HTTP ${response.status})` +
+                (raw ? `\n${raw.slice(0, 120)}` : ''),
+            );
+          }
+
+          const result = await response.json();
+          if (!response.ok || !result.success) {
+            throw new Error(result.message || 'ลบฐานข้อมูลโครงการไม่สำเร็จ');
+          }
+
+          masterProjects = [];
+          projectOptions = [];
+          closeModal('project-manager-modal');
+          await reloadMasterAndDashboard();
+
+          alert(
+            'ลบฐานข้อมูลโครงการทั้งหมดเรียบร้อยแล้ว\n\n' +
+              'โครงการใหม่รายการแรกจะได้รหัส A0001\n' +
+              'ระบบได้สร้าง Backup ก่อนลบไว้แล้ว',
+          );
+        } catch (e) {
+          console.error(e);
+          alert('ลบฐานข้อมูลโครงการทั้งหมดไม่สำเร็จ\n\n' + e.message);
+        }
+      }
+
+      async function toggleManagerSummary(button, code, type, visible) {
+        button
+          .closest('tr')
+          .querySelectorAll('.summary-visibility-light')
+          .forEach((item) => {
+            item.disabled = true;
+          });
+        try {
+          await setProjectSummaryVisibility(code, type, visible, true);
+        } finally {
+          renderProjectManager();
+        }
+      }
+
+      async function changeManagerCategory(select, code) {
+        const project = masterProjects.find(p => String(p.code) === String(code));
+        const previous = project?.summary_group === 'new_project' ? 'new_project' : 'continuing';
+        if (select.value === previous) return;
+        select.disabled = true;
+        try {
+          const response = await fetch(API_BASE_URL + '/api/project-master/' + encodeURIComponent(code), {
+            method: 'PUT', headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({summary_group: canonicalGroupForCategory(select.value)}),
+          });
+          const result = await response.json();
+          if (!response.ok || !result.success) throw new Error(result.message || 'Save failed');
+          await reloadMasterAndDashboard();
+          renderProjectManager();
+        } catch (error) {
+          select.value = previous;
+          alert(error.message);
+        } finally { select.disabled = false; }
+      }
+
+      function renderProjectManager() {
+        const body = document.getElementById('project-manager-body');
+        if (!body) return;
+        if (!masterProjects.length) {
+          body.innerHTML =
+            '<tr><td colspan="6" style="text-align:center;color:#64748b">ยังไม่มีโครงการ</td></tr>';
+          return;
+        }
+        body.innerHTML = masterProjects
+          .map((p) => {
+            const active = Number(p.is_active) === 1;
+            const showSet = Number(p.show_set_summary ?? 1) === 1;
+            const showChange = Number(p.show_change_summary ?? 0) === 1;
+            const safeCode = inlineCode(p.code);
+            const visibilityButton = (type, visible, year) => {
+              const label = `${type === 'change' ? 'เปลี่ยนแปลง' : 'ตั้งงบ'} ${year}: ${visible ? 'แสดง' : 'ไม่แสดง'}`;
+              return `<td class="visibility-cell"><button type="button" class="summary-visibility-light ${visible ? 'is-on' : 'is-off'}" aria-pressed="${visible}" aria-label="${label}" title="${label}" onclick="toggleManagerSummary(this,'${safeCode}','${type}',${!visible})" ${active ? '' : 'disabled'}><span aria-hidden="true">${visible ? '✓' : '−'}</span></button></td>`;
+            };
+            return `<tr class="${active ? '' : 'inactive'}">
+                          <td>${escapeText(p.short_name || '—')}</td>
+                          <td>${escapeText(p.name)}</td>
+                          <td><select aria-label="หมวดโครงการ" onchange="changeManagerCategory(this,'${safeCode}')"><option value="continuing" ${p.summary_group !== 'new_project' ? 'selected' : ''}>โครงการต่อเนื่อง</option><option value="new_project" ${p.summary_group === 'new_project' ? 'selected' : ''}>โครงการใหม่</option></select></td>
+                          ${visibilityButton('change', showChange, CHANGE_YEAR)}
+                          ${visibilityButton('set', showSet, SET_YEAR)}
+                          <td><div class="manager-actions">
+                              <button class="small-btn edit" onclick="openProjectForm('${safeCode}')"><i class="fa-solid fa-pen"></i> แก้ไข</button>
+                              <button class="small-btn ${active ? 'archive' : 'restore'}" onclick="setProjectActive('${safeCode}',${active ? 'false' : 'true'})">${active ? 'ปิด' : 'เปิด'}</button>
+                              <button class="small-btn archive" onclick="removeProjectFromMeeting('${safeCode}')">นำออกจากรอบประชุม</button>
+                          </div></td>
+                      </tr>`;
+          })
+          .join('');
+      }
+
+      function openProjectManager() {
+        renderProjectManager();
+        document.getElementById('project-manager-modal').classList.add('show');
+      }
+
+      async function reloadMasterAndDashboard(markDirty = false) {
+        await loadProjectMaster(true);
+        applyCycleLabels();
+        renderTable();
+        calculateAndRefresh();
+        dashboardReady = true;
+        await refreshDashboardFromProjects();
+
+        if (markDirty) {
+          hasUnsavedDashboardChanges = true;
+        }
+      }
+
+      async function unusedLegacyDashboardState() {
+        try {
+          const response = await fetch(
+            `${API_BASE_URL}/api/dashboard-state/${MEETING_YEAR}`,
+          );
+          const result = await response.json();
+          if (response.ok && Array.isArray(result.data) && result.data.length) {
+            projectData = result.data;
+            /* Summary values are read from Master DB. */
+            return;
+          }
+        } catch (e) {
+          console.warn('โหลดข้อมูลหน้าหลักจากฐานข้อมูลไม่สำเร็จ:', e.message);
+        }
+        // Compatibility fallback for data saved by the older LocalStorage build.
+        // Do not mix LocalStorage from another workbook into an explicitly opened file.
+        if (!HAS_CURRENT_FILE) {
+          const saved = localStorage.getItem(storageKey());
+          if (saved) {
+            try {
+              projectData = JSON.parse(saved);
+            } catch (e) {}
+          }
+        }
+      }
+
+      async function saveDashboardState() {
+        applyCycleLabels();
+        const response = await fetch(
+          `${API_BASE_URL}/api/dashboard-state/${MEETING_YEAR}`,
+          {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ data: projectData }),
+          },
+        );
+        const result = await response.json();
+        if (!response.ok)
+          throw new Error(result.message || 'บันทึกข้อมูลหน้าหลักไม่สำเร็จ');
+        /* Summary values are read from Master DB. */
+        await saveFundSourceState();
+        hasUnsavedDashboardChanges = false;
+      }
+
+      async function openWorkbook() {
+        if (
+          hasUnsavedDashboardChanges &&
+          !confirm(
+            'มีการแก้ไขที่ยังไม่ได้บันทึก ต้องการเปิดไฟล์อื่นและละทิ้งการแก้ไขเหล่านี้หรือไม่?',
+          )
+        )
+          return;
+        try {
+          const response = await fetch(`${API_BASE_URL}/api/file/open`, {
+            method: 'POST',
+          });
+          const result = await response.json();
+          if (!response.ok)
+            throw new Error(result.message || 'เปิดไฟล์ไม่สำเร็จ');
+          if (result.cancelled) return;
+          location.reload();
+        } catch (e) {
+          alert('เปิดไฟล์ไม่สำเร็จ\n\n' + e.message);
+        }
+      }
+
+      async function saveWorkbook(saveAs = false) {
+        try {
+          await saveDashboardState();
+          const endpoint = saveAs ? '/api/file/save-as' : '/api/file/save';
+          const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+            method: 'POST',
+          });
+          const result = await response.json();
+          if (!response.ok)
+            throw new Error(result.message || 'บันทึกไฟล์ไม่สำเร็จ');
+          if (result.cancelled) return;
+          await loadFileStatus();
+          alert(`บันทึกไฟล์เรียบร้อยแล้ว\n${result.name || ''}`);
+        } catch (e) {
+          alert('บันทึกไฟล์ไม่สำเร็จ\n\n' + e.message);
+        }
+      }
+
+      function formatSummaryChange(value) {
+        const rounded = Math.round((Number(value) || 0) * 1000) / 1000;
+        const amount = Math.abs(rounded).toLocaleString('en-US', { minimumFractionDigits: 3, maximumFractionDigits: 3 });
+        if (rounded > 0) return amount;
+        if (rounded < 0) return `<span class="summary-change-negative">(${amount})</span>`;
+        return amount;
+      }
+      function formatNumDash(val) {
+        const n = Number(val) || 0;
+        if (Math.abs(n) < 0.0005) return '-';
+        if (n < 0) {
+          return `<span class="negative-val">(${Math.abs(n).toLocaleString('en-US', { minimumFractionDigits: 3, maximumFractionDigits: 3 })})</span>`;
+        }
+        return n.toLocaleString('en-US', {
+          minimumFractionDigits: 3,
+          maximumFractionDigits: 3,
+        });
+      }
+
+      function switchSummaryTable(tab) {
+        ACTIVE_SUMMARY_TAB = tab === 'change' ? 'change' : 'set';
+        document
+          .getElementById('summary-tab-set')
+          ?.classList.toggle('active', ACTIVE_SUMMARY_TAB === 'set');
+        document
+          .getElementById('summary-tab-change')
+          ?.classList.toggle('active', ACTIVE_SUMMARY_TAB === 'change');
+        document
+          .getElementById('set-summary-panel')
+          ?.classList.toggle('active', ACTIVE_SUMMARY_TAB === 'set');
+        document
+          .getElementById('change-summary-panel')
+          ?.classList.toggle('active', ACTIVE_SUMMARY_TAB === 'change');
+
+        const setTitle = document.getElementById('set-year-title');
+        if (setTitle)
+          setTitle.textContent =
+            ACTIVE_SUMMARY_TAB === 'change' ? CHANGE_YEAR : SET_YEAR;
+        const badge = document.getElementById('summary-year-badge');
+        if (badge && !document.querySelector('.allocation-view-tabs'))
+          badge.textContent =
+            ACTIVE_SUMMARY_TAB === 'change'
+              ? `ปีเปลี่ยนแปลงงบ ${CHANGE_YEAR}`
+              : `ปีตั้งงบ ${SET_YEAR}`;
+
+        if (ACTIVE_SUMMARY_TAB === 'change') refreshChangeSummaryFromProjects();
+      }
+
+      function renderChangeSummaryTable() {
+        const body = document.getElementById('change-summary-body');
+        if (!body) return;
+        body.innerHTML = '';
+
+        const masterMap = new Map(
+          masterProjects.map((p) => [String(p.code), p]),
+        );
+        const eligible = changeSummaryData
+          .filter((item) => {
+            const p = masterMap.get(String(item.code));
+
+            return (
+              p &&
+              Number(p.is_active) === 1 &&
+              Number(p.show_change_summary ?? 0) === 1
+            );
+          })
+          .sort((a, b) => {
+            const pa = masterMap.get(String(a.code)) || {};
+            const pb = masterMap.get(String(b.code)) || {};
+
+            return (
+              (Number(pa.display_order) || 0) -
+                (Number(pb.display_order) || 0) ||
+              (Number(pa.id) || 0) - (Number(pb.id) || 0)
+            );
+          });
+
+        const totals = Array(12).fill(0);
+        eligible.forEach((item, idx) => {
+          const p = masterMap.get(String(item.code)) || {};
+          const setBudget = Number(item.budget_before) || 0;
+          const changeBefore = Number(item.budget_change_before) || 0;
+          const changeAfter = Number(item.budget_change) || 0;
+          const adjustment = changeAfter - changeBefore;
+          const openingCommitment = Number(item.committed) || 0;
+          const openingAndAnnualBudget = openingCommitment + setBudget;
+          const totalBudget = openingAndAnnualBudget + changeAfter;
+          const cabinet = Number(item.cabinet_target) || 0;
+          const targetBefore = Number(item.disbursement_before) || 0;
+          const targetAdjustment = Number(item.disbursement_change) || 0;
+          const targetAfter = Number(item.disbursement_after) || 0;
+          const vsCabinet = targetAfter - cabinet;
+          const vals = [
+            openingCommitment,
+            setBudget,
+            openingAndAnnualBudget,
+            changeBefore,
+            adjustment,
+            changeAfter,
+            totalBudget,
+            cabinet,
+            targetBefore,
+            targetAdjustment,
+            targetAfter,
+            vsCabinet,
+          ];
+          vals.forEach((v, i) => (totals[i] += v));
+
+          const tr = document.createElement('tr');
+
+          tr.className = 'project-item-row';
+
+          const code = inlineCode(item.code || '');
+          const dragGroup = inlineCode(p.summary_group || '');
+
+          tr.setAttribute('draggable', 'true');
+
+          tr.setAttribute(
+            'ondragstart',
+            `startProjectDrag(event,'${code}','${dragGroup}','change')`,
+          );
+
+          tr.setAttribute('ondragend', 'endProjectDrag()');
+
+          tr.setAttribute(
+            'ondragover',
+            `projectDragOver(event,'${code}','${dragGroup}','change')`,
+          );
+
+          tr.setAttribute(
+            'ondrop',
+            `dropProjectDrag(event,'${code}','${dragGroup}','change')`,
+          );
+          tr.innerHTML = `
+                          <td class="center">${idx + 1}</td>
+                          <td class="project-cell">
+                              <div class="project-name-wrap">
+                                  <a href="project_detail.html?id=${encodeURIComponent(item.code)}&name=${encodeURIComponent(item.name)}&meeting_year=${MEETING_YEAR}"
+                                     onclick="return openProjectFromSummary(event,this.dataset.code,'')" data-code="${escapeText(String(item.code))}"
+                                     class="project-link project-name-main" draggable="false" title="เปิดรายละเอียดโครงการ">
+                                     <span class="project-name-with-short"><span class="project-short-name">${escapeText(p.short_name || '—')}</span></span>
+                                  </a>
+                                  
+                              </div>
+                          </td>
+                          ${vals.map((v, i) => `<td class="num${i === 0 ? ' budget-core-outline-left' : ''}${i === 2 ? ' change-budget-total-column budget-core-outline-right' : ''}${i === 6 ? ' change-budget-total-column budget-core-outline-left budget-core-outline-right' : ''}">${formatNumDash(v)}</td>`).join('')}
+                          <td class="center">${escapeText(item.owner ?? p.owner ?? '')}</td>`;
+          body.appendChild(tr);
+        });
+
+        totals.forEach((v, i) => {
+          const el = document.getElementById(`change-gt-${i + 1}`);
+          if (el) el.innerHTML = [4, 9].includes(i) ? formatSummaryChange(v) : formatNumDash(v);
+        });
+        const comparison = eligible.reduce((out, item) => {
+          const committed = Number(item.committed) || 0;
+          const beforeInvestment = (Number(item.investment_set_before) || 0) + (Number(item.budget_change_before) || 0);
+          const afterInvestment = (Number(item.investment_set_after) || 0) + (Number(item.budget_change_after) || 0);
+          const beforeTarget = Number(item.disbursement_before) || 0;
+          const afterTarget = Number(item.disbursement_after) || 0;
+          [committed, beforeInvestment, beforeTarget, committed + beforeInvestment - beforeTarget].forEach((value, i) => out.before[i] += value);
+          [committed, afterInvestment, afterTarget, committed + afterInvestment - afterTarget].forEach((value, i) => out.after[i] += value);
+          return out;
+        }, {before: [0,0,0,0], after: [0,0,0,0]});
+        window.dispatchEvent(new CustomEvent('meeting-change-summary-totals', {detail: comparison}));
+      }
+
+      async function refreshChangeSummaryFromProjects() {
+        try {
+          const response = await fetch(
+            `${API_BASE_URL}/api/dashboard/${CHANGE_YEAR}?meeting_year=${MEETING_YEAR}`,
+          );
+          const result = await response.json();
+          if (!response.ok)
+            throw new Error(
+              result.message || 'ดึงข้อมูลปีเปลี่ยนแปลงงบไม่สำเร็จ',
+            );
+          changeSummaryData = Array.isArray(result.data) ? result.data : [];
+          renderChangeSummaryTable();
+        } catch (e) {
+          console.warn('โหลดสรุปปีเปลี่ยนแปลงงบไม่สำเร็จ:', e.message);
+        }
+      }
+
+      async function refreshDashboardFromProjects() {
+        if (!dashboardReady || dashboardSyncInProgress) return;
+        dashboardSyncInProgress = true;
+        try {
+          const response = await fetch(
+            `${API_BASE_URL}/api/dashboard/${SET_YEAR}?meeting_year=${MEETING_YEAR}`,
+          );
+          const result = await response.json();
+          if (!response.ok)
+            throw new Error(result.message || 'ดึงข้อมูลโครงการไม่สำเร็จ');
+          const byCode = new Map(
+            (result.data || []).map((item) => [String(item.code), item]),
+          );
+          allProjectDashboardTotals = result.totals || null;
+          window.dispatchEvent(
+            new CustomEvent('meeting-dashboard-data', {
+              detail: { year: SET_YEAR, rows: result.data || [] },
+            }),
+          );
+          let changed = false;
+          projectData.forEach((row) => {
+            if (row.type !== 'item') return;
+            const src = byCode.get(String(row.code));
+            if (!src) return;
+            const values = {
+              operatingBudgetBefore: Number(src.operating_budget_before) || 0,
+              committed:
+                Number(
+                  src.committed ??
+                    Number(src.operating_budget_after || 0) -
+                      Number(src.budget_after || 0),
+                ) || 0,
+              operatingBudgetAfter: Number(src.operating_budget_after) || 0,
+              col1: Number(src.budget_before) || 0,
+              col2: Number(src.budget_change) || 0,
+              col4: Number(src.disbursement_before) || 0,
+              col5: Number(src.disbursement_change) || 0,
+            };
+            for (const [key, value] of Object.entries(values)) {
+              if (row[key] == null || Number(row[key]) !== value) {
+                row[key] = value;
+                changed = true;
+              }
+            }
+            if (src.owner && row.owner !== src.owner) {
+              row.owner = src.owner;
+              changed = true;
+            }
+          });
+          if (changed || allProjectDashboardTotals) {
+            renderTable();
+            calculateAndRefresh();
+            /* Summary values are read from Master DB. */
+          }
+        } catch (e) {
+          console.warn('ซิงก์หน้าสรุปจากแผนงบประมาณไม่สำเร็จ:', e.message);
+          window.dispatchEvent(new CustomEvent('meeting-dashboard-error'));
+        } finally {
+          dashboardSyncInProgress = false;
+        }
+        await refreshChangeSummaryFromProjects();
+      }
+
+      function setupLiveDashboardSync() {
+        if ('BroadcastChannel' in window) {
+          dashboardSyncChannel = new BroadcastChannel(
+            'meeting-budget-sync-' + ROUND_ID,
+          );
+          dashboardSyncChannel.onmessage = (event) => {
+            const msg = event.data || {};
+            if (
+              msg.type === 'project-saved' &&
+              Number(msg.meeting_year) === MEETING_YEAR
+            ) {
+              refreshDashboardFromProjects();
+            }
+          };
+        }
+        window.addEventListener('focus', () => refreshDashboardFromProjects());
+        document.addEventListener('visibilitychange', () => {
+          if (!document.hidden) refreshDashboardFromProjects();
+        });
+      }
+
+      window.addEventListener('DOMContentLoaded', async () => {
+        if (!window.meetingBridgeReady) return;
+        await loadCycleConfig();
+        setupChangeHeaderNoteAutosave();
+        await loadFileStatus();
+
+        try {
+          await loadProjectMaster(true);
+        } catch (e) {
+          console.error(e);
+          alert('โหลดฐานข้อมูลโครงการไม่สำเร็จ\n\n' + e.message);
+          projectData = [];
+        }
+        applyCycleLabels();
+        setupFundInputs();
+        await loadFundSourceState();
+        renderTable();
+        initChart();
+        calculateAndRefresh();
+        hasUnsavedDashboardChanges = false;
+        dashboardReady = true;
+        setupLiveDashboardSync();
+        await refreshDashboardFromProjects();
+        await refreshChangeSummaryFromProjects();
+        restoreSummaryScrollPosition();
+        window.meetingInitialLoadComplete = true;
+      });
+
+      function formatNum(val) {
+        if (val === null || val === undefined || isNaN(val)) return '-';
+        if (val === 0) return '0.000';
+        if (val < 0) {
+          return `<span class="negative-val">(${Math.abs(val).toLocaleString('en-US', { minimumFractionDigits: 3, maximumFractionDigits: 3 })})</span>`;
+        }
+        return val.toLocaleString('en-US', {
+          minimumFractionDigits: 3,
+          maximumFractionDigits: 3,
+        });
+      }
+
+      function renderTable() {
+        const tbody = document.getElementById('table-body');
+        tbody.innerHTML = '';
+        let currentSectionId = '';
+        let itemSequence = 0;
+
+        projectData.forEach((row, idx) => {
+          const tr = document.createElement('tr');
+          if (row.type === 'header') {
+            currentSectionId = String(row.id || '').replace(/\.$/, '');
+            itemSequence = 0;
+            tr.className = 'row-section-header';
+            tr.dataset.summaryGroup = currentSectionId === '2' ? 'new' : 'continuing';
+            tr.innerHTML = `<td class="text-center">${currentSectionId}</td><td colspan="10">${escapeText(row.text)}</td>`;
+          } else if (row.type === 'subheader') {
+            tr.className = 'row-subsection-header';
+            const safeGroup = inlineCode(row.group || '');
+            tr.innerHTML = `<td></td><td colspan="10"><div class="summary-subheader-content"><span>${escapeText(row.text)}</span>${safeGroup ? `<button class="summary-inline-add" type="button" onclick="openSummaryProjectPicker('${safeGroup}','set')" title="นำโครงการมาแสดงในหน้าสรุป" aria-label="นำโครงการมาแสดงในหน้าสรุป"><i class="fa-solid fa-plus"></i></button>` : ''}</div></td>`;
+          } else if (row.type === 'item') {
+            tr.className = 'project-item-row';
+            itemSequence += 1;
+            const displaySequence = currentSectionId
+              ? `${currentSectionId}.${itemSequence}`
+              : String(itemSequence);
+            const col3 = (Number(row.col1) || 0) + (Number(row.col2) || 0);
+            const committed = Number(row.committed) || 0;
+            const operatingTotal = committed + col3;
+            const col6 = (Number(row.col4) || 0) + (Number(row.col5) || 0);
+
+            /* ค่าที่ใช้กับ Drag & Drop */
+            const dragCode = inlineCode(row.code);
+            const dragGroup = inlineCode(row.summary_group || '');
+
+            /* ให้ลากได้ทั้งแถว */
+            tr.setAttribute('draggable', 'true');
+
+            tr.setAttribute(
+              'ondragstart',
+              `startProjectDrag(event,'${dragCode}','${dragGroup}','set')`,
+            );
+
+            tr.setAttribute('ondragend', 'endProjectDrag()');
+
+            tr.setAttribute(
+              'ondragover',
+              `projectDragOver(event,'${dragCode}','${dragGroup}','set')`,
+            );
+
+            tr.setAttribute(
+              'ondrop',
+              `dropProjectDrag(event,'${dragCode}','${dragGroup}','set')`,
+            );
+
+            tr.innerHTML = `
+                              <td class="text-center project-code-cell">${displaySequence}</td>
+                              <td>
+                                  <div class="project-name-wrap">
+                                      <a href="project_detail.html?id=${encodeURIComponent(row.code)}&name=${encodeURIComponent(row.name)}&meeting_year=${MEETING_YEAR}"
+                                         onclick="return openProjectFromSummary(event,this.dataset.code,'')" data-code="${escapeText(String(row.code))}"
+                                         class="project-link project-name-main" draggable="false" title="เปิดรายละเอียดโครงการ">
+                                          ${projectDisplayNameHtml(row)}
+                                      </a>
+                                      
+                                  </div>
+                              </td>
+                              <td class="text-right">${formatNum(committed)}</td>
+                              <td class="text-right"><span class="linked-value" title="ดึงจากลงทุน (ตั้งงบประจำปี) ใน Tab แผนงบประมาณ">${formatNum(row.col1 || 0)}</span></td>
+                              <td class="text-right"><span class="linked-value" title="ดึงจากลงทุน (เปลี่ยนแปลงงบระหว่างปี) ใน Tab แผนงบประมาณ">${formatNum(row.col2 || 0)}</span></td>
+                              <td class="text-right" id="col3-${idx}">${formatNum(col3)}</td>
+                              <td class="text-right">${formatNum(operatingTotal)}</td>
+                              <td class="text-right"><span class="linked-value" title="ดึงจากเป้าหมายเบิกจ่าย (ก่อนประชุม)">${formatNum(row.col4 || 0)}</span></td>
+                              <td class="text-right"><span class="linked-value" title="หลังประชุม - ก่อนประชุม">${formatNum(row.col5 || 0)}</span></td>
+                              <td class="text-right" id="col6-${idx}">${formatNum(col6)}</td>
+                              <td class="text-center">${escapeText(row.owner || '')}</td>
+      `;
+          } else if (row.type === 'summary') {
+            tr.className = 'row-summary';
+            tr.dataset.summaryGroup = currentSectionId === '2' ? 'new' : 'continuing';
+            tr.innerHTML = `
+                              <td></td><td class="text-right">${escapeText(row.text)}</td>
+                              <td class="text-right" id="sum-committed-${idx}">0.000</td>
+                              <td class="text-right" id="sum-col1-${idx}">0.000</td>
+                              <td class="text-right" id="sum-col2-${idx}">0.000</td>
+                              <td class="text-right" id="sum-col3-${idx}">0.000</td>
+                              <td class="text-right" id="sum-operatingTotal-${idx}">0.000</td>
+                              <td class="text-right" id="sum-col4-${idx}">0.000</td>
+                              <td class="text-right" id="sum-col5-${idx}">0.000</td>
+                              <td class="text-right" id="sum-col6-${idx}">0.000</td><td colspan="1"></td>`;
+          } else if (row.type === 'grand_total') {
+            tr.className = 'row-grand-total';
+            tr.innerHTML = `
+                              <td></td><td class="text-right">${escapeText(row.text)}</td>
+                              <td class="text-right" id="gt-committed">0.000</td><td class="text-right" id="gt-col1">0.000</td><td class="text-right" id="gt-col2">0.000</td>
+                              <td class="text-right" id="gt-col3">0.000</td><td class="text-right" id="gt-operatingTotal">0.000</td><td class="text-right" id="gt-col4">0.000</td>
+                              <td class="text-right" id="gt-col5">0.000</td><td class="text-right" id="gt-col6">0.000</td><td colspan="1"></td>`;
+          }
+          tbody.appendChild(tr);
+        });
+      }
+
+      function calculateAndRefresh() {
+        let committedTotal = 0;
+        let operatingBefore = 0,
+          operatingAfter = 0;
+        let gt1 = 0,
+          gt2 = 0,
+          gt3 = 0,
+          gt4 = 0,
+          gt5 = 0,
+          gt6 = 0;
+        let currentSub = {
+          committed: 0,
+          operatingTotal: 0,
+          col1: 0,
+          col2: 0,
+          col3: 0,
+          col4: 0,
+          col5: 0,
+          col6: 0,
+        };
+
+        projectData.forEach((row, idx) => {
+          if (row.type === 'item') {
+            const c3 = (Number(row.col1) || 0) + (Number(row.col2) || 0);
+            committedTotal += Number(row.committed) || 0;
+            operatingBefore +=
+              Number(row.operatingBudgetBefore ?? row.col1) || 0;
+            operatingAfter += Number(row.operatingBudgetAfter ?? c3) || 0;
+            const c6 = (Number(row.col4) || 0) + (Number(row.col5) || 0);
+
+            currentSub.committed += Number(row.committed) || 0;
+            currentSub.operatingTotal += (Number(row.committed) || 0) + c3;
+            currentSub.col1 += Number(row.col1) || 0;
+            currentSub.col2 += Number(row.col2) || 0;
+            currentSub.col3 += c3;
+            currentSub.col4 += Number(row.col4) || 0;
+            currentSub.col5 += Number(row.col5) || 0;
+            currentSub.col6 += c6;
+
+            gt1 += Number(row.col1) || 0;
+            gt2 += Number(row.col2) || 0;
+            gt3 += c3;
+            gt4 += Number(row.col4) || 0;
+            gt5 += Number(row.col5) || 0;
+            gt6 += c6;
+          } else if (row.type === 'summary') {
+            const ids = ['committed', 'operatingTotal', 'col1', 'col2', 'col3', 'col4', 'col5', 'col6'];
+            ids.forEach((col) => {
+              const elem = document.getElementById(`sum-${col}-${idx}`);
+              if (elem) elem.innerHTML = ['col2', 'col5'].includes(col) ? formatSummaryChange(currentSub[col]) : formatNum(currentSub[col]);
+            });
+            currentSub = {
+              committed: 0,
+              operatingTotal: 0,
+              col1: 0,
+              col2: 0,
+              col3: 0,
+              col4: 0,
+              col5: 0,
+              col6: 0,
+            };
+          }
+        });
+
+        const gtIds = {
+          'gt-committed': committedTotal,
+          'gt-operatingTotal': committedTotal + gt3,
+          'gt-col1': gt1,
+          'gt-col2': gt2,
+          'gt-col3': gt3,
+          'gt-col4': gt4,
+          'gt-col5': gt5,
+          'gt-col6': gt6,
+        };
+        for (let id in gtIds) {
+          const elem = document.getElementById(id);
+          if (elem) elem.innerHTML = ['gt-col2', 'gt-col5'].includes(id) ? formatSummaryChange(gtIds[id]) : formatNum(gtIds[id]);
+        }
+        window.dispatchEvent(
+          new CustomEvent('meeting-set-summary-totals', {
+            detail: {
+              year: SET_YEAR,
+              totals: [gt1, gt4, gt3, gt6],
+              committed: committedTotal,
+            },
+          }),
+        );
+
+        const cardValues = allProjectDashboardTotals
+          ? [
+              allProjectDashboardTotals.operating_budget_before,
+              allProjectDashboardTotals.operating_budget_after,
+              allProjectDashboardTotals.disbursement_before,
+              allProjectDashboardTotals.disbursement_after,
+            ]
+          : [operatingBefore, operatingAfter, gt4, gt6];
+        updateSummaryCards(...cardValues);
+        updateChart(...cardValues);
+      }
+
+      function updateSummaryCards(
+        preBudget,
+        postBudget,
+        preEstimate,
+        postEstimate,
+      ) {
+        const preRem = preBudget - preEstimate;
+        const postRem = postBudget - postEstimate;
+        summaryTotals = {
+          preBudget,
+          postBudget,
+          preTarget: preEstimate,
+          postTarget: postEstimate,
+        };
+
+        document.getElementById('card-pre-total').textContent =
+          formatMoney(preBudget);
+        document.getElementById('card-pre-target').textContent =
+          formatMoney(preEstimate);
+        document.getElementById('card-pre-rem').textContent =
+          formatMoney(preRem);
+
+        document.getElementById('card-post-total').textContent =
+          formatMoney(postBudget);
+        document.getElementById('card-post-target').textContent =
+          formatMoney(postEstimate);
+        document.getElementById('card-post-rem').textContent =
+          formatMoney(postRem);
+
+        renderFundInputs();
+        renderFundSummary();
+      }
+
+      function signedMoney(value) {
+        const n = Number(value) || 0;
+        const sign = n > 0 ? '+' : '';
+        return `${sign}${formatMoney(n)}`;
+      }
+
+      function meetingBarGradient(context, top, bottom) {
+        const { ctx, chartArea } = context.chart;
+        if (!chartArea) return top;
+        const gradient = ctx.createLinearGradient(
+          0,
+          chartArea.top,
+          0,
+          chartArea.bottom,
+        );
+        gradient.addColorStop(0, top);
+        gradient.addColorStop(1, bottom);
+        return gradient;
+      }
+      const meetingValueLabelsPlugin = {
+        id: 'meetingValueLabels',
+        afterDatasetsDraw(chart) {
+          const {
+            ctx,
+            scales: { y },
+          } = chart;
+          const dark =
+            document.documentElement.classList.contains('meeting-dark');
+          ctx.save();
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'bottom';
+          [0, 1].forEach((datasetIndex) => {
+            if (!chart.isDatasetVisible(datasetIndex)) return;
+            chart.getDatasetMeta(datasetIndex).data.forEach((bar, index) => {
+              if (index === 2) return; // Remaining balance has no change annotation.
+              const value =
+                Number(chart.data.datasets[datasetIndex].data[index]) || 0;
+              const before = Number(chart.data.datasets[0].data[index]) || 0;
+              const diff = value - before;
+              if (datasetIndex === 1 && Math.abs(diff) >= 0.0005) {
+                const deltaColor =
+                  diff > 0
+                    ? dark
+                      ? '#38bdf8'
+                      : '#0369a1'
+                    : dark
+                      ? '#f87171'
+                      : '#b91c1c';
+                const start = y.getPixelForValue(before),
+                  end = y.getPixelForValue(value);
+                ctx.save();
+                ctx.fillStyle = diff > 0 ? deltaColor : '#c62828';
+                ctx.strokeStyle =
+                  diff > 0 ? deltaColor : dark ? '#ff8a80' : '#8e1515';
+                ctx.lineWidth = 2;
+                if (diff < 0) ctx.setLineDash([4, 3]);
+                ctx.fillRect(
+                  bar.x - bar.width / 2,
+                  Math.min(start, end),
+                  bar.width,
+                  Math.abs(end - start),
+                );
+                ctx.strokeRect(
+                  bar.x - bar.width / 2,
+                  Math.min(start, end),
+                  bar.width,
+                  Math.max(1, Math.abs(end - start)),
+                );
+                ctx.restore();
+              }
+            });
+          });
+          // Only the signed change is annotated; full totals remain in the table/tooltips.
+          const theme = getComputedStyle(chart.canvas);
+          const surface = theme.getPropertyValue('--review-card-start').trim() || (dark ? '#172a3b' : '#f7fbff');
+          const foreground = theme.getPropertyValue('--text').trim() || (dark ? '#f3f3f3' : '#40352c');
+          chart.data.labels.forEach((_, index) => {
+            if (index === 2) return;
+            const visible = [0, 1].filter(i => chart.isDatasetVisible(i));
+            if (!visible.length) return;
+            const bars = visible.map(i => chart.getDatasetMeta(i).data[index]);
+            const center = bars.reduce((sum, bar) => sum + bar.x, 0) / bars.length;
+            const before = Number(chart.data.datasets[0].data[index]) || 0;
+            const after = Number(chart.data.datasets[1].data[index]) || 0;
+            const diff = after - before;
+            if (visible.length !== 2) return;
+            const top = Math.max(chart.chartArea.top + 3,
+              Math.min(...bars.map(bar => Math.min(bar.y, bar.base))) - 38);
+            ctx.font = `800 ${chart.width < 400 ? 14 : 18}px Tahoma, sans-serif`;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            const roundedDiff = Math.round(diff * 1000) / 1000;
+            const label = signedMoney(roundedDiff);
+            const width = ctx.measureText(label).width + 20;
+            const x = Math.max(width / 2 + 2, Math.min(chart.width - width / 2 - 2, center));
+            const changed = Math.abs(roundedDiff) >= 0.0005;
+            const accent = roundedDiff > 0
+              ? (dark ? '#34d399' : '#15803d')
+              : (dark ? '#fb923c' : '#c2410c');
+            ctx.fillStyle = surface;
+            ctx.strokeStyle = changed ? accent : foreground;
+            ctx.lineWidth = changed ? 1.5 : 1;
+            ctx.beginPath();
+            ctx.roundRect(x - width / 2, top, width, 30, 6);
+            ctx.fill(); ctx.stroke();
+            ctx.fillStyle = changed ? accent : foreground;
+            ctx.fillText(label, x, top + 15);
+          });
+          ctx.restore();
+        },
+      };
+
+      function initChart() {
+        const ctx = document
+          .getElementById('meetingCompareChart')
+          .getContext('2d');
+        chartInstance = new Chart(ctx, {
+          type: 'bar',
+          plugins: [meetingValueLabelsPlugin],
+          data: {
+            labels: ['วงเงินดำเนินการ', 'เป้าจ่าย', 'คงเหลือ'],
+            datasets: [
+              {
+                label: 'ก่อนประชุม',
+                data: [0, 0, 0],
+                backgroundColor: (context) =>
+                  meetingBarGradient(context, '#18d2aa', '#059669'),
+                borderRadius: 5,
+              },
+              {
+                label: 'หลังประชุม',
+                data: [0, 0, 0],
+                backgroundColor: (context) =>
+                  meetingBarGradient(context, '#ffb347', '#d97706'),
+                borderRadius: 5,
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            layout: {
+              padding: { top: 28, bottom: 28, left: 8, right: 8 },
+            },
+            scales: {
+              x: {
+                grid: { display: false },
+                ticks: {
+                  color: '#294b6b',
+                  font: context => ({ size: context.chart.width < 400 ? 12 : 14, weight: '700' }),
+                  minRotation: 0,
+                  maxRotation: 0,
+                  autoSkip: false,
+                  callback(value) {
+                    const label = this.getLabelForValue(value);
+                    return this.chart.width < 480 && label === 'วงเงินดำเนินการ'
+                      ? ['วงเงิน', 'ดำเนินการ'] : label;
+                  },
+                  padding: 14,
+                },
+              },
+              y: {
+                beginAtZero: true,
+                grace: '22%',
+                title: {
+                  display: true,
+                  text: 'หน่วย : ล้านบาท',
+                  font: { size: 14, weight: '700' },
+                },
+                ticks: {
+                  font: { size: 14 },
+                  callback: (value) => Number(value).toLocaleString('en-US'),
+                },
+              },
+            },
+            plugins: {
+              tooltip: {
+                callbacks: {
+                  label: (context) => {
+                    const value = Number(context.raw) || 0;
+                    return `${context.dataset.label}: ${formatMoney(value)}`;
+                  },
+                  afterLabel: (context) => {
+                    if (context.datasetIndex === 1) {
+                      const before =
+                        Number(
+                          context.chart.data.datasets[0].data[
+                            context.dataIndex
+                          ],
+                        ) || 0;
+                      const diff = Number(context.raw) - before;
+                      return `ส่วนต่าง: ${signedMoney(diff)}`;
+                    }
+                    return '';
+                  },
+                },
+              },
+              legend: {
+                labels: {
+                  usePointStyle: true,
+                  boxWidth: 10,
+                  padding: 16,
+                  font: { size: 12, weight: '500' },
+                },
+              },
+            },
+          },
+        });
+      }
+
+      function updateChart(preBudget, postBudget, preEstimate, postEstimate) {
+        if (!chartInstance) return;
+        const preRem = preBudget - preEstimate;
+        const postRem = postBudget - postEstimate;
+
+        chartInstance.data.datasets[0].data = [preBudget, preEstimate, preRem];
+        chartInstance.data.datasets[1].data = [
+          postBudget,
+          postEstimate,
+          postRem,
+        ];
+        chartInstance.update();
+      }
+
+      // ==================== ฟังก์ชันบันทึกข้อมูล (Save / Import / Export) ====================
+
+      // Compatibility helper retained for older calls; the main toolbar now saves a complete workbook file.
+      async function saveToLocalStorage() {
+        try {
+          await saveDashboardState();
+          alert(`บันทึกข้อมูลรอบประชุมปี ${MEETING_YEAR} ลงฐานข้อมูลทำงานแล้ว`);
+        } catch (e) {
+          alert('เกิดข้อผิดพลาดในการบันทึกข้อมูล: ' + e.message);
+        }
+      }
+
+      // 2. บันทึกข้อมูลออกเป็นไฟล์ CSV (Export CSV)
+      function exportCSV() {
+        let csvContent = '\uFEFF'; // BOM เพื่อรองรับภาษาไทยใน Excel
+        csvContent += 'Type,Code,Name,Col1,Col2,Col4,Col5,Owner\n';
+
+        projectData.forEach((row) => {
+          if (row.type === 'item') {
+            csvContent += `"${row.type}","${row.code || ''}","${row.name || ''}",${row.col1 || 0},${row.col2 || 0},${row.col4 || 0},${row.col5 || 0},"${row.owner || ''}"\n`;
+          } else {
+            csvContent += `"${row.type}","${row.id || ''}","${row.text || ''}",0,0,0,0,""\n`;
+          }
+        });
+
+        const blob = new Blob([csvContent], {
+          type: 'text/csv;charset=utf-8;',
+        });
+        const link = document.createElement('a');
+        const url = URL.createObjectURL(blob);
+        link.setAttribute('href', url);
+        link.setAttribute(
+          'download',
+          `budget_${MEETING_YEAR}_${new Date().toISOString().slice(0, 10)}.csv`,
+        );
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      }
+
+      // 3. ดึงไฟล์ CSV เข้ามาใช้งาน (Import CSV)
+      function importCSV(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          const text = e.target.result;
+          const lines = text.split('\n');
+          const importedData = [];
+
+          for (let i = 1; i < lines.length; i++) {
+            const line = lines[i].trim();
+            if (!line) continue;
+
+            // แยกคอลัมน์จาก CSV
+            const cols = line
+              .split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/)
+              .map((c) => c.replace(/^"|"$/g, ''));
+            const [type, codeOrId, nameOrText, col1, col2, col4, col5, owner] =
+              cols;
+
+            if (type === 'item') {
+              importedData.push({
+                type: 'item',
+                code: codeOrId,
+                name: nameOrText,
+                col1: parseFloat(col1) || 0,
+                col2: parseFloat(col2) || 0,
+                col4: parseFloat(col4) || 0,
+                col5: parseFloat(col5) || 0,
+                owner: owner || '',
+              });
+            } else if (type === 'header') {
+              importedData.push({
+                type: 'header',
+                id: codeOrId,
+                text: nameOrText,
+              });
+            } else if (type === 'subheader') {
+              importedData.push({ type: 'subheader', text: nameOrText });
+            } else if (type === 'summary') {
+              importedData.push({ type: 'summary', text: nameOrText });
+            } else if (type === 'grand_total') {
+              importedData.push({ type: 'grand_total', text: nameOrText });
+            }
+          }
+
+          if (importedData.length > 0) {
+            projectData = importedData;
+            hasUnsavedDashboardChanges = true;
+            renderTable();
+            calculateAndRefresh();
+            alert('นำเข้าข้อมูลจากไฟล์ CSV สำเร็จ!');
+          }
+        };
+        reader.readAsText(file);
+      }
+
+      // Native fullscreen only displays descendants of its active element.
+      // Preserve each modal's original position when moving it into that element.
+      const summaryModalHomes = new Map();
+      function syncSummaryModalHost() {
+        const host = document.fullscreenElement;
+        for (const id of [
+          'summary-project-picker-modal',
+          'project-form-modal',
+          'project-manager-modal',
+        ]) {
+          const modal = document.getElementById(id);
+          if (!modal) continue;
+          if (host && !host.contains(modal)) {
+            if (!summaryModalHomes.has(modal)) {
+              const marker = document.createComment(`modal-home:${id}`);
+              modal.before(marker);
+              summaryModalHomes.set(modal, marker);
+            }
+            host.append(modal);
+          } else if (!host && summaryModalHomes.has(modal)) {
+            const marker = summaryModalHomes.get(modal);
+            marker.replaceWith(modal);
+            summaryModalHomes.delete(modal);
+          }
+        }
+      }
+      document.addEventListener('fullscreenchange', syncSummaryModalHost);
+
+      async function toggleSummaryFullscreen() {
+        const target = document.getElementById('summary-table-fullscreen');
+
+        if (!target) return;
+
+        try {
+          if (document.fullscreenElement !== target) {
+            summaryFullscreenScrollState = captureViewScroll();
+            await target.requestFullscreen();
+          } else {
+            await document.exitFullscreen();
+          }
+        } catch (error) {
+          console.error('ไม่สามารถเปิดโหมดเต็มหน้าจอได้:', error);
+        }
+      }
+
+      document.addEventListener('fullscreenchange', () => {
+        const buttons = document.querySelectorAll(
+          '#summary-fullscreen-btn, [data-summary-fullscreen]',
+        );
+        const target = document.getElementById('summary-table-fullscreen');
+
+        if (!target) return;
+
+        const active = document.fullscreenElement === target;
+
+        buttons.forEach((button) => {
+          button.innerHTML = active
+            ? '<i class="fa-solid fa-compress"></i> Exit Fullscreen'
+            : '<i class="fa-solid fa-expand"></i> Fullscreen';
+          button.title = active ? 'Exit Fullscreen' : 'Fullscreen';
+          button.setAttribute('aria-pressed', String(active));
+        });
+      });
+    </script>
+    <script async src="/meeting-app/assets/vendor/exceljs.min.js"></script>
+    <script src="/meeting-app/assets/export-excel.js?v=3-decision-summary"></script>
+    <script src="/meeting-app/assets/bridge.js?v=20261020-single-fullscreen-control"></script>
+    <script src="/meeting-app/assets/set-budget-cards.js?v=17-total-equation-column"></script>
+    <script src="/meeting-app/assets/animated-tabs.js?v=1"></script>
+  </body>
+</html>

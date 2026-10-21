@@ -1,0 +1,123 @@
+/* Shared by the decision dialog and its standalone project-list window. */
+.decision-project-table-scroll {
+  width: 100%;
+  overflow: auto;
+  border: 1px solid var(--border, #d5c6b5);
+  border-radius: 8px;
+  background: var(--surface, #fbf7f1);
+}
+.decision-project-table-scroll:focus-visible { outline: 2px solid var(--cyan, #1578cf); outline-offset: 2px; }
+.decision-project-table {
+  width: 100%;
+  min-width: 860px;
+  border-collapse: collapse;
+  table-layout: auto;
+  font: 14px/1.6 Tahoma, sans-serif;
+  color: var(--text, #40352c);
+}
+.decision-project-table :is(th, td) {
+  padding: 12px 10px;
+  border-bottom: 1px solid var(--border, #d5c6b5);
+  vertical-align: top;
+}
+#summary-table-fullscreen .decision-project-table thead th,
+.decision-project-table thead th {
+  background: linear-gradient(180deg, #296bb0, #174779) !important;
+  color: #ffffff !important;
+  font-size: 13px;
+  font-weight: 700;
+  text-align: center;
+}
+.decision-project-table th:first-child { width: 52px; }
+.decision-project-table thead th:nth-child(2) { width: 100%; }
+.decision-project-table thead th:nth-child(n+3) {
+  width: 1%;
+  min-width: 145px;
+  word-break: normal;
+  overflow-wrap: normal;
+}
+.decision-project-table:not(.decision-table-no-deltas) thead th:is(:nth-child(4), :nth-child(6)) {
+  min-width: 95px;
+  white-space: nowrap;
+}
+.decision-project-table td:first-child { text-align: center; }
+.decision-project-table td:nth-child(2) { overflow-wrap: anywhere; }
+.decision-project-table .decision-table-money { text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.decision-project-table .decision-table-money { width: 1%; }
+.decision-project-table tbody tr:last-child td { border-bottom: 0; }
+.decision-project-table tbody tr:hover { background: var(--surface2, #eee7df); }
+.decision-project-table a { color: inherit; font-size: 14px; font-weight: 600; text-decoration: none; }
+.decision-project-table a:hover { text-decoration: underline; }
+.decision-project-table a:focus-visible { outline: 2px solid var(--cyan, #1578cf); outline-offset: 2px; }
+.decision-project-table .decision-table-empty { padding: 24px; text-align: center; color: var(--muted, #78695c); }
+.decision-project-table tfoot :is(th, td),
+.decision-project-table tbody tr.decision-subtotal > :is(th, td) {
+  background: var(--ledger-total, #d1e2f3) !important;
+  color: var(--ledger-ink, #203750);
+  border-top: 1px solid var(--border, #d5c6b5);
+  font-weight: 700;
+}
+.decision-project-table tfoot th,
+.decision-project-table .decision-subtotal th { width: auto; text-align: left; }
+.decision-project-table tbody tr.decision-subtotal > :is(th, td) {
+  background: #e7e9ec !important;
+  color: #303943;
+}
+.meeting-dark .decision-project-table tbody tr.decision-subtotal > :is(th, td) {
+  background: #343a42 !important;
+  color: #f0f3f7;
+}
+.decision-project-table .decision-table-group th {
+  width: auto;
+  text-align: left;
+  background: var(--ledger-group, #e9dfd3);
+  color: var(--ledger-ink, #40352c);
+  font-weight: 700;
+}
+.decision-project-table .decision-grand-total :is(th, td) {
+  background: linear-gradient(180deg, #296bb0, #174779) !important;
+  color: #ffffff;
+  border-top: 2px solid #386690;
+}
+.decision-project-table .decision-grand-total > td:nth-child(n+2):nth-child(-n+3) {
+  background: linear-gradient(180deg, #258264, #15583f) !important;
+}
+.decision-project-table .decision-grand-total > td:nth-child(n+4) {
+  background: linear-gradient(180deg, #bd741f, #8c4c0c) !important;
+}
+.meeting-dark .decision-project-table { --ledger-total: #304d6b; --ledger-ink: #eef5ff; }
+.decision-project-table .decision-grand-total .decision-table-money { color: #ffffff !important; }
+.decision-project-table {
+  --decision-budget-surface: #eaf4ed;
+  --decision-target-surface: #fff0dc;
+}
+.meeting-dark .decision-project-table {
+  --decision-budget-surface: #1c372f;
+  --decision-target-surface: #403022;
+}
+#summary-table-fullscreen .decision-project-table thead th:nth-child(n+3):nth-child(-n+4),
+.decision-project-table thead th:nth-child(n+3):nth-child(-n+4) {
+  background: linear-gradient(180deg, #258264, #15583f) !important;
+  border-color: #5b9f88;
+}
+#summary-table-fullscreen .decision-project-table thead th:nth-child(n+5),
+.decision-project-table thead th:nth-child(n+5) {
+  background: linear-gradient(180deg, #bd741f, #8c4c0c) !important;
+  border-color: #d29a57;
+}
+.decision-project-table tbody tr:not(.decision-subtotal) > td:nth-child(n+3):nth-child(-n+4):not([colspan]) {
+  background: var(--decision-budget-surface);
+}
+.decision-project-table tbody tr:not(.decision-subtotal) > td:nth-child(n+5):not([colspan]) {
+  background: var(--decision-target-surface);
+}
+
+/* Rejected and review lists show amounts without change columns. */
+#summary-table-fullscreen .decision-project-table.decision-table-no-deltas thead th:nth-child(4),
+.decision-project-table.decision-table-no-deltas thead th:nth-child(4),
+.decision-project-table.decision-table-no-deltas .decision-grand-total > td:nth-child(3) {
+  background: linear-gradient(180deg, #bd741f, #8c4c0c) !important;
+}
+.decision-project-table.decision-table-no-deltas tbody tr:not(.decision-subtotal) > td:nth-child(4):not([colspan]) {
+  background: var(--decision-target-surface);
+}

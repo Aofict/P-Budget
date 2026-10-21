@@ -1,0 +1,4056 @@
+html,
+body {
+  min-width: 0 !important;
+  background: #f3f6fb !important;
+}
+body {
+  padding: 14px !important;
+  margin: 0 !important;
+}
+.container,
+.main-container,
+.app-container {
+  width: 100% !important;
+  max-width: none !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+.integration-context {
+  padding: 10px 14px;
+  border-radius: 8px;
+  margin-bottom: 12px;
+  background: #e5effb;
+  color: #16456b;
+  font: 13px/1.6 sans-serif;
+}
+.integration-master-note {
+  margin: 12px 16px;
+  color: #345c7e;
+  font: 13px/1.6 sans-serif;
+}
+#integration-error {
+  position: sticky;
+  top: 0;
+  z-index: 99999;
+  padding: 18px;
+  background: #fff0dd;
+  color: #8c350b;
+  border: 1px solid #d99536;
+  font: 15px/1.6 sans-serif;
+}
+input[readonly],
+textarea[readonly] {
+  background: #edf2f7 !important;
+  color: #40536a;
+}
+@media (max-width: 700px) {
+  body {
+    padding: 8px !important;
+  }
+  .integration-context {
+    font-size: 12px;
+  }
+  .header,
+  .header-section {
+    padding: 12px !important;
+  }
+  .dashboard-cards {
+    grid-template-columns: 1fr !important;
+  }
+  .table-container {
+    max-width: 100%;
+    overflow: auto;
+  }
+}
+
+html.meeting-single-scroll,
+html.meeting-single-scroll body {
+  height: auto !important;
+  min-height: 0 !important;
+}
+html.meeting-single-scroll {
+  overflow-y: hidden !important;
+}
+.app-modal {
+  padding: 16px !important;
+  overscroll-behavior: contain;
+}
+.app-modal-card {
+  overscroll-behavior: contain;
+  overflow: auto;
+}
+.app-modal-head {
+  position: sticky;
+  top: 0;
+  background: inherit;
+  z-index: 2;
+}
+/* Fullscreen leaves the shell's scroll area, so the page must scroll itself. */
+html.meeting-single-scroll:fullscreen {
+  height: 100% !important;
+  overflow-y: auto !important;
+}
+html.meeting-single-scroll:fullscreen:has(.presentation-project-overlay.show) {
+  overflow-y: hidden !important;
+}
+
+/* Round selection and cycle context are displayed once in the shared shell. */
+.meeting-shell-dashboard .db-header {
+  display: none !important;
+}
+
+/* Embedded meeting pages share the shell's light/dark selection. */
+html.meeting-dark,
+html.meeting-dark body {
+  background: #0b0b0c !important;
+  color: #f0f0f2 !important;
+  color-scheme: dark;
+}
+.meeting-dark {
+  --bs-body-color: #f0f0f2;
+  --bs-body-bg: #171719;
+  --bs-border-color: #38383b;
+}
+.meeting-dark
+  :is(
+    .status-group-card,
+    .mini-card,
+    .chart-card,
+    .table-card,
+    .detail-card,
+    .modal-content,
+    .info-section-card,
+    .info-section-body,
+    .project-info-sheet,
+    .tab-content,
+    .presentation-content
+  ) {
+  background: #171719 !important;
+  color: #f0f0f2 !important;
+  border-color: #38383b !important;
+}
+.meeting-dark
+  :is(
+    .project-topbar,
+    .nav-wrap,
+    .info-section-head,
+    .summary-table-tabs,
+    .integration-context,
+    .project-code,
+    .year-badge,
+    .unit-badge,
+    .file-indicator
+  ) {
+  background: #242426 !important;
+  color: #dddde2 !important;
+  border-color: #404044 !important;
+}
+.meeting-dark
+  :is(
+    h1,
+    h2,
+    h3,
+    h4,
+    label,
+    .num,
+    .metric-label,
+    .fund-label,
+    .compact-label,
+    .integration-master-note,
+    .nav-link,
+    .info-main-title,
+    .table-toolbar,
+    .chart-header
+  ) {
+  color: #ededf0 !important;
+}
+.meeting-dark :is(.group-subtitle, .auto-note, small, .text-muted) {
+  color: #b1b1b7 !important;
+}
+.meeting-dark :is(input, textarea, select, .fund-auto, .linked-value) {
+  background: #101012 !important;
+  color: #f0f0f2 !important;
+  border-color: #444448 !important;
+}
+.meeting-dark :is(input, textarea)[readonly] {
+  background: #28282b !important;
+  color: #c3c3ca !important;
+}
+.meeting-dark :is(input, textarea)::placeholder {
+  color: #a6a6af !important;
+}
+.meeting-dark :is(table, thead, tbody, tr, td, th) {
+  border-color: #404044 !important;
+  color: #ededf0 !important;
+}
+.meeting-dark td {
+  background: #19191c !important;
+}
+.meeting-dark th {
+  background: #303034 !important;
+}
+.meeting-dark
+  tr:nth-child(even):not(.row-summary):not(.row-grand-total):not(
+    .change-total-row
+  )
+  td {
+  background: #222225 !important;
+}
+.meeting-dark :is(.row-summary, .row-grand-total, .change-total-row) td {
+  background: #16443f !important;
+}
+.meeting-dark :is(.row-section-header, .row-subsection-header) td {
+  background: #343439 !important;
+}
+/* Count from the end to also support summary labels spanning two columns. */
+.meeting-dark
+  #summary-table-fullscreen
+  .excel-style-table
+  :is(.row-summary, .row-grand-total)
+  > td:nth-last-child(n + 8) {
+  background: #19443f !important;
+}
+.meeting-dark
+  #summary-table-fullscreen
+  .excel-style-table
+  :is(.row-summary, .row-grand-total)
+  > td:nth-last-child(n + 5):nth-last-child(-n + 7) {
+  background: #19443f !important;
+}
+.meeting-dark
+  #summary-table-fullscreen
+  .excel-style-table
+  :is(.row-summary, .row-grand-total)
+  > td:nth-last-child(n + 2):nth-last-child(-n + 4) {
+  background: #513d22 !important;
+}
+.meeting-dark
+  #summary-table-fullscreen
+  .excel-style-table
+  :is(.row-summary, .row-grand-total)
+  > td:last-child {
+  background: #19191c !important;
+}
+.meeting-dark
+  #summary-table-fullscreen
+  .excel-style-table
+  :is(.row-summary, .row-grand-total):nth-child(even)
+  > td:last-child {
+  background: #222225 !important;
+}
+.meeting-dark .pre-meeting-box {
+  border-top-color: #18c9a0 !important;
+}
+.meeting-dark .post-meeting-box {
+  border-top-color: #f6aa38 !important;
+}
+.meeting-dark .pre-meeting-box .mini-card.highlight {
+  background: #123c36 !important;
+}
+.meeting-dark .post-meeting-box .mini-card.highlight-green {
+  background: #3c3020 !important;
+}
+.meeting-dark
+  :is(.summary-table-tab, .presentation-btn, .btn-outline-secondary) {
+  background: #29292d !important;
+  color: #dddde2 !important;
+  border-color: #444448 !important;
+}
+.meeting-dark :is(.summary-table-tab.active, .nav-link.active) {
+  background: #194977 !important;
+  color: #74d7ff !important;
+}
+.meeting-dark .negative-val {
+  color: #ff9595 !important;
+}
+.meeting-dark a {
+  color: #75c9ff;
+}
+
+/* Dark-only detail controls and budget sheet; light styles stay untouched. */
+.meeting-dark .opinion-panel {
+  background: #171719 !important;
+  border-color: #444448 !important;
+}
+.meeting-dark .opinion-item {
+  background: #222225 !important;
+  border-color: #444448 !important;
+}
+.meeting-dark :is(.opinion-panel-title, .opinion-agency) {
+  color: #ededf0 !important;
+}
+.meeting-dark .opinion-legend {
+  color: #b1b1b7 !important;
+}
+.meeting-dark .opinion-toggle {
+  background: #38383b;
+  border-color: #a6a6af;
+  box-shadow: inset 0 0 0 4px #222225;
+}
+.meeting-dark .opinion-toggle.active {
+  background: #68d6a5;
+  border-color: #8ce6bc;
+  box-shadow: inset 0 0 0 4px #16443f;
+}
+.meeting-dark .opinion-toggle:focus-visible {
+  outline: 3px solid #75c9ff;
+  outline-offset: 4px;
+}
+.meeting-dark
+  :is(
+    .money-card,
+    .project-type-option,
+    .choice-item,
+    .budget-legend,
+    .budget-row-menu,
+    .budget-wrapper,
+    .budget-meta-card,
+    .budget-meta-value,
+    .budget-meta-readonly,
+    .meeting-comment-card,
+    .cycle-card,
+    .detail-comment-card
+  ) {
+  background: #222225 !important;
+  border-color: #444448 !important;
+  color: #ededf0 !important;
+}
+.meeting-dark .money-card.total {
+  background: #143d37 !important;
+  border-color: #286b5d !important;
+}
+.meeting-dark .money-total-value {
+  background: #0c2926 !important;
+  color: #68e3c4 !important;
+  border-color: #286b5d !important;
+}
+.meeting-dark
+  :is(
+    .project-type-option strong,
+    .money-card .compact-label,
+    .budget-title h5,
+    .budget-comment-title,
+    .meeting-comment-label,
+    .budget-meta-label,
+    .budget-row-menu-title,
+    .cycle-card span,
+    .cycle-card strong
+  ) {
+  color: #dddde2 !important;
+}
+.meeting-dark
+  .budget-table
+  :is(.label, .budget-merged-label, .budget-section-fill, .budget-locked-cell) {
+  background: #29292d !important;
+  color: #ededf0 !important;
+}
+.meeting-dark .budget-table :is(.row-set, .row-before) .label {
+  background: #503d24 !important;
+}
+.meeting-dark
+  .budget-table
+  :is(.row-change, .row-change-before, .row-cabinet)
+  .label {
+  background: #17443d !important;
+}
+.meeting-dark .budget-table .row-after .label {
+  background: #34343b !important;
+}
+.meeting-dark .budget-table .budget-comment-cell {
+  background: #342f20 !important;
+}
+.meeting-dark .budget-table .input-budget.is-edited {
+  background: #28475f !important;
+  color: #fff !important;
+}
+.meeting-dark
+  :is(
+    .project-name-main,
+    .project-name-wrap,
+    .project-name-wrap span,
+    .summary-picker-name,
+    .icon-action-btn,
+    .table-card td a,
+    .table-card td small,
+    .table-card th small
+  ) {
+  color: #e4e4ea !important;
+}
+.meeting-dark .project-name-wrap .icon-action-btn {
+  opacity: 1;
+}
+.meeting-dark
+  :is(
+    .budget-meta-section,
+    .budget-meta-grid,
+    .budget-overview,
+    .budget-overview-card
+  ) {
+  background: #19191c !important;
+  color: #ededf0 !important;
+}
+
+/* Override the spreadsheet's explicit white fills only in dark mode. */
+.meeting-dark .budget-project-overview,
+.meeting-dark .budget-project-overview .budget-overview-grid,
+.meeting-dark .budget-project-overview .budget-overview-col {
+  background: #19191c !important;
+  color: #ededf0 !important;
+  border-color: #444448 !important;
+}
+.meeting-dark .budget-project-overview-head {
+  background: #29292d !important;
+  border-color: #444448 !important;
+}
+.meeting-dark .budget-project-overview-head strong {
+  color: #ededf0 !important;
+}
+.meeting-dark .budget-project-overview-head span,
+.meeting-dark .budget-overview-unit {
+  color: #bdbdc5 !important;
+}
+.meeting-dark .budget-overview-line {
+  border-color: #38383b !important;
+}
+.meeting-dark .budget-table .year-header {
+  background: #303034 !important;
+  color: #ededf0 !important;
+}
+.meeting-dark .budget-table .year-header.change-year {
+  background: #194b48 !important;
+  color: #b5f4e6 !important;
+  box-shadow: inset 0 3px 0 #34d399;
+}
+.meeting-dark .budget-table .year-header.set-year {
+  background: #654919 !important;
+  color: #ffe1a3 !important;
+  box-shadow: inset 0 3px 0 #e5aa38;
+}
+.meeting-dark .budget-table .total-row > td,
+.meeting-dark .budget-table .total-row > .label {
+  background: #2b2b30 !important;
+  color: #e5f1ff !important;
+}
+.meeting-dark .budget-table .remain-row > td,
+.meeting-dark .budget-table .remain-row > .label {
+  background: #163b37 !important;
+  color: #c6f4e7 !important;
+}
+.meeting-dark .budget-table .input-budget:focus {
+  background: #303036 !important;
+  color: #fff !important;
+}
+
+/* Workflow: opaque dark fills also cover sticky columns and fullscreen. */
+.meeting-dark #workflow-pane,
+.meeting-dark #workflow-pane.workflow-fullscreen-mode {
+  background: #121214 !important;
+  color: #f0f0f2 !important;
+}
+.meeting-dark
+  :is(
+    .workflow-wrapper,
+    .workflow-meta-card,
+    .workflow-notes,
+    .workflow-import-card,
+    .workflow-import-stat
+  ) {
+  background: #222225 !important;
+  color: #f0f0f2 !important;
+  border-color: #48484d !important;
+}
+.meeting-dark
+  :is(
+    .workflow-toolbar h5,
+    .workflow-meta-card strong,
+    .workflow-import-stat strong,
+    .workflow-unit
+  ) {
+  color: #edf5ff !important;
+}
+.meeting-dark
+  :is(
+    .workflow-source,
+    .workflow-meta-card span,
+    .workflow-import-stat span,
+    .workflow-toolbar small
+  ) {
+  color: #b4c9e3 !important;
+}
+.meeting-dark .workflow-table :is(th, td) {
+  border-color: #48484d !important;
+  color: #e7f1ff !important;
+}
+.meeting-dark .workflow-table thead th {
+  background: #303034 !important;
+}
+.meeting-dark .workflow-table .wf-head-plan {
+  background: #1b4755 !important;
+  color: #d7f5ff !important;
+}
+.meeting-dark .workflow-table .wf-head-target {
+  background: #544323 !important;
+  color: #fff0cd !important;
+}
+.meeting-dark .workflow-table .wf-head-special {
+  background: #33405b !important;
+}
+.meeting-dark .workflow-table .wf-group td {
+  background: #584422 !important;
+  color: #fff0cb !important;
+}
+.meeting-dark .workflow-table .wf-subgroup td {
+  background: #503044 !important;
+  color: #ffe3ef !important;
+}
+.meeting-dark .workflow-table .wf-subtotal td {
+  background: #194754 !important;
+  color: #d9f7ff !important;
+}
+.meeting-dark .workflow-table .wf-total td {
+  background: #563039 !important;
+  color: #ffe6e9 !important;
+}
+.meeting-dark .workflow-table .wf-metric td {
+  background: #334a2e !important;
+  color: #e5f8d9 !important;
+}
+.meeting-dark .workflow-table .wf-row-total-pea :is(td, .wf-col-code, .wf-col-item) {
+  background: #503044 !important;
+  color: #ffe3ef !important;
+}
+.meeting-dark .workflow-table .wf-row-contract-section :is(td, .wf-col-code, .wf-col-item) {
+  background: #194754 !important;
+  color: #d9f7ff !important;
+}
+.meeting-dark .workflow-table .wf-row-total-construction :is(td, .wf-col-code, .wf-col-item) {
+  background: #5b481f !important;
+  color: #fff1c9 !important;
+}
+.meeting-dark .workflow-table .wf-row-total-land-construction :is(td, .wf-col-code, .wf-col-item) {
+  background: #314b38 !important;
+  color: #e1f3db !important;
+}
+.meeting-dark .workflow-table .wf-row-grand-total :is(td, .wf-col-code, .wf-col-item) {
+  background: #5b3045 !important;
+  color: #ffe4f0 !important;
+}
+.meeting-dark .workflow-table .wf-row-detail-heading :is(td, .wf-col-code, .wf-col-item) {
+  background: #3b3d42 !important;
+  color: #f0f2f5 !important;
+}
+.meeting-dark .workflow-table .wf-row-detail-heading input:not(:focus) {
+  background: transparent !important;
+}
+.meeting-dark .workflow-table .wf-status-ok {
+  background: #17483a !important;
+  color: #a7f3d0 !important;
+}
+.meeting-dark .workflow-table .wf-status-bad {
+  background: #5a2731 !important;
+  color: #ffbec7 !important;
+}
+.meeting-dark .workflow-table input {
+  background: #101012 !important;
+  color: #f0f6ff !important;
+  caret-color: #fff;
+}
+.meeting-dark .workflow-table input:focus {
+  background: #2b2b30 !important;
+  outline: 2px solid #54c8ff;
+}
+.meeting-dark .workflow-import-warning.warn {
+  background: #4b3520 !important;
+  color: #ffdea6 !important;
+  border-color: #906537 !important;
+}
+.meeting-dark .workflow-import-warning.ok {
+  background: #17483a !important;
+  color: #a7f3d0 !important;
+  border-color: #347961 !important;
+}
+
+/* More room for disbursement figures, with matching monthly/yearly columns. */
+#detail-budget-pane .detail-budget-table {
+  min-width: 1800px;
+  font-size: 13px;
+}
+#detail-budget-pane.detail-fullscreen-mode .detail-budget-table {
+  min-width: 1800px;
+  font-size: 13px;
+}
+#detail-budget-pane .detail-budget-table .work-col,
+#detail-budget-pane .detail-budget-table tbody td:nth-child(2) {
+  width: 220px;
+  min-width: 220px;
+  max-width: 220px;
+}
+#detail-budget-pane
+  .detail-budget-table
+  :is(.month-col, .money-col, .future-col, .year-sum-col, .detail-year-col) {
+  width: 96px;
+  min-width: 96px;
+  max-width: 96px;
+}
+#detail-budget-pane
+  .detail-budget-table
+  :is(.numeric-cell, .year-sum-col, .detail-year-col, .month-head),
+#detail-budget-pane .detail-budget-table input {
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}
+#detail-budget-pane .detail-budget-table input.work-input {
+  font-size: 13px;
+}
+.meeting-dark #detail-budget-pane,
+.meeting-dark #detail-budget-pane.detail-fullscreen-mode {
+  background: #121214 !important;
+  color: #f0f0f2 !important;
+}
+.meeting-dark #detail-budget-pane .detail-budget-wrapper {
+  background: #19191c !important;
+  border-color: #444448 !important;
+}
+.meeting-dark #detail-budget-pane :is(h5, .detail-comment-label, .fw-bold) {
+  color: #f0f0f2 !important;
+}
+.meeting-dark #detail-budget-pane .detail-comment-card {
+  background: #222225 !important;
+  border-color: #444448 !important;
+  color: #f0f0f2 !important;
+}
+.meeting-dark
+  #detail-budget-pane
+  .detail-budget-table
+  :is(.group-head, .year-head) {
+  background: #23435e !important;
+  color: #e5f1ff !important;
+}
+.meeting-dark #detail-budget-pane .detail-budget-table tfoot td {
+  background: #17443d !important;
+  color: #dbfff2 !important;
+  border-color: #397866 !important;
+}
+.meeting-dark #detail-budget-pane .detail-budget-table input:focus {
+  background: #2b2b30 !important;
+  color: #fff !important;
+  outline: 2px solid #54c8ff;
+}
+
+/* Larger funding labels and amounts in both meeting summaries. */
+.comparison-cards-section .fund-row {
+  grid-template-columns: 70px minmax(0, 1fr);
+  gap: 8px;
+}
+.comparison-cards-section .fund-row label,
+.comparison-cards-section .fund-row .fund-label {
+  font-size: 14px;
+  line-height: 1.5;
+  font-weight: 700;
+}
+.comparison-cards-section .fund-input,
+.comparison-cards-section .fund-auto {
+  font-size: 16px;
+  line-height: 1.5;
+  font-weight: 800;
+  padding: 7px 8px;
+  min-height: 40px;
+}
+.comparison-cards-section .fund-auto {
+  overflow-wrap: anywhere;
+}
+@media (min-width: 1051px) and (max-width: 1500px) {
+  .comparison-cards-section .fund-row {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 3px;
+  }
+}
+
+.chart-card > .summary-table-tabs {
+  margin-bottom: 16px;
+}
+.chart-card [hidden] {
+  display: none !important;
+}
+.decision-counts {
+  line-height: 1.8;
+  font-size: 14px;
+}
+.table-card [hidden] {
+  display: none !important;
+}
+.decision-project-panel {
+  padding: 24px;
+  line-height: 1.65;
+  color: var(--text);
+}
+.decision-panel-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+  padding-bottom: 22px;
+  border-bottom: 1px solid var(--border);
+}
+.decision-panel-head .decision-eyebrow {
+  margin: 0;
+  color: var(--text);
+  font-size: clamp(30px, 2.7vw, 38px);
+  font-weight: 800;
+  line-height: 1.25;
+}
+.decision-overall-count {
+  display: grid;
+  grid-template-columns: auto auto;
+  align-items: center;
+  gap: 2px 10px;
+  min-width: 170px;
+  padding: 12px 16px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface2);
+}
+.decision-overall-count strong {
+  grid-row: 1/3;
+  color: var(--text);
+  font-size: 30px;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+.decision-overall-count span {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.4;
+}
+.decision-year-section {
+  margin-top: 28px;
+}
+.decision-years-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: 28px;
+  margin-top: 28px;
+}
+.decision-years-grid .decision-year-section {
+  min-width: 0;
+  margin-top: 0;
+}
+.decision-years-grid .decision-year-section + .decision-year-section {
+  padding-top: 0;
+  padding-left: 28px;
+  border-top: 0;
+  border-left: 1px solid var(--border);
+}
+.decision-years-grid .decision-groups {
+  grid-template-columns: minmax(0, 1fr);
+  margin-inline-start: 20px;
+}
+.decision-years-grid .decision-year-head {
+  margin-inline-start: 20px;
+}
+.decision-year-section + .decision-year-section {
+  padding-top: 28px;
+  border-top: 1px solid var(--border);
+}
+.decision-year-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 14px;
+}
+/* หัวข้อ เปลี่ยนแปลงงบประมาณปี 2570 / ตั้งงบประมาณปี 2571 */
+.decision-year-head h2 {
+  margin: 0;
+  color: var(--text);
+  font-size: clamp(24px, 1.9vw, 29px);
+  font-weight: 800;
+  line-height: 1.3;
+}
+.decision-year-meta {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.decision-year-count {
+  flex: none;
+  padding: 5px 10px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--surface2);
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 600;
+}
+.decision-pending-count {
+  flex: none;
+  padding: 5px 10px;
+  border: 1px solid color-mix(in srgb, var(--after-meeting) 55%, var(--border));
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--after-meeting) 10%, transparent);
+  color: var(--after-meeting);
+  font-size: 12px;
+  font-weight: 700;
+}
+.decision-groups {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+  align-items: stretch;
+}
+.decision-project-group {
+  position: relative;
+  min-width: 0;
+  height: 100%;
+
+  display: flex;
+  flex-direction: column;
+
+  padding: 16px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface);
+  overflow: hidden;
+}
+
+.decision-project-group::before {
+  content: '';
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 3px;
+  background: var(--decision-accent);
+}
+.decision-approved {
+  --decision-accent: var(--green);
+}
+.decision-rejected {
+  --decision-accent: #ef6b73;
+}
+.decision-review {
+  --decision-accent: #2563eb;
+}
+.decision-group-head {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  position: relative;
+  padding-right: 100px;
+}
+.decision-group-icon {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  flex: none;
+  border-radius: 11px;
+  background: var(--decision-accent);
+  color: #fff;
+  font-size: 28px;
+  font-weight: 800;
+}
+.decision-group-head > div {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 12px 28px;
+  min-width: 0;
+  flex: 1;
+}
+/* เห็นชอบ / ไม่เห็นชอบ / ทบทวน */
+.decision-group-head h3 {
+  margin: 0;
+  color: var(--text);
+  font-size: 33px;
+  font-weight: 650;
+}
+.decision-group-head strong {
+  color: var(--decision-accent);
+  font-size: 33px;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+/* Fullscreen: รายการโครงการที่ขยาย ให้ scroll ภายในกล่อง */
+#summary-table-fullscreen:fullscreen .decision-project-group ol:not([hidden]) {
+  max-height: min(320px, 36vh);
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-right: 8px;
+}
+
+/* ไม่ให้การ์ดอีก 2 ใบยืดตามการ์ดที่เปิดรายการ */
+#summary-table-fullscreen:fullscreen .decision-groups {
+  align-items: start;
+}
+.decision-list-toggle {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: auto;
+  min-height: 34px;
+  margin: 0;
+  padding: 6px 10px;
+  border: 1px solid color-mix(in srgb, var(--decision-accent) 35%, transparent);
+  border-radius: 6px;
+  background: transparent;
+  color: var(--decision-accent);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.5;
+  white-space: nowrap;
+  text-align: center;
+  cursor: pointer;
+}
+.decision-list-toggle:hover {
+  border-color: var(--decision-accent);
+  background: color-mix(in srgb, var(--decision-accent) 9%, transparent);
+}
+.decision-list-toggle:focus-visible {
+  outline: 2px solid var(--cyan);
+  outline-offset: 3px;
+}
+@media (pointer: coarse) {
+  .decision-list-toggle { min-height: 44px; }
+}
+.decision-list-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: rgba(24, 17, 12, 0.55);
+}
+.decision-list-dialog {
+  width: min(1080px, 100%);
+  min-height: 0;
+  max-height: min(820px, calc(100dvh - 48px));
+  overflow-y: auto;
+  scrollbar-gutter: stable;
+  padding: 28px 32px;
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  background: var(--surface);
+  color: var(--text);
+  box-shadow: 0 18px 44px rgba(24, 17, 12, 0.25);
+}
+.decision-list-dialog-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+.decision-list-dialog h2 {
+  margin: 0;
+  font-size: clamp(22px, 2.4vw, 28px);
+}
+.decision-list-dialog > p {
+  margin: 4px 0 20px;
+  color: var(--muted);
+  font-size: 20px;
+}
+.decision-project-category + .decision-project-category {
+  margin-top: 28px;
+}
+.decision-project-category h3 {
+  margin: 0 0 8px;
+  color: var(--text);
+  font-size: 21px;
+}
+.decision-category-empty {
+  margin: 8px 0 0;
+  color: var(--muted);
+}
+.decision-list-dialog-close {
+  flex: none;
+  padding: 7px 14px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface2);
+  color: var(--text);
+  font: inherit;
+  cursor: pointer;
+}
+.decision-list-dialog-close:focus-visible,
+.decision-list-dialog a:focus-visible {
+  outline: 3px solid var(--cyan);
+  outline-offset: 3px;
+}
+.decision-list-dialog ol {
+  margin: 0;
+  padding-left: 40px;
+}
+.decision-list-dialog li {
+  padding: 9px 6px;
+  border-bottom: 1px solid var(--border);
+  font-size: 18px;
+  line-height: 1.4;
+}
+.decision-list-dialog li:last-child {
+  border-bottom: 0;
+}
+.decision-list-dialog a {
+  color: var(--text);
+  font-size: 18px;
+  font-weight: 700;
+  text-decoration: none;
+}
+.decision-list-dialog a:hover {
+  color: var(--cyan);
+  text-decoration: underline;
+}
+.decision-list-dialog .decision-project-amount {
+  margin: 2px 0 0;
+  color: var(--muted);
+  line-height: 1.4;
+}
+@media (max-width: 600px) {
+  .decision-list-overlay { padding: 12px; }
+  .decision-list-dialog { padding: 20px; }
+}
+.decision-project-group li {
+  padding: 9px 0 7px;
+  color: var(--muted);
+}
+.decision-project-group li + li {
+  border-top: 1px solid color-mix(in srgb, var(--border) 70%, transparent);
+}
+#summary-table-fullscreen table a.project-link,
+#summary-table-fullscreen
+  table
+  a.project-link:is(:hover, :focus, :active, :visited) {
+  text-decoration: none;
+}
+#summary-table-fullscreen table a.project-link:focus-visible {
+  outline: 2px solid var(--cyan);
+  outline-offset: 3px;
+}
+#summary-table-fullscreen {
+  --project-hover-gold: #946500;
+}
+.meeting-dark #summary-table-fullscreen {
+  --project-hover-gold: #f5c65b;
+}
+#summary-table-fullscreen table a.project-link {
+  display: inline-block;
+  transform-origin: left center;
+  transition:
+    transform 0.18s ease,
+    color 0.18s ease;
+}
+#summary-table-fullscreen table a.project-link:focus-visible {
+  transform: scale(1.025);
+  color: var(--project-hover-gold) !important;
+}
+@media (hover: hover) {
+  #summary-table-fullscreen table .project-item-row:hover a.project-link {
+    transform: scale(1.025);
+    color: var(--project-hover-gold) !important;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  #summary-table-fullscreen table a.project-link {
+    transition: none;
+    transform: none !important;
+  }
+}
+.decision-project-group a {
+  color: var(--text);
+  font-size: 18px;
+  line-height: 1.6;
+  text-decoration: none;
+  overflow-wrap: anywhere;
+}
+.decision-project-group a:hover {
+  color: var(--cyan);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.decision-project-group a:focus-visible {
+  outline: 3px solid var(--cyan);
+  outline-offset: 3px;
+  border-radius: 3px;
+}
+.decision-empty {
+  margin: 14px 0 0;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+  color: var(--muted);
+  font-size: 20px;
+}
+@media (max-width: 1000px) {
+  .decision-groups {
+    grid-template-columns: 1fr;
+  }
+  .decision-project-panel {
+    padding: 18px;
+  }
+}
+@media (max-width: 1180px) {
+  .decision-years-grid {
+    grid-template-columns: minmax(0, 1fr);
+    row-gap: 28px;
+  }
+  .decision-years-grid .decision-year-section + .decision-year-section {
+    padding-top: 28px;
+    padding-left: 0;
+    border-top: 1px solid var(--border);
+    border-left: 0;
+  }
+}
+@media (max-width: 600px) {
+  .decision-years-grid :is(.decision-year-head, .decision-groups) {
+    margin-inline-start: 12px;
+  }
+  .decision-panel-head {
+    align-items: stretch;
+    flex-direction: column;
+  }
+  .decision-overall-count {
+    width: 100%;
+  }
+  .decision-year-head {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 8px;
+  }
+}
+
+/* Project dialogs and independent summary visibility lights. */
+.meeting-dark .app-modal-card {
+  background: #171719;
+  color: #f0f0f2;
+  border: 1px solid #38383b;
+}
+.meeting-dark :is(.app-modal-head, .app-modal-foot) {
+  border-color: #38383b;
+}
+.meeting-dark .modal-close {
+  color: #b9cce4;
+}
+.manager-table .visibility-cell {
+  text-align: center;
+  vertical-align: middle;
+}
+/* Sliding switch inspired by UI/Toggle switches/01 (Uiverse.io by varoonrao). */
+.summary-visibility-light {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  width: 54px;
+  height: 30px;
+  padding: 0;
+  border: 2px solid;
+  border-radius: 20px;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  box-sizing: border-box;
+}
+.summary-visibility-light::before {
+  content: '';
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 20px;
+  height: 20px;
+  border: 2px solid currentColor;
+  border-radius: 50%;
+  background: currentColor;
+  box-sizing: border-box;
+  transition: transform 0.25s ease;
+}
+.summary-visibility-light.is-on {
+  background: #e2f1e1;
+  border-color: #16a34a;
+  color: #15803d;
+  box-shadow: none;
+}
+.summary-visibility-light.is-off {
+  background: #f1e1e1;
+  border-color: #dc2626;
+  color: #b91c1c;
+  box-shadow: none;
+}
+.summary-visibility-light.is-on::before {
+  transform: translateX(24px);
+}
+.summary-visibility-light span {
+  position: absolute;
+  right: 5px;
+  line-height: 20px;
+}
+.summary-visibility-light.is-on span {
+  left: 5px;
+  right: auto;
+}
+.summary-visibility-light:hover:not(:disabled) {
+  filter: brightness(1.08);
+}
+.meeting-dark .summary-visibility-light.is-on {
+  background: #143d37;
+  border-color: #68d6a5;
+  color: #68d6a5;
+}
+.meeting-dark .summary-visibility-light.is-off {
+  background: #3c202b;
+  border-color: #fca5a5;
+  color: #fca5a5;
+}
+@media (prefers-reduced-motion: reduce) {
+  .summary-visibility-light::before {
+    transition: none;
+  }
+}
+.summary-visibility-light:focus-visible {
+  outline: 3px solid #38bdf8;
+  outline-offset: 4px;
+}
+.summary-visibility-light:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+/* Fullscreen summary toolbars and the nested project viewer share the theme. */
+.meeting-dark #summary-table-fullscreen:fullscreen,
+.meeting-dark #summary-table-fullscreen:fullscreen .table-toolbar,
+.meeting-dark :is(.presentation-project-overlay, .presentation-project-frame) {
+  background: #171719 !important;
+  color: #f0f0f2;
+}
+.meeting-dark #summary-table-fullscreen:fullscreen .summary-table-tabs {
+  background: #242426 !important;
+}
+.meeting-dark
+  #summary-table-fullscreen:fullscreen
+  :is(.table-toolbar small, th small) {
+  color: #b1b1b7 !important;
+}
+.future-summary-panel > :is(h3, p, button) {
+  margin-bottom: 12px;
+}
+
+/* Detail tables use their own fullscreen surface, separate from tab-content. */
+.meeting-dark
+  :is(
+    #budget-pane.budget-fullscreen-mode,
+    #detail-budget-pane.detail-fullscreen-mode,
+    #workflow-pane.workflow-fullscreen-mode
+  ) {
+  background: #171719 !important;
+  color: #f0f0f2 !important;
+  color-scheme: dark;
+}
+.meeting-dark
+  :is(
+    .budget-fullscreen-mode,
+    .detail-fullscreen-mode,
+    .workflow-fullscreen-mode
+  )::backdrop {
+  background: #0b0b0c;
+}
+
+/* Keep hovered tabs legible without hiding which tab is selected. */
+.meeting-dark .nav-tabs .nav-link:is(:hover, :focus-visible) {
+  background: #294560 !important;
+  color: #ffffff !important;
+  border-color: #527493;
+}
+.meeting-dark .nav-tabs .nav-link.active:is(:hover, :focus-visible) {
+  background: #205b8f !important;
+  color: #b3edff !important;
+  box-shadow: inset 0 -3px 0 #38bdf8;
+}
+.meeting-dark .nav-tabs .nav-link:focus-visible {
+  outline: 2px solid #7dd3fc;
+  outline-offset: -3px;
+}
+#summary-table-fullscreen .table-toolbar .action-btns {
+  width: 100%;
+}
+#summary-fullscreen-btn {
+  margin-left: auto;
+}
+.future-summary-actions {
+  justify-content: flex-end;
+  margin-bottom: 18px;
+}
+.decision-money-summary {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 22px 16px;
+  margin: 20px 0;
+  padding-bottom: 4px;
+}
+/* วงเงิน / เพิ่ม-ลด / เป้าเบิกจ่าย */
+.decision-money-summary dt {
+  padding-inline-start: 24px;
+  font-size: 19px;
+  color: var(--text-muted, #8293a8);
+  line-height: 1.6;
+}
+.decision-money-summary dd {
+  margin: 6px 0 0;
+  padding-inline-end: clamp(24px, 5vw, 72px);
+  text-align: right;
+  font-size: clamp(28px, 2vw, 28px);
+  line-height: 1.25;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  overflow-wrap: anywhere;
+}
+.decision-project-amount {
+  font-size: 16px;
+  line-height: 1.7;
+  color: var(--text-muted, #8293a8);
+  margin: 6px 0 12px;
+  font-variant-numeric: tabular-nums;
+}
+@media (max-width: 600px) {
+  .decision-money-summary {
+    grid-template-columns: 1fr;
+  }
+}
+#operating-overview-cards[hidden],
+#annual-allocation-cards[hidden] {
+  display: none !important;
+}
+.allocation-view-tabs {
+  margin: 0 0 18px;
+}
+.allocation-difference {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 20px;
+  padding-top: 18px;
+  border-top: 1px solid var(--border, #404044);
+}
+.allocation-difference span {
+  font-size: 13px;
+  color: var(--muted, #9eb3d3);
+}
+.allocation-difference strong {
+  padding: 12px;
+  text-align: right;
+  border: 1px solid var(--border, #404044);
+  border-radius: 8px;
+  background: var(--bg, #101012);
+  font-size: 18px;
+  font-variant-numeric: tabular-nums;
+}
+.allocation-status {
+  grid-column: 1/-1;
+  margin: 0;
+  color: var(--muted, #9eb3d3);
+  font-size: 12px;
+}
+.allocation-difference strong.is-increase {
+  color: #15803d !important;
+}
+.allocation-difference strong.is-decrease {
+  color: #c2410c !important;
+}
+.meeting-dark .allocation-difference strong.is-increase {
+  color: #34d399 !important;
+}
+.meeting-dark .allocation-difference strong.is-decrease {
+  color: #fb923c !important;
+}
+.decision-delta.is-increase {
+  color: #15803d !important;
+}
+.decision-delta.is-decrease {
+  color: #c2410c !important;
+}
+.meeting-dark .decision-delta.is-increase {
+  color: #34d399 !important;
+}
+.meeting-dark .decision-delta.is-decrease {
+  color: #fb923c !important;
+}
+.decision-panel-head {
+  align-items: center;
+}
+.decision-panel-head > div:first-child {
+  flex: 1;
+  min-width: 0;
+}
+.meeting-dashboard .decision-panel-head > .decision-actions {
+  width: auto;
+  flex: 0 0 auto;
+  justify-content: flex-end;
+  margin: 0;
+}
+@media (max-width: 600px) {
+  .meeting-dashboard .decision-panel-head > .decision-actions {
+    align-self: flex-end;
+  }
+}
+.meeting-dashboard #annual-allocation-cards .allocation-equation {
+  display: grid;
+  grid-template-columns:
+    minmax(0, 1fr) 22px minmax(0, 1fr) 22px minmax(0, 1fr)
+    22px minmax(0, 1fr);
+  gap: 0;
+  align-items: stretch;
+}
+#annual-allocation-cards .allocation-operator {
+  align-self: start;
+  margin-top: var(--operator-center, 104px);
+  transform: translateY(-50%);
+  text-align: center;
+  font-size: 24px;
+  line-height: 1;
+  font-weight: 600;
+  color: var(--text);
+}
+.meeting-dashboard #annual-allocation-cards .mini-card {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 290px;
+  padding: 18px 10px;
+  container-type: inline-size;
+}
+.meeting-dashboard #annual-allocation-cards .mini-card .num {
+  font-size: clamp(16px, 17cqi, 36px);
+  line-height: 1.3;
+  font-weight: 800;
+  white-space: nowrap;
+  letter-spacing: -0.5px;
+  margin: 20px 0 18px;
+}
+.meeting-dashboard #annual-allocation-cards .allocation-difference {
+  margin-top: auto;
+}
+.meeting-dashboard #annual-allocation-cards .allocation-difference span {
+  font-size: 15px;
+}
+.meeting-dashboard #annual-allocation-cards .allocation-difference strong {
+  font-size: clamp(15px, 15cqi, 26px);
+  padding: 14px 4px;
+}
+.meeting-dashboard #annual-allocation-cards .metric-label {
+  min-height: 48px;
+  font-size: clamp(17px, 1.15vw, 21px);
+  font-weight: 800;
+  line-height: 1.4;
+}
+.meeting-dashboard #annual-allocation-cards .group-title-row h2 {
+  font-size: 22px;
+}
+.meeting-dashboard #annual-allocation-cards {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.meeting-dashboard #annual-allocation-cards > .status-group-card {
+  min-width: 0;
+}
+@media (max-width: 640px) {
+  .meeting-dashboard #annual-allocation-cards {
+    grid-template-columns: 1fr;
+  }
+  .meeting-dashboard #annual-allocation-cards .allocation-equation {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 8px;
+  }
+  #annual-allocation-cards .allocation-operator {
+    margin-top: 0;
+    transform: none;
+  }
+  .meeting-dashboard #annual-allocation-cards .mini-card {
+    min-height: 210px;
+  }
+  .meeting-dashboard #annual-allocation-cards .metric-label {
+    min-height: 0;
+  }
+}
+.meeting-dashboard .chart-card .chart-container {
+  height: 420px !important;
+  width: 94%;
+  margin-inline: auto;
+}
+@media (max-width: 700px) {
+  .meeting-dashboard .chart-card .chart-container {
+    height: 360px !important;
+  }
+}
+/* Compact numeric headers with formulas aligned along the bottom edge. */
+#summary-table-fullscreen
+  .excel-style-table
+  thead
+  :is(.th-budget, .th-estimate),
+#changeSummaryTable thead tr:nth-child(2) th {
+  position: relative;
+  vertical-align: top;
+  padding-top: 10px;
+  padding-bottom: 28px;
+  height: auto;
+  box-sizing: border-box;
+}
+#summary-table-fullscreen .excel-style-table thead .header-formula,
+#changeSummaryTable thead tr:nth-child(2) th > small {
+  position: absolute;
+  bottom: 6px;
+  left: 4px;
+  right: 4px;
+  margin: 0;
+  display: block;
+  text-align: center;
+  font-weight: normal;
+  line-height: 1.5;
+  white-space: nowrap;
+}
+
+/* Keep the meeting-state note directly above its formula at the header base. */
+#summary-table-fullscreen .excel-style-table thead .sub-formula {
+  position: absolute;
+  bottom: 6px;
+  left: 4px;
+  right: 4px;
+  line-height: 1.35;
+}
+#summary-table-fullscreen .excel-style-table thead .sub-formula .header-formula {
+  position: static;
+  display: block;
+  margin-top: 3px;
+  line-height: 1.35;
+}
+#summary-table-fullscreen .excel-style-table thead :is(.th-budget, .th-estimate) {
+  padding-bottom: 48px;
+  line-height: 1.4;
+}
+
+/* Clearly distinguish the selected project type in either theme. */
+.project-type-option:has(input:checked) {
+  background: #e0f2fe !important;
+  border-color: #0284c7 !important;
+  box-shadow: inset 0 0 0 1px #0284c7;
+}
+.project-type-option:has(input:checked) strong {
+  color: #075985 !important;
+}
+.meeting-dark .project-type-option:has(input:checked) {
+  background: #123f60 !important;
+  border-color: #38bdf8 !important;
+  box-shadow: inset 0 0 0 1px #38bdf8;
+}
+.meeting-dark .project-type-option:has(input:checked) strong {
+  color: #f0f9ff !important;
+}
+.project-type-option input {
+  accent-color: #0284c7;
+}
+.meeting-dark .project-type-option input {
+  accent-color: #38bdf8;
+}
+.project-type-option:has(input:focus-visible) {
+  outline: 3px solid #38bdf8;
+  outline-offset: 3px;
+}
+
+/* ==========================================================================
+   LIGHT MODE — WARM BROWN / CREAM / WARM GRAY
+   Dark-mode rules above remain unchanged.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   Project detail pages only
+   The dashboard root uses .meeting-dashboard, so these rules do not leak into it.
+   -------------------------------------------------------------------------- */
+html:not(.meeting-dark):not(.meeting-dashboard) {
+  --detail-bg: #e9e1d6;
+  --detail-surface: #fbf7f1;
+  --detail-surface-2: #f3ebe2;
+  --detail-surface-3: #e7dbcd;
+  --detail-border: #cdbda9;
+  --detail-border-strong: #ad967d;
+  --detail-text: #40352c;
+  --detail-muted: #78695c;
+  --detail-accent: #8b5e3c;
+  --detail-accent-dark: #6f4b32;
+  --detail-focus: rgba(139, 94, 60, 0.16);
+
+  /* Override project_detail.html's original blue tokens in light mode only. */
+  --bg: var(--detail-bg);
+  --card: var(--detail-surface);
+  --line: var(--detail-border);
+  --text: var(--detail-text);
+  --muted: var(--detail-muted);
+  --primary: var(--detail-accent);
+  --primary-soft: #f1e5d8;
+  --meeting: #6f5a48;
+  --meeting-soft: #eee5dc;
+  --change: #5f795a;
+  --change-soft: #e8efe5;
+  --set: #99602e;
+  --set-soft: #f7ead7;
+}
+
+html:not(.meeting-dark):not(.meeting-dashboard) body,
+html:not(.meeting-dark):not(.meeting-dashboard) body.embedded-mode {
+  background: var(--detail-bg) !important;
+  color: var(--detail-text) !important;
+}
+
+html:not(.meeting-dark):not(.meeting-dashboard) .detail-card {
+  background: var(--detail-surface) !important;
+  border-color: var(--detail-border) !important;
+  box-shadow: 0 10px 28px rgba(91, 67, 50, 0.1);
+}
+
+/* Project title + primary tabs */
+html:not(.meeting-dark):not(.meeting-dashboard) .project-topbar {
+  background: linear-gradient(
+    135deg,
+    #f7f0e7 0%,
+    #efe4d6 55%,
+    #fbf7f1 100%
+  ) !important;
+  border-bottom-color: #d4c4b2 !important;
+}
+html:not(.meeting-dark):not(.meeting-dashboard) .project-title-wrap h3 {
+  color: #65452f !important;
+}
+html:not(.meeting-dark):not(.meeting-dashboard) .project-code {
+  background: var(--detail-surface-3) !important;
+  color: #604936 !important;
+  border-color: var(--detail-border) !important;
+}
+html:not(.meeting-dark):not(.meeting-dashboard) .nav-wrap {
+  background: #f7f1e9 !important;
+  border-bottom-color: #d4c4b2 !important;
+}
+html:not(.meeting-dark):not(.meeting-dashboard) .nav-tabs .nav-link {
+  color: #685342 !important;
+}
+html:not(.meeting-dark):not(.meeting-dashboard) .nav-tabs .nav-link:hover {
+  background: #eadccd !important;
+  color: #70492e !important;
+}
+html:not(.meeting-dark):not(.meeting-dashboard) .nav-tabs .nav-link.active {
+  background: linear-gradient(145deg, #9b6c48, #755039) !important;
+  color: #fff !important;
+  box-shadow:
+    inset 0 -3px 0 #5f402c,
+    0 3px 8px rgba(91, 67, 50, 0.18) !important;
+}
+html:not(.meeting-dark):not(.meeting-dashboard) .tab-content {
+  background: var(--detail-surface) !important;
+}
+
+/* Project information tab */
+html:not(.meeting-dark):not(.meeting-dashboard) .info-main-title {
+  color: #533c2b !important;
+  border-bottom-color: #d6c6b5 !important;
+}
+html:not(.meeting-dark):not(.meeting-dashboard) .info-number {
+  background: #eadccc !important;
+  color: #744e32 !important;
+}
+html:not(.meeting-dark):not(.meeting-dashboard) .info-section-card {
+  background: var(--detail-surface) !important;
+  border-color: #d5c5b3 !important;
+  box-shadow: 0 2px 8px rgba(91, 67, 50, 0.05);
+}
+html:not(.meeting-dark):not(.meeting-dashboard) .info-section-head {
+  background: #eee5db !important;
+  border-bottom-color: #d7c7b6 !important;
+  color: #4c392c !important;
+}
+html:not(.meeting-dark):not(.meeting-dashboard) .info-subnumber {
+  color: #855936 !important;
+}
+html:not(.meeting-dark):not(.meeting-dashboard)
+  :is(.form-control, .form-select, textarea, .choice-item) {
+  background: #fffaf4 !important;
+  border-color: var(--detail-border) !important;
+  color: var(--detail-text) !important;
+}
+html:not(.meeting-dark):not(.meeting-dashboard)
+  :is(.form-control, .form-select, textarea):focus {
+  border-color: #9b704c !important;
+  box-shadow: 0 0 0 2px var(--detail-focus) !important;
+}
+html:not(.meeting-dark):not(.meeting-dashboard) .compact-label {
+  color: var(--detail-muted) !important;
+}
+html:not(.meeting-dark):not(.meeting-dashboard) .short-name-input {
+  color: #754e32 !important;
+}
+
+/* Budget-plan overview */
+html:not(.meeting-dark):not(.meeting-dashboard) .budget-project-overview {
+  background: var(--detail-surface) !important;
+  border-color: var(--detail-border) !important;
+}
+html:not(.meeting-dark):not(.meeting-dashboard) .budget-project-overview-head {
+  background: #eadfd2 !important;
+  border-bottom-color: var(--detail-border) !important;
+}
+html:not(.meeting-dark):not(.meeting-dashboard)
+  .budget-project-overview-head
+  strong {
+  color: #4d392b !important;
+}
+html:not(.meeting-dark):not(.meeting-dashboard)
+  :is(
+    .budget-project-overview-head span,
+    .budget-meta-label,
+    .budget-overview-unit
+  ) {
+  color: #725e4e !important;
+}
+html:not(.meeting-dark):not(.meeting-dashboard)
+  .budget-overview-col
+  + .budget-overview-col {
+  border-left-color: #d5c7b7 !important;
+}
+html:not(.meeting-dark):not(.meeting-dashboard) .budget-overview-line {
+  border-bottom-color: #e3d8cc !important;
+}
+html:not(.meeting-dark):not(.meeting-dashboard)
+  :is(.budget-meta-readonly, .budget-meta-input, .budget-overview-value input) {
+  background: #f4ede5 !important;
+  border-color: var(--detail-border) !important;
+  color: var(--detail-text) !important;
+}
+html:not(.meeting-dark):not(.meeting-dashboard) .budget-wrapper {
+  background: var(--detail-surface) !important;
+  border-color: var(--detail-border) !important;
+}
+html:not(.meeting-dark):not(.meeting-dashboard) .budget-table :is(th, td) {
+  border-color: var(--detail-border) !important;
+}
+html:not(.meeting-dark):not(.meeting-dashboard)
+  .budget-table
+  :is(thead th, thead .label, .budget-merged-label) {
+  background: #ded2c4 !important;
+  color: #453327 !important;
+}
+html:not(.meeting-dark):not(.meeting-dashboard) .budget-table .year-header {
+  background: #e8ded2 !important;
+  color: #4b392c !important;
+}
+html:not(.meeting-dark):not(.meeting-dashboard)
+  .budget-table
+  .year-header.change-year {
+  background: #dce8db !important;
+  color: #405a42 !important;
+  box-shadow: inset 0 3px 0 #829f78 !important;
+}
+html:not(.meeting-dark):not(.meeting-dashboard)
+  .budget-table
+  .year-header.set-year {
+  background: #efd7ad !important;
+  color: #64451f !important;
+  box-shadow: inset 0 3px 0 #b77b34 !important;
+}
+html:not(.meeting-dark):not(.meeting-dashboard)
+  .budget-table
+  .input-budget:focus {
+  border-color: var(--detail-accent) !important;
+  box-shadow: 0 0 0 2px var(--detail-focus) !important;
+}
+
+/* Change-detail table */
+html:not(.meeting-dark):not(.meeting-dashboard)
+  #detail-budget-pane
+  .detail-budget-wrapper {
+  background: var(--detail-surface) !important;
+  border-color: var(--detail-border) !important;
+}
+html:not(.meeting-dark):not(.meeting-dashboard)
+  #detail-budget-pane
+  .detail-budget-table
+  :is(th, td) {
+  border-color: var(--detail-border) !important;
+}
+html:not(.meeting-dark):not(.meeting-dashboard)
+  #detail-budget-pane
+  .detail-budget-table
+  th {
+  background: #e4d8ca !important;
+  color: #49382b !important;
+}
+html:not(.meeting-dark):not(.meeting-dashboard)
+  #detail-budget-pane
+  .detail-budget-table
+  :is(.title-row td, .group-head, .year-head) {
+  background: #f0dfc4 !important;
+  color: #62431f !important;
+}
+html:not(.meeting-dark):not(.meeting-dashboard)
+  #detail-budget-pane
+  .detail-budget-table
+  .month-head {
+  background: #f8f1e8 !important;
+}
+html:not(.meeting-dark):not(.meeting-dashboard)
+  #detail-budget-pane
+  .detail-budget-table
+  :is(.year-sum-col, .auto-cell) {
+  background: #eee6dc !important;
+}
+html:not(.meeting-dark):not(.meeting-dashboard)
+  #detail-budget-pane
+  .detail-comment-card {
+  background: #f3ebe2 !important;
+  border-color: var(--detail-border) !important;
+}
+html:not(.meeting-dark):not(.meeting-dashboard)
+  #detail-budget-pane
+  .detail-budget-table
+  input:focus {
+  background: #fffaf4 !important;
+  border-color: var(--detail-accent) !important;
+  box-shadow: 0 0 0 1px var(--detail-accent) !important;
+}
+
+/* Workflow
+   Keep semantic group/subgroup/subtotal row colors from the original sheet. */
+html:not(.meeting-dark):not(.meeting-dashboard) .workflow-meta-card {
+  background: #f3ebe2 !important;
+  border-color: var(--detail-border) !important;
+}
+html:not(.meeting-dark):not(.meeting-dashboard) .workflow-meta-card span {
+  color: #756253 !important;
+}
+html:not(.meeting-dark):not(.meeting-dashboard)
+  :is(.workflow-meta-card strong, .workflow-unit) {
+  color: #44342a !important;
+}
+html:not(.meeting-dark):not(.meeting-dashboard) .workflow-wrapper {
+  background: var(--detail-surface) !important;
+  border-color: #9f8d7b !important;
+}
+html:not(.meeting-dark):not(.meeting-dashboard) .workflow-table {
+  color: #352b24 !important;
+}
+html:not(.meeting-dark):not(.meeting-dashboard) .workflow-table :is(th, td) {
+  border-color: #b5a89a !important;
+}
+html:not(.meeting-dark):not(.meeting-dashboard) .workflow-table thead th {
+  background: #e2d6c8 !important;
+  color: #44342a !important;
+}
+html:not(.meeting-dark):not(.meeting-dashboard)
+  .workflow-table
+  thead
+  :is(.wf-col-code, .wf-col-item) {
+  background: #e2d6c8 !important;
+}
+html:not(.meeting-dark):not(.meeting-dashboard)
+  .workflow-table
+  tbody
+  :is(.wf-col-code, .wf-col-item) {
+  background: var(--detail-surface) !important;
+}
+html:not(.meeting-dark):not(.meeting-dashboard) .workflow-table .wf-auto {
+  background: #eee6dc !important;
+}
+html:not(.meeting-dark) #workflow-pane .workflow-table .wf-head-plan {
+  background: #ddcdbb !important;
+  color: #4f3828 !important;
+  border-color: #bda78f !important;
+}
+html:not(.meeting-dark):not(.meeting-dashboard)
+  .workflow-table
+  .wf-head-target {
+  background: #f2dfbf !important;
+}
+html:not(.meeting-dark):not(.meeting-dashboard)
+  .workflow-table
+  .wf-head-special {
+  background: #ded2c4 !important;
+}
+html:not(.meeting-dark):not(.meeting-dashboard) .workflow-table input:focus {
+  background: #fffaf4 !important;
+  outline: 2px solid var(--detail-accent) !important;
+}
+
+/* Fullscreen surfaces */
+html:not(.meeting-dark):not(.meeting-dashboard)
+  :is(
+    #workflow-pane.workflow-fullscreen-mode,
+    #budget-pane.budget-fullscreen-mode,
+    #detail-budget-pane.detail-fullscreen-mode
+  ) {
+  background: var(--detail-bg) !important;
+  color: var(--detail-text) !important;
+}
+
+
+/* --------------------------------------------------------------------------
+   Decision summary — dashboard light mode
+   Warm cream + semantic gradients + soft shadows
+   -------------------------------------------------------------------------- */
+
+/* พื้นหลัก */
+html.meeting-dashboard:not(.meeting-dark) #summary-table-fullscreen {
+  background: linear-gradient(180deg, #f7f0e7 0%, #eee2d4 100%) !important;
+
+  color: #4b3524;
+}
+
+html.meeting-dashboard:not(.meeting-dark) .decision-project-panel {
+  background: linear-gradient(180deg, #f6eee5 0%, #eee1d2 100%) !important;
+
+  color: #4b3524;
+
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.65);
+}
+
+/* หัวผลการพิจารณา */
+html.meeting-dashboard:not(.meeting-dark) .decision-panel-head {
+  --text: #f5f2eb;
+  --muted: #ded4c2;
+  --surface2: #45484c;
+  --border: #997537;
+  background: linear-gradient(
+    110deg,
+    #414449 0%,
+    #34373c 58%,
+    #292c30 100%
+  );
+
+  border: 1px solid #997537;
+  border-left: 5px solid #997537;
+  border-radius: 12px;
+  padding: 18px 20px;
+
+  box-shadow: 0 7px 20px rgba(91, 67, 50, 0.12);
+}
+
+html.meeting-dashboard:not(.meeting-dark) .decision-panel-head .decision-eyebrow {
+  color: #f0d39b;
+  font-size: clamp(34px, 3vw, 43px);
+  font-weight: 800;
+  letter-spacing: 0.01em;
+  text-shadow: 0 1px 2px #00000040;
+}
+
+html.meeting-dashboard:not(.meeting-dark) .decision-year-head h2 {
+  color: #5f3b1f;
+}
+
+/* เส้นแบ่งระหว่างปี */
+html.meeting-dashboard:not(.meeting-dark)
+  .decision-year-section
+  + .decision-year-section {
+  border-top-color: #d4bda1;
+}
+
+/* การ์ดสถานะพื้นฐาน */
+html.meeting-dashboard:not(.meeting-dark) .decision-project-group {
+  border-color: #d8c1a0;
+
+  box-shadow:
+    0 10px 22px rgba(91, 67, 50, 0.1),
+    0 3px 7px rgba(91, 67, 50, 0.06);
+
+  transition:
+    box-shadow 0.18s ease,
+    transform 0.18s ease;
+}
+
+html.meeting-dashboard:not(.meeting-dark) .decision-project-group:hover {
+  transform: translateY(-1px);
+
+  box-shadow:
+    0 13px 26px rgba(91, 67, 50, 0.13),
+    0 4px 9px rgba(91, 67, 50, 0.07);
+}
+
+/* หัวข้อในการ์ด */
+html.meeting-dashboard:not(.meeting-dark) .decision-group-head h3 {
+  color: #50351f;
+}
+
+/* ข้อความรอง */
+html.meeting-dashboard:not(.meeting-dark)
+  :is(.decision-money-summary dt, .decision-empty) {
+  color: #84684e;
+}
+
+html.meeting-dashboard:not(.meeting-dark) .decision-money-summary dd {
+  color: #3f2d20;
+}
+
+/* จำนวนโครงการ */
+html.meeting-dashboard:not(.meeting-dark) .decision-year-count {
+  background: linear-gradient(180deg, #f4eadf 0%, #e9dac8 100%);
+
+  border-color: #d6baa0;
+  color: #694628;
+}
+
+/* รอผล */
+html.meeting-dashboard:not(.meeting-dark) .decision-pending-count {
+  background: linear-gradient(180deg, #fff6e4 0%, #f5dfb9 100%);
+
+  border-color: #d9b477;
+  color: #9a5c10;
+}
+
+/* ปุ่มขยายรายการ */
+
+
+
+
+
+
+/* รายการโครงการ */
+html.meeting-dashboard:not(.meeting-dark) .decision-project-group ol {
+  border-top-color: #dcc8af;
+}
+
+html.meeting-dashboard:not(.meeting-dark) .decision-project-group li {
+  color: #76583d;
+}
+
+html.meeting-dashboard:not(.meeting-dark) .decision-project-group li + li {
+  border-top-color: #eadccb;
+}
+
+html.meeting-dashboard:not(.meeting-dark) .decision-project-group a {
+  color: #4d321d;
+}
+
+html.meeting-dashboard:not(.meeting-dark) .decision-project-group a:hover {
+  color: #a35d17;
+}
+
+html.meeting-dashboard:not(.meeting-dark) .decision-project-amount {
+  color: #86694f;
+}
+
+/* =========================================================
+   สีสถานะ
+   ========================================================= */
+
+/* เห็นชอบ — เขียว */
+html.meeting-dashboard:not(.meeting-dark) .decision-approved {
+  background: linear-gradient(
+    145deg,
+    #f5fcf7 0%,
+    #e6f6ec 55%,
+    #d8eee1 100%
+  ) !important;
+
+  border-color: #9bcfb0 !important;
+
+  box-shadow:
+    0 10px 22px rgba(24, 120, 77, 0.11),
+    0 3px 7px rgba(24, 120, 77, 0.07) !important;
+}
+
+/* ไม่เห็นชอบ — แดง */
+html.meeting-dashboard:not(.meeting-dark) .decision-rejected {
+  background: linear-gradient(
+    145deg,
+    #fff8f8 0%,
+    #fdebec 55%,
+    #f8dddd 100%
+  ) !important;
+
+  border-color: #efb6b6 !important;
+
+  box-shadow:
+    0 10px 22px rgba(190, 72, 78, 0.11),
+    0 3px 7px rgba(190, 72, 78, 0.07) !important;
+}
+
+/* ทบทวน — น้ำเงิน */
+html.meeting-dashboard:not(.meeting-dark) .decision-review {
+  background: linear-gradient(
+    145deg,
+    #f4f8ff 0%,
+    #e1ecff 55%,
+    #ccdefa 100%
+  ) !important;
+
+  border-color: #93b4ed !important;
+
+  box-shadow:
+    0 10px 22px rgba(37, 99, 235, 0.12),
+    0 3px 7px rgba(37, 99, 235, 0.07) !important;
+}
+/* =========================================================
+   PROJECT DETAIL — LIGHT MODE
+   Remove remaining white backgrounds
+   Brown / Cream / Warm Gray
+   ========================================================= */
+
+/* พื้นการ์ดหลัก */
+html:not(.meeting-dark) .detail-card {
+  background: #f3eadf !important;
+}
+
+/* พื้นหลักใต้ Tabs */
+html:not(.meeting-dark) .tab-content,
+html:not(.meeting-dark) .tab-pane {
+  background: #f3eadf !important;
+}
+
+/* Sheet ตรงกลาง ให้ใช้พื้นเดียวกับหน้า */
+html:not(.meeting-dark) .project-info-sheet {
+  background: transparent !important;
+}
+
+/* =========================================================
+   การ์ดข้อมูลแต่ละหัวข้อ
+   ========================================================= */
+
+html:not(.meeting-dark) .info-section-card {
+  background: #f8f2ea !important;
+  border-color: #cfbea9 !important;
+}
+
+html:not(.meeting-dark) .info-section-body {
+  background: #f8f2ea !important;
+}
+
+/* Header ของแต่ละการ์ด */
+html:not(.meeting-dark) .info-section-head {
+  background: #e7dacb !important;
+  border-bottom-color: #cdb9a2 !important;
+  color: #49372a !important;
+}
+
+/* =========================================================
+   ช่องกรอกข้อมูล
+   ========================================================= */
+
+html:not(.meeting-dark) .form-control,
+html:not(.meeting-dark) .form-select,
+html:not(.meeting-dark) textarea,
+html:not(.meeting-dark) .budget-meta-input,
+html:not(.meeting-dark) .budget-meta-readonly,
+html:not(.meeting-dark) .budget-overview-value input {
+  background: #fcf7f0 !important;
+  border-color: #ccb9a3 !important;
+  color: #40352c !important;
+}
+
+html:not(.meeting-dark) #budget-pane .budget-overview-value.editable {
+  background: #fcf7f0 !important;
+}
+
+html:not(.meeting-dark) .form-control:focus,
+html:not(.meeting-dark) .form-select:focus,
+html:not(.meeting-dark) textarea:focus,
+html:not(.meeting-dark) .budget-meta-input:focus,
+html:not(.meeting-dark) .budget-overview-value input:focus {
+  background: #fff9f2 !important;
+  border-color: #9b704c !important;
+  box-shadow: 0 0 0 2px rgba(139, 94, 60, 0.14) !important;
+}
+
+/* =========================================================
+   กล่องย่อยในหน้า Detail
+   ========================================================= */
+
+html:not(.meeting-dark) .choice-item,
+html:not(.meeting-dark) .detail-budget-wrapper,
+html:not(.meeting-dark) .workflow-wrapper {
+  background: #f8f2ea !important;
+  border-color: #cdbda9 !important;
+}
+
+/* =========================================================
+   2.7 ปริมาณงาน
+   ========================================================= */
+
+html:not(.meeting-dark) .work-volume-wrapper {
+  background: #f8f2ea !important;
+  border-color: #cdbda9 !important;
+}
+
+html:not(.meeting-dark) .work-volume-table th,
+html:not(.meeting-dark) .work-volume-table td {
+  border-color: #cdbda9 !important;
+}
+
+/* หัวตาราง */
+html:not(.meeting-dark) .work-volume-table thead th {
+  background: #e5d8c9 !important;
+  color: #49372a !important;
+}
+
+/* พื้นเซลล์ข้อมูล */
+html:not(.meeting-dark) .work-volume-table tbody td {
+  background: #fbf6ef !important;
+}
+
+/* ช่องกรอก */
+html:not(.meeting-dark) .work-volume-input,
+html:not(.meeting-dark) .work-volume-percent {
+  background: #fcf7f0 !important;
+  border-color: #d1c0ad !important;
+  color: #40352c !important;
+}
+
+html:not(.meeting-dark) .work-volume-input:hover,
+html:not(.meeting-dark) .work-volume-percent:hover {
+  background: #fff9f2 !important;
+  border-color: #b89d80 !important;
+}
+
+html:not(.meeting-dark) .work-volume-input:focus,
+html:not(.meeting-dark) .work-volume-percent:focus {
+  background: #fff9f2 !important;
+  border-color: #9b704c !important;
+  box-shadow: 0 0 0 2px rgba(139, 94, 60, 0.14) !important;
+}
+
+/* แถวว่าง */
+html:not(.meeting-dark) .work-volume-empty td {
+  background: #f4ece3 !important;
+}
+
+/* ปุ่มเพิ่มรายการ */
+html:not(.meeting-dark) .work-volume-empty-btn {
+  background: #f8f1e8 !important;
+  border-color: #bda78f !important;
+  color: #5d4635 !important;
+}
+
+html:not(.meeting-dark) .work-volume-empty-btn:hover {
+  background: #e9dccd !important;
+  border-color: #967354 !important;
+  color: #493322 !important;
+}
+
+/* Footer ตาราง */
+html:not(.meeting-dark) .work-volume-table tfoot td {
+  background: #e9dfd3 !important;
+  color: #49372a !important;
+}
+
+/* ค่า % */
+html:not(.meeting-dark) .work-volume-table .wv-percent-fixed {
+  background: #e3ddd2 !important;
+  color: #594332 !important;
+}
+
+/* =========================================================
+   2.8 ประมาณการผลตอบแทนโครงการ
+   ========================================================= */
+
+html:not(.meeting-dark) .estimated-return-wrapper {
+  background: #f8f2ea !important;
+  border-color: #cdbda9 !important;
+}
+
+html:not(.meeting-dark) .estimated-return-table td {
+  background: #f8f2ea !important;
+  border-bottom-color: #d5c6b5 !important;
+}
+
+/* ชื่อรายการ */
+html:not(.meeting-dark) .estimated-return-table .er-label {
+  color: #49382b !important;
+}
+
+/* ช่องค่า */
+html:not(.meeting-dark) .estimated-return-table .er-value {
+  background: #e7ddd1 !important;
+}
+
+/* หน่วย */
+html:not(.meeting-dark) .estimated-return-table .er-unit {
+  color: #665242 !important;
+}
+
+/* Input */
+html:not(.meeting-dark) .estimated-return-input {
+  color: #40352c !important;
+}
+
+html:not(.meeting-dark) .estimated-return-input:hover,
+html:not(.meeting-dark) .estimated-return-input:focus {
+  background: #fff8ef !important;
+  border-color: #9b704c !important;
+  box-shadow: 0 0 0 2px rgba(139, 94, 60, 0.14) !important;
+}
+/* พื้นนอก */
+html:not(.meeting-dark) body,
+html:not(.meeting-dark) body.embedded-mode,
+html:not(.meeting-dark) .container-fluid,
+html:not(.meeting-dark) .detail-card,
+html:not(.meeting-dark) .tab-content,
+html:not(.meeting-dark) .tab-pane,
+html:not(.meeting-dark) #info-pane,
+html:not(.meeting-dark) .project-info-sheet {
+  background: #eee3d6 !important;
+}
+
+/* การ์ด 2.1 - 2.8 */
+html:not(.meeting-dark) .info-section-card {
+  background: #f8f2ea !important;
+}
+
+/* เนื้อในการ์ด */
+html:not(.meeting-dark) .info-section-body {
+  background: #f8f2ea !important;
+}
+/* =========================================================
+   NORMAL MODE — Project Detail Tabs
+   ========================================================= */
+
+html:not(.meeting-dark) #budget-pane,
+html:not(.meeting-dark) #detail-budget-pane,
+html:not(.meeting-dark) #workflow-pane {
+  background: #eee3d6 !important;
+}
+
+/* Tab แผนงบประมาณ */
+html:not(.meeting-dark) #budget-pane .budget-wrapper,
+html:not(.meeting-dark) #budget-pane .budget-project-overview,
+html:not(.meeting-dark) #budget-pane .meeting-comment-card {
+  background: #f8f2ea !important;
+  border-color: #cdbda9 !important;
+}
+
+/* Tab รายละเอียดเปลี่ยนแปลงงบ */
+html:not(.meeting-dark) #detail-budget-pane .detail-budget-section,
+html:not(.meeting-dark) #detail-budget-pane .detail-budget-wrapper,
+html:not(.meeting-dark) #detail-budget-pane .detail-comment-card {
+  background: #f8f2ea !important;
+  border-color: #cdbda9 !important;
+}
+
+/* Tab Workflow */
+html:not(.meeting-dark) #workflow-pane,
+html:not(.meeting-dark) #workflow-pane .workflow-toolbar,
+html:not(.meeting-dark) #workflow-pane .workflow-meta,
+html:not(.meeting-dark) #workflow-pane .workflow-footer {
+  background: #eee3d6 !important;
+}
+
+html:not(.meeting-dark) #workflow-pane .workflow-wrapper,
+html:not(.meeting-dark) #workflow-pane .workflow-meta-card,
+html:not(.meeting-dark) #workflow-pane .workflow-notes {
+  background: #f8f2ea !important;
+  border-color: #cdbda9 !important;
+}
+/* =========================================================
+   WORKFLOW — restore original semantic highlights
+   Light mode only
+   ========================================================= */
+
+/* หมวดหลัก — เหลือง */
+html:not(.meeting-dark) #workflow-pane .workflow-table .wf-group td,
+html:not(.meeting-dark) #workflow-pane .workflow-table .wf-group .wf-col-code,
+html:not(.meeting-dark) #workflow-pane .workflow-table .wf-group .wf-col-item {
+  background: #ffe79b !important;
+  color: #111827 !important;
+  font-weight: 800;
+}
+
+/* หมวดย่อย — ชมพู */
+html:not(.meeting-dark) #workflow-pane .workflow-table .wf-subgroup td,
+html:not(.meeting-dark)
+  #workflow-pane
+  .workflow-table
+  .wf-subgroup
+  .wf-col-code,
+html:not(.meeting-dark)
+  #workflow-pane
+  .workflow-table
+  .wf-subgroup
+  .wf-col-item {
+  background: #ffd7d7 !important;
+  color: #111827 !important;
+  font-weight: 800;
+}
+
+/* รวมย่อย — ฟ้า */
+html:not(.meeting-dark) #workflow-pane .workflow-table .wf-subtotal td,
+html:not(.meeting-dark)
+  #workflow-pane
+  .workflow-table
+  .wf-subtotal
+  .wf-col-code,
+html:not(.meeting-dark)
+  #workflow-pane
+  .workflow-table
+  .wf-subtotal
+  .wf-col-item {
+  background: #b7dce7 !important;
+  color: #111827 !important;
+  font-weight: 800;
+}
+
+/* รวมหลัก — ชมพูเข้ม */
+html:not(.meeting-dark) #workflow-pane .workflow-table .wf-total td,
+html:not(.meeting-dark) #workflow-pane .workflow-table .wf-total .wf-col-code,
+html:not(.meeting-dark) #workflow-pane .workflow-table .wf-total .wf-col-item {
+  background: #f7bcbc !important;
+  color: #111827 !important;
+  font-weight: 900;
+}
+
+/* แถวตัวชี้วัด / สรุป — เขียวอ่อน */
+html:not(.meeting-dark) #workflow-pane .workflow-table .wf-metric td,
+html:not(.meeting-dark) #workflow-pane .workflow-table .wf-metric .wf-col-code,
+html:not(.meeting-dark) #workflow-pane .workflow-table .wf-metric .wf-col-item {
+  background: #eef5d5 !important;
+  color: #111827 !important;
+  font-weight: 800;
+}
+
+/* สีแถวสรุปตามแบบ Excel */
+html:not(.meeting-dark) #workflow-pane .workflow-table .wf-row-total-pea :is(td, .wf-col-code, .wf-col-item) {
+  background: #ffcccc !important;
+}
+html:not(.meeting-dark) #workflow-pane .workflow-table .wf-row-contract-section :is(td, .wf-col-code, .wf-col-item) {
+  background: #b7dce7 !important;
+}
+html:not(.meeting-dark) #workflow-pane .workflow-table .wf-row-total-construction :is(td, .wf-col-code, .wf-col-item) {
+  background: #ffd966 !important;
+}
+html:not(.meeting-dark) #workflow-pane .workflow-table .wf-row-total-land-construction :is(td, .wf-col-code, .wf-col-item) {
+  background: #c6e0b4 !important;
+}
+html:not(.meeting-dark) #workflow-pane .workflow-table .wf-row-grand-total :is(td, .wf-col-code, .wf-col-item) {
+  background: #f4c2d7 !important;
+}
+html:not(.meeting-dark) #workflow-pane .workflow-table .wf-row-detail-heading :is(td, .wf-col-code, .wf-col-item) {
+  background: #dedede !important;
+  color: #111827 !important;
+}
+
+/* Extend the item-column cream across ordinary rows and imported detail rows. */
+html:not(.meeting-dark)
+  #workflow-pane
+  .workflow-table
+  tr:is(.wf-detail, .wf-detail_child):not(.wf-row-detail-heading)
+  > td {
+  background: #fbf7f1 !important;
+}
+
+/* สถานะผ่าน */
+html:not(.meeting-dark) #workflow-pane .workflow-table .wf-status-ok {
+  background: #dcfce7 !important;
+  color: #166534 !important;
+  font-weight: 800;
+}
+
+/* สถานะไม่ผ่าน */
+html:not(.meeting-dark) #workflow-pane .workflow-table .wf-status-bad {
+  background: #fee2e2 !important;
+  color: #b91c1c !important;
+  font-weight: 800;
+}
+/* =========================================================
+   SET BUDGET TABLE — ITEM ROW COLORS
+   LIGHT MODE ONLY
+   ========================================================= */
+
+/* Change-budget summary: keep the whole project row equally light. */
+.change-summary-table .budget-core-outline-left {
+  border-left: 2px solid #2563eb !important;
+}
+.change-summary-table .budget-core-outline-right {
+  border-right: 2px solid #2563eb !important;
+}
+.change-summary-table .budget-core-outline-top {
+  border-top: 2px solid #2563eb !important;
+}
+.change-summary-table .budget-core-outline-bottom {
+  border-bottom: 2px solid #2563eb !important;
+}
+html.meeting-dashboard #changeSummaryTable thead .change-budget-total-column {
+  background: #1c7054 !important;
+  border-color: #5b9f88 !important;
+  color: #ffffff !important;
+}
+html.meeting-dashboard #changeSummaryTable tbody tr.project-item-row > td.change-budget-total-column {
+  background: var(--ledger-budget, #e7efe6) !important;
+  color: var(--ledger-ink, #183b2d) !important;
+}
+html.meeting-dashboard:not(.meeting-dark)
+  #changeSummaryTable
+  tbody
+  tr.project-item-row
+  > td {
+  background: #fbf7f2 !important;
+}
+
+/* พื้นรายการทั่วไป : ลำดับ / ชื่อโครงการ / ผู้รับผิดชอบ */
+html.meeting-dashboard:not(.meeting-dark)
+  #projectTable
+  tbody
+  tr.project-item-row
+  > td {
+  background: #fbf7f2 !important;
+  color: #40352c !important;
+}
+
+/* ฝั่งวงเงินดำเนินการ : คอลัมน์ 3-5 */
+html.meeting-dashboard:not(.meeting-dark)
+  #projectTable
+  tbody
+  tr.project-item-row
+  > td:nth-child(3),
+html.meeting-dashboard:not(.meeting-dark)
+  #projectTable
+  tbody
+  tr.project-item-row
+  > td:nth-child(4),
+html.meeting-dashboard:not(.meeting-dark)
+  #projectTable
+  tbody
+  tr.project-item-row
+  > td:nth-child(5) {
+  background: #edf4ee !important;
+}
+
+/* ฝั่งเป้าหมายเบิกจ่าย : คอลัมน์ 6-8 */
+html.meeting-dashboard:not(.meeting-dark)
+  #projectTable
+  tbody
+  tr.project-item-row
+  > td:nth-child(6),
+html.meeting-dashboard:not(.meeting-dark)
+  #projectTable
+  tbody
+  tr.project-item-row
+  > td:nth-child(7),
+html.meeting-dashboard:not(.meeting-dark)
+  #projectTable
+  tbody
+  tr.project-item-row
+  > td:nth-child(8) {
+  background: #fbf0df !important;
+}
+
+/* ลำดับ + ชื่อโครงการ + ผู้รับผิดชอบ */
+html.meeting-dashboard:not(.meeting-dark)
+  #projectTable
+  tbody
+  tr.project-item-row
+  > td:nth-child(1),
+html.meeting-dashboard:not(.meeting-dark)
+  #projectTable
+  tbody
+  tr.project-item-row
+  > td:nth-child(2),
+html.meeting-dashboard:not(.meeting-dark)
+  #projectTable
+  tbody
+  tr.project-item-row
+  > td:last-child {
+  background: #fbf7f2 !important;
+}
+/* =========================================================
+   ANNUAL SUMMARY 2569–2575 — LIGHT MODE
+   ตาราง Clone จะไม่มี id="projectTable"
+   ========================================================= */
+
+/* ลำดับ + ชื่อโครงการ + ผู้รับผิดชอบ */
+html.meeting-dashboard:not(.meeting-dark)
+  .future-summary-panel
+  .excel-style-table
+  tbody
+  tr.project-item-row
+  > td {
+  background: #fbf7f2 !important;
+  color: #40352c !important;
+}
+
+/* วงเงินดำเนินการ : คอลัมน์ 3–5 */
+html.meeting-dashboard:not(.meeting-dark)
+  .future-summary-panel
+  .excel-style-table
+  tbody
+  tr.project-item-row
+  > td:nth-child(3),
+html.meeting-dashboard:not(.meeting-dark)
+  .future-summary-panel
+  .excel-style-table
+  tbody
+  tr.project-item-row
+  > td:nth-child(4),
+html.meeting-dashboard:not(.meeting-dark)
+  .future-summary-panel
+  .excel-style-table
+  tbody
+  tr.project-item-row
+  > td:nth-child(5) {
+  background: #edf4ee !important;
+}
+
+/* เป้าหมายเบิกจ่าย : คอลัมน์ 6–8 */
+html.meeting-dashboard:not(.meeting-dark)
+  .future-summary-panel
+  .excel-style-table
+  tbody
+  tr.project-item-row
+  > td:nth-child(6),
+html.meeting-dashboard:not(.meeting-dark)
+  .future-summary-panel
+  .excel-style-table
+  tbody
+  tr.project-item-row
+  > td:nth-child(7),
+html.meeting-dashboard:not(.meeting-dark)
+  .future-summary-panel
+  .excel-style-table
+  tbody
+  tr.project-item-row
+  > td:nth-child(8) {
+  background: #fbf0df !important;
+}
+
+/* ลำดับ + ชื่อ + ผู้รับผิดชอบ ให้ครีม */
+html.meeting-dashboard:not(.meeting-dark)
+  .future-summary-panel
+  .excel-style-table
+  tbody
+  tr.project-item-row
+  > td:nth-child(1),
+html.meeting-dashboard:not(.meeting-dark)
+  .future-summary-panel
+  .excel-style-table
+  tbody
+  tr.project-item-row
+  > td:nth-child(2),
+html.meeting-dashboard:not(.meeting-dark)
+  .future-summary-panel
+  .excel-style-table
+  tbody
+  tr.project-item-row
+  > td:last-child {
+  background: #fbf7f2 !important;
+}
+/* =========================================================
+   CHART AREA — WARM LIGHT THEME
+   ========================================================= */
+
+html.meeting-dashboard:not(.meeting-dark) .chart-card {
+  background: linear-gradient(
+    145deg,
+    #f8f2ea 0%,
+    #f3e8dc 55%,
+    #ede0d2 100%
+  ) !important;
+
+  border-color: #d4c0a9 !important;
+
+  box-shadow:
+    0 10px 28px rgba(91, 67, 50, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.65) !important;
+}
+
+/* พื้นใต้กราฟแท่ง */
+html.meeting-dashboard:not(.meeting-dark) .chart-container {
+  background: transparent !important;
+}
+
+/* Tab วงกลม */
+
+
+/* ตรงกลางวงกลม */
+
+/* =========================================================
+   PROJECT DETAIL — SAVE BUTTONS
+   ========================================================= */
+
+html .detail-card .btn-save-data {
+  background: linear-gradient(
+    180deg,
+    #258fe0 0%,
+    #126ec0 100%
+  ) !important;
+
+  border: 1px solid #0c5fa9 !important;
+  color: #ffffff !important;
+
+  box-shadow:
+    0 5px 14px rgba(18, 100, 174, 0.22),
+    inset 0 1px 0 rgba(255, 255, 255, 0.28) !important;
+
+  font-weight: 700 !important;
+}
+
+html .detail-card .btn-save-data:hover {
+  background: linear-gradient(
+    180deg,
+    #39a0eb 0%,
+    #1779cc 100%
+  ) !important;
+
+  border-color: #0d65b2 !important;
+
+  box-shadow:
+    0 7px 17px rgba(18, 100, 174, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.32) !important;
+
+  transform: translateY(-1px);
+}
+
+html .detail-card .btn-save-data:active {
+  background: #105fa9 !important;
+  transform: translateY(0);
+
+  box-shadow: inset 0 2px 5px rgba(0, 35, 80, 0.25) !important;
+}
+/* =========================================================
+   LIGHT MODE — SCROLLBAR
+   ========================================================= */
+
+html.meeting-dashboard:not(.meeting-dark) {
+  scrollbar-color: #b89a7a #f3eadf;
+  scrollbar-width: thin;
+}
+
+html.meeting-dashboard:not(.meeting-dark) * {
+  scrollbar-color: #b89a7a #f3eadf;
+  scrollbar-width: thin;
+}
+
+/* Chrome / Edge */
+html.meeting-dashboard:not(.meeting-dark) ::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+html.meeting-dashboard:not(.meeting-dark) ::-webkit-scrollbar-track {
+  background: #f3eadf;
+  border-radius: 10px;
+}
+
+html.meeting-dashboard:not(.meeting-dark) ::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #c4a585 0%, #a9825f 100%);
+  border: 2px solid #f3eadf;
+  border-radius: 10px;
+}
+
+html.meeting-dashboard:not(.meeting-dark) ::-webkit-scrollbar-thumb:hover {
+  background: #946b48;
+}
+
+html.meeting-dashboard:not(.meeting-dark) ::-webkit-scrollbar-corner {
+  background: #f3eadf;
+}
+/* =========================================================
+   BUDGET PLAN TABLE — LIGHT MODE
+   ========================================================= */
+
+/* กรอบตาราง */
+html:not(.meeting-dark):not(.meeting-dashboard) #budget-pane .budget-wrapper {
+  background: #f8f3ed !important;
+  border-color: #d8c9b8 !important;
+}
+
+/* เส้นแบ่งทุกช่อง */
+html:not(.meeting-dark):not(.meeting-dashboard)
+  #budget-pane
+  .budget-table
+  :is(th, td) {
+  border-color: #ddd0c1 !important;
+}
+
+/* ---------------------------------------------------------
+   หัวตาราง
+   --------------------------------------------------------- */
+
+/* หัวซ้าย วงเงินดำเนินการ */
+html:not(.meeting-dark):not(.meeting-dashboard)
+  #budget-pane
+  .budget-table
+  :is(thead .label, .budget-merged-label) {
+  background: #e4d8ca !important;
+  color: #49382b !important;
+}
+
+/* ปีทั่วไป */
+html:not(.meeting-dark):not(.meeting-dashboard)
+  #budget-pane
+  .budget-table
+  .year-header {
+  background: #f3eee8 !important;
+  color: #44372d !important;
+  box-shadow: inset 0 3px 0 #c5b29d !important;
+}
+
+/* ปีเปลี่ยนแปลงงบ 2570 */
+html:not(.meeting-dark):not(.meeting-dashboard)
+  #budget-pane
+  .budget-table
+  .year-header.change-year {
+  background: #dfece5 !important;
+  color: #315b49 !important;
+  box-shadow: inset 0 4px 0 #72a58b !important;
+}
+
+/* ปีตั้งงบ 2571 */
+html:not(.meeting-dark):not(.meeting-dashboard)
+  #budget-pane
+  .budget-table
+  .year-header.set-year {
+  background: #f4dfb6 !important;
+  color: #724719 !important;
+  box-shadow: inset 0 4px 0 #c58a3c !important;
+}
+
+/* ---------------------------------------------------------
+   สีพื้นข้อมูลทั่วไป
+   --------------------------------------------------------- */
+
+html:not(.meeting-dark):not(.meeting-dashboard)
+  #budget-pane
+  .budget-table
+  tbody
+  td {
+  background: #fbf8f4 !important;
+  color: #312a24 !important;
+}
+
+/* ---------------------------------------------------------
+   ผูกพันยกมา
+   --------------------------------------------------------- */
+
+html:not(.meeting-dark):not(.meeting-dashboard)
+  #budget-pane
+  .budget-table
+  .row-carry
+  > td {
+  background: #f3eee8 !important;
+}
+
+html:not(.meeting-dark):not(.meeting-dashboard)
+  #budget-pane
+  .budget-table
+  .row-carry
+  > .label {
+  background: #e9e1d8 !important;
+  color: #514438 !important;
+}
+
+/* ---------------------------------------------------------
+   ตั้งงบประจำปี — เขียว
+   --------------------------------------------------------- */
+
+html:not(.meeting-dark):not(.meeting-dashboard)
+  #budget-pane
+  .budget-table
+  .row-set
+  > td {
+  background: #f1f7ef !important;
+}
+
+html:not(.meeting-dark):not(.meeting-dashboard)
+  #budget-pane
+  .budget-table
+  .row-set
+  > .label {
+  background: #dcebd5 !important;
+  color: #315735 !important;
+}
+
+/* ช่องปีตั้งงบ 2571 */
+html:not(.meeting-dark):not(.meeting-dashboard)
+  #budget-pane
+  .budget-table
+  .row-set
+  > td:nth-child(4) {
+  background: #f1f7ef !important;
+  outline: 2px solid #5c9367;
+  outline-offset: -5px;
+}
+
+/* ---------------------------------------------------------
+   เปลี่ยนแปลงงบระหว่างปี — เขียวเข้มขึ้น
+   --------------------------------------------------------- */
+
+html:not(.meeting-dark):not(.meeting-dashboard)
+  #budget-pane
+  .budget-table
+  :is(.row-change-before, .row-change)
+  > td {
+  background: #f1f7f3 !important;
+}
+
+html:not(.meeting-dark):not(.meeting-dashboard)
+  #budget-pane
+  .budget-table
+  :is(.row-change-before, .row-change)
+  > .label {
+  background: #d3e6d7 !important;
+  color: #315744 !important;
+}
+
+/* ช่องปีเปลี่ยนแปลง 2570 */
+html:not(.meeting-dark):not(.meeting-dashboard)
+  #budget-pane
+  .budget-table
+  :is(.row-change-before, .row-change)
+  > td:nth-child(3) {
+  background: #c5dfcb !important;
+}
+
+/* ---------------------------------------------------------
+   รวม ผูกพัน + ลงทุน
+   --------------------------------------------------------- */
+
+html:not(.meeting-dark):not(.meeting-dashboard)
+  #budget-pane
+  .budget-table
+  .total-row
+  > td {
+  background: #e6efe2 !important;
+  color: #29412c !important;
+  font-weight: 800;
+}
+
+html:not(.meeting-dark):not(.meeting-dashboard)
+  #budget-pane
+  .budget-table
+  .total-row
+  > .label {
+  background: #dce8d7 !important;
+}
+
+/* ---------------------------------------------------------
+   เป้าหมายเบิกจ่าย — พีช/ส้มอ่อน
+   --------------------------------------------------------- */
+
+html:not(.meeting-dark):not(.meeting-dashboard)
+  #budget-pane
+  .budget-table
+  :is(.row-before, .row-after)
+  > td {
+  background: #fff8f1 !important;
+}
+
+html:not(.meeting-dark):not(.meeting-dashboard)
+  #budget-pane
+  .budget-table
+  .row-before
+  > .label {
+  background: #f7e6d9 !important;
+  color: #87492e !important;
+}
+
+html:not(.meeting-dark):not(.meeting-dashboard)
+  #budget-pane
+  .budget-table
+  .row-after
+  > .label {
+  background: #f3d9c7 !important;
+  color: #7c3f27 !important;
+}
+
+/* ช่องปีเปลี่ยนแปลงของเป้าจ่ายหลังประชุม */
+html:not(.meeting-dark):not(.meeting-dashboard)
+  #budget-pane
+  .budget-table
+  .row-after
+  > td:nth-child(3) {
+  background: #f1d1bb !important;
+}
+
+/* ---------------------------------------------------------
+   คงเหลือ
+   --------------------------------------------------------- */
+
+html:not(.meeting-dark):not(.meeting-dashboard)
+  #budget-pane
+  .budget-table
+  .remain-row
+  > td {
+  background: #eee7de !important;
+  color: #40372f !important;
+  font-weight: 800;
+}
+
+html:not(.meeting-dark):not(.meeting-dashboard)
+  #budget-pane
+  .budget-table
+  .remain-row
+  > .label {
+  background: #e5dbcf !important;
+}
+
+/* ---------------------------------------------------------
+   ไม่ผูกพันงบไปปีถัดไป
+   --------------------------------------------------------- */
+
+html:not(.meeting-dark):not(.meeting-dashboard)
+  #budget-pane
+  .budget-table
+  .row-uncommitted
+  > td {
+  background: #f5f2ee !important;
+  color: #574c43 !important;
+}
+
+html:not(.meeting-dark):not(.meeting-dashboard)
+  #budget-pane
+  .budget-table
+  .row-uncommitted
+  > .label {
+  background: #ece7e1 !important;
+}
+
+/* ---------------------------------------------------------
+   เป้าหมายเบิกจ่ายตามมติ ครม. — ฟ้า
+   --------------------------------------------------------- */
+
+html:not(.meeting-dark):not(.meeting-dashboard)
+  #budget-pane
+  .budget-table
+  .row-cabinet
+  > td {
+  background: #f3f8fc !important;
+}
+
+html:not(.meeting-dark):not(.meeting-dashboard)
+  #budget-pane
+  .budget-table
+  .row-cabinet
+  > .label {
+  background: #dceaf6 !important;
+  color: #28577c !important;
+}
+
+html:not(.meeting-dark):not(.meeting-dashboard)
+  #budget-pane
+  .budget-table
+  .row-cabinet
+  > td:nth-child(3) {
+  background: #f3f8fc !important;
+  outline: 2px solid #5b8cb4;
+  outline-offset: -5px;
+}
+
+/* ---------------------------------------------------------
+   สูง/ต่ำกว่าเป้าหมาย ครม. — ทองอ่อน
+   --------------------------------------------------------- */
+
+html:not(.meeting-dark):not(.meeting-dashboard)
+  #budget-pane
+  .budget-table
+  .row-diff
+  > td {
+  background: #fffaf0 !important;
+}
+
+html:not(.meeting-dark):not(.meeting-dashboard)
+  #budget-pane
+  .budget-table
+  .row-diff
+  > .label {
+  background: #f7e9c7 !important;
+  color: #78571a !important;
+}
+
+html:not(.meeting-dark):not(.meeting-dashboard)
+  #budget-pane
+  .budget-table
+  .row-diff
+  > td:nth-child(3) {
+  background: #f2d997 !important;
+}
+
+/* ---------------------------------------------------------
+   ช่องกรอกตัวเลข
+   --------------------------------------------------------- */
+
+html:not(.meeting-dark):not(.meeting-dashboard)
+  #budget-pane
+  .budget-table
+  .input-budget {
+  background: transparent !important;
+  color: #17263c !important;
+  border-color: transparent !important;
+}
+
+html:not(.meeting-dark):not(.meeting-dashboard)
+  #budget-pane
+  .budget-table
+  .input-budget:hover {
+  background: rgba(255, 255, 255, 0.55) !important;
+  border-color: #c8b7a5 !important;
+}
+
+html:not(.meeting-dark):not(.meeting-dashboard)
+  #budget-pane
+  .budget-table
+  .input-budget:focus {
+  background: #fffdf9 !important;
+  border-color: #9b704c !important;
+  box-shadow: 0 0 0 2px rgba(155, 112, 76, 0.14) !important;
+}
+
+/* ช่องที่มีการแก้ไข */
+html:not(.meeting-dark):not(.meeting-dashboard)
+  #budget-pane
+  .budget-table
+  .input-budget.is-edited {
+  border-color: #ba9d7f !important;
+}
+/* =========================================================
+   BUDGET PLAN TABLE — LIGHT MODE
+   Tab: แผนงบประมาณ
+   ========================================================= */
+
+/* ---------------------------------------------------------
+   1. กรอบและพื้นตาราง
+   --------------------------------------------------------- */
+
+html:not(.meeting-dark):not(.meeting-dashboard) #budget-pane .budget-wrapper {
+  background: #f8f3ed !important;
+  border: 1px solid #d8c9b8 !important;
+}
+
+html:not(.meeting-dark):not(.meeting-dashboard) #budget-pane .budget-table {
+  background: #f8f3ed !important;
+  color: #312a24 !important;
+}
+
+html:not(.meeting-dark):not(.meeting-dashboard) #budget-pane .budget-table th,
+html:not(.meeting-dark):not(.meeting-dashboard) #budget-pane .budget-table td {
+  border-color: #ddd0c1 !important;
+}
+
+/* =========================================================
+   2. HEADER — ปีงบประมาณ
+   ========================================================= */
+
+/* ช่องซ้าย "วงเงินดำเนินการ" */
+html:not(.meeting-dark):not(.meeting-dashboard)
+  #budget-pane
+  .budget-table
+  thead
+  .label {
+  background: #d8c6b3 !important;
+  color: #3e2e22 !important;
+  box-shadow: inset 0 4px 0 #9b704c !important;
+  font-weight: 800 !important;
+}
+
+/* ปีทั่วไป */
+html:not(.meeting-dark):not(.meeting-dashboard)
+  #budget-pane
+  .budget-table
+  .year-header {
+  background: #f3eee8 !important;
+  color: #44372d !important;
+  box-shadow: inset 0 3px 0 #c5b29d !important;
+  font-weight: 800 !important;
+}
+
+html:not(.meeting-dark):not(.meeting-dashboard)
+  #budget-pane
+  .budget-table
+  thead
+  .year-header:not(.change-year):not(.set-year) {
+  background: #d8c6b3 !important;
+  color: #3e2e22 !important;
+  box-shadow: inset 0 4px 0 #9b704c !important;
+}
+
+/* ปีเปลี่ยนแปลงงบ เช่น 2570 */
+html:not(.meeting-dark):not(.meeting-dashboard)
+  #budget-pane
+  .budget-table
+  .year-header.change-year {
+  background: #dfece5 !important;
+  color: #315b49 !important;
+  box-shadow: inset 0 4px 0 #5da889 !important;
+}
+
+/* ปีตั้งงบ เช่น 2571 */
+html:not(.meeting-dark):not(.meeting-dashboard)
+  #budget-pane
+  .budget-table
+  .year-header.set-year {
+  background: #f4dfb6 !important;
+  color: #724719 !important;
+  box-shadow: inset 0 4px 0 #c58a3c !important;
+}
+
+/* =========================================================
+   3. ผูกพันยกมา
+   ========================================================= */
+
+html:not(.meeting-dark):not(.meeting-dashboard)
+  #budget-pane
+  .budget-table
+  .row-carry
+  > td {
+  background: #e3ddd6 !important;
+  color: #312a24 !important;
+}
+
+html:not(.meeting-dark):not(.meeting-dashboard)
+  #budget-pane
+  .budget-table
+  .row-carry
+  > .label {
+  background: #e3ddd6 !important;
+  color: #4b4037 !important;
+  font-weight: 700 !important;
+}
+
+/* =========================================================
+   4. ลงทุน — ตั้งงบประจำปี
+   ========================================================= */
+
+html:not(.meeting-dark):not(.meeting-dashboard)
+  #budget-pane
+  .budget-table
+  .row-set
+  > td {
+  background: #f1f7ef !important;
+  color: #253226 !important;
+}
+
+html:not(.meeting-dark):not(.meeting-dashboard)
+  #budget-pane
+  .budget-table
+  .row-set
+  > .label {
+  background: #dcebd5 !important;
+  color: #315735 !important;
+  font-weight: 700 !important;
+}
+
+/* ปีตั้งงบ */
+html:not(.meeting-dark):not(.meeting-dashboard)
+  #budget-pane
+  .budget-table
+  .row-set
+  > td:nth-child(4) {
+  background: #f1f7ef !important;
+  outline: 2px solid #5c9367;
+  outline-offset: -5px;
+}
+
+/* =========================================================
+   5. ลงทุน — เปลี่ยนแปลงงบระหว่างปี
+   ========================================================= */
+
+html:not(.meeting-dark):not(.meeting-dashboard)
+  #budget-pane
+  .budget-table
+  .row-change-before
+  > td,
+html:not(.meeting-dark):not(.meeting-dashboard)
+  #budget-pane
+  .budget-table
+  .row-change
+  > td {
+  background: #f1f7f3 !important;
+  color: #253226 !important;
+}
+
+html:not(.meeting-dark):not(.meeting-dashboard)
+  #budget-pane
+  .budget-table
+  .row-change-before
+  > .label,
+html:not(.meeting-dark):not(.meeting-dashboard)
+  #budget-pane
+  .budget-table
+  .row-change
+  > .label {
+  background: #d3e6d7 !important;
+  color: #315744 !important;
+  font-weight: 700 !important;
+}
+
+/* ปีเปลี่ยนแปลง */
+html:not(.meeting-dark):not(.meeting-dashboard)
+  #budget-pane
+  .budget-table
+  .row-change-before
+  > td:nth-child(3),
+html:not(.meeting-dark):not(.meeting-dashboard)
+  #budget-pane
+  .budget-table
+  .row-change
+  > td:nth-child(3) {
+  background: #f1f7f3 !important;
+  outline: 2px solid #5c9367;
+  outline-offset: -5px;
+}
+
+/* =========================================================
+   6. รวม (ผูกพัน + ลงทุน)
+   ========================================================= */
+
+html:not(.meeting-dark):not(.meeting-dashboard)
+  #budget-pane
+  .budget-table
+  .total-row
+  > td {
+  background: #9fc4a5 !important;
+  color: #21452b !important;
+  font-weight: 800 !important;
+}
+
+html:not(.meeting-dark):not(.meeting-dashboard)
+  #budget-pane
+  .budget-table
+  .total-row
+  > .label {
+  background: #9fc4a5 !important;
+  color: #21452b !important;
+  font-weight: 800 !important;
+}
+
+/* =========================================================
+   7. เป้าหมายเบิกจ่าย
+   โทนเดิม — ครีม / พีช
+   ========================================================= */
+
+/* ก่อนประชุม */
+html:not(.meeting-dark):not(.meeting-dashboard)
+  #budget-pane
+  .budget-table
+  .row-before
+  > td {
+  background: #fff8f2 !important;
+  color: #17263c !important;
+}
+
+html:not(.meeting-dark):not(.meeting-dashboard)
+  #budget-pane
+  .budget-table
+  .row-before
+  > .label {
+  background: #f3d4bf !important;
+  color: #8a3f17 !important;
+  font-weight: 700 !important;
+}
+
+/* หลังประชุม */
+html:not(.meeting-dark):not(.meeting-dashboard)
+  #budget-pane
+  .budget-table
+  .row-after
+  > td {
+  background: #fff8f2 !important;
+  color: #17263c !important;
+}
+
+html:not(.meeting-dark):not(.meeting-dashboard)
+  #budget-pane
+  .budget-table
+  .row-after
+  > .label {
+  background: #f3d4bf !important;
+  color: #8a3f17 !important;
+  font-weight: 700 !important;
+}
+
+/* ปีเปลี่ยนแปลง 2570 และปีตั้งงบ 2571 — ก่อนประชุม */
+html:not(.meeting-dark):not(.meeting-dashboard)
+  #budget-pane
+  .budget-table
+  .row-before
+  > td:is(:nth-child(3), :nth-child(4)) {
+  background: #fff8f2 !important;
+  outline: 2px solid #b86d43;
+  outline-offset: -5px;
+}
+
+/* ปีเปลี่ยนแปลง 2570 และปีตั้งงบ 2571 — หลังประชุม */
+html:not(.meeting-dark):not(.meeting-dashboard)
+  #budget-pane
+  .budget-table
+  .row-after
+  > td:is(:nth-child(3), :nth-child(4)) {
+  background: #fff8f2 !important;
+  outline: 2px solid #b86d43;
+  outline-offset: -5px;
+}
+
+/* ช่องกรอก กลืนกับสีของ Cell */
+html:not(.meeting-dark):not(.meeting-dashboard)
+  #budget-pane
+  .budget-table
+  .row-before
+  .input-budget,
+html:not(.meeting-dark):not(.meeting-dashboard)
+  #budget-pane
+  .budget-table
+  .row-after
+  .input-budget {
+  background: transparent !important;
+  color: #17263c !important;
+  border-color: transparent !important;
+}
+/* =========================================================
+   8. คงเหลือ
+   ========================================================= */
+
+html:not(.meeting-dark):not(.meeting-dashboard)
+  #budget-pane
+  .budget-table
+  .remain-row
+  > td {
+  background: #dfd6cc !important;
+  color: #40372f !important;
+  font-weight: 800 !important;
+}
+
+html:not(.meeting-dark):not(.meeting-dashboard)
+  #budget-pane
+  .budget-table
+  .remain-row
+  > .label {
+  background: #dfd6cc !important;
+  color: #40372f !important;
+  font-weight: 800 !important;
+}
+
+/* =========================================================
+   9. ไม่ผูกพันงบไปปีถัดไป
+   ========================================================= */
+
+html:not(.meeting-dark):not(.meeting-dashboard)
+  #budget-pane
+  .budget-table
+  .row-uncommitted
+  > td {
+  background: #eae5df !important;
+  color: #51483f !important;
+}
+
+html:not(.meeting-dark):not(.meeting-dashboard)
+  #budget-pane
+  .budget-table
+  .row-uncommitted
+  > .label {
+  background: #eae5df !important;
+  color: #51483f !important;
+  font-weight: 700 !important;
+}
+
+/* =========================================================
+   10. เป้าหมายเบิกจ่าย (มติ ครม.)
+   ========================================================= */
+
+html:not(.meeting-dark):not(.meeting-dashboard)
+  #budget-pane
+  .budget-table
+  .row-cabinet
+  > td {
+  background: #f3f8fc !important;
+  color: #273d50 !important;
+}
+
+html:not(.meeting-dark):not(.meeting-dashboard)
+  #budget-pane
+  .budget-table
+  .row-cabinet
+  > .label {
+  background: #dceaf6 !important;
+  color: #28577c !important;
+  font-weight: 700 !important;
+}
+
+/* ช่องปีเปลี่ยนแปลง */
+html:not(.meeting-dark):not(.meeting-dashboard)
+  #budget-pane
+  .budget-table
+  .row-cabinet
+  > td:nth-child(3) {
+  background: #f3f8fc !important;
+  outline: 2px solid #5b8cb4;
+  outline-offset: -5px;
+}
+
+/* =========================================================
+   11. สูง/ต่ำกว่าเป้าหมายมติ ครม.
+   ========================================================= */
+
+html:not(.meeting-dark):not(.meeting-dashboard)
+  #budget-pane
+  .budget-table
+  .row-diff
+  > td {
+  background: #fffaf0 !important;
+  color: #4b3c20 !important;
+}
+
+html:not(.meeting-dark):not(.meeting-dashboard)
+  #budget-pane
+  .budget-table
+  .row-diff
+  > .label {
+  background: #f7e9c7 !important;
+  color: #78571a !important;
+  font-weight: 700 !important;
+}
+
+html:not(.meeting-dark):not(.meeting-dashboard)
+  #budget-pane
+  .budget-table
+  .row-diff
+  > td:nth-child(3) {
+  background: #f2d997 !important;
+}
+
+/* =========================================================
+   12. ช่องกรอกตัวเลข
+   ให้รับสีพื้นของ Cell
+   ========================================================= */
+
+html:not(.meeting-dark):not(.meeting-dashboard)
+  #budget-pane
+  .budget-table
+  .input-budget {
+  background: transparent !important;
+  color: #17263c !important;
+  border: 1px solid transparent !important;
+  border-radius: 8px !important;
+  box-shadow: none !important;
+}
+
+/* ผูกพันยกมา */
+html:not(.meeting-dark):not(.meeting-dashboard)
+  #budget-pane
+  .budget-table
+  .row-carry
+  .input-budget {
+  background: rgba(255, 255, 255, 0.22) !important;
+}
+
+/* เป้าหมายเบิกจ่าย — ช่องกรอกต้องเป็นเทา */
+html:not(.meeting-dark):not(.meeting-dashboard)
+  #budget-pane
+  .budget-table
+  .row-before
+  .input-budget,
+html:not(.meeting-dark):not(.meeting-dashboard)
+  #budget-pane
+  .budget-table
+  .row-after
+  .input-budget {
+  background: transparent !important;
+  border-color: transparent !important;
+}
+
+/* Hover */
+html:not(.meeting-dark):not(.meeting-dashboard)
+  #budget-pane
+  .budget-table
+  .input-budget:hover {
+  background: #f1f7ef !important;
+  border-color: #c8b7a5 !important;
+}
+
+/* Focus */
+html:not(.meeting-dark):not(.meeting-dashboard)
+  #budget-pane
+  .budget-table
+  .input-budget:focus {
+  background: #fffdf9 !important;
+  border-color: #9b704c !important;
+  box-shadow: 0 0 0 2px rgba(155, 112, 76, 0.14) !important;
+  outline: none !important;
+}
+
+/* ช่องที่มีการแก้ไข */
+html:not(.meeting-dark):not(.meeting-dashboard)
+  #budget-pane
+  .budget-table
+  .input-budget.is-edited {
+  border-color: #b99b7d !important;
+}
+
+/* =========================================================
+   13. ตัวเลขคำนวณ
+   ========================================================= */
+
+html:not(.meeting-dark):not(.meeting-dashboard)
+  #budget-pane
+  .budget-table
+  .calc-cell {
+  color: #312a24 !important;
+}
+
+/* =========================================================
+   14. Scrollbar ภายในตาราง
+   ========================================================= */
+
+html:not(.meeting-dark):not(.meeting-dashboard) #budget-pane .budget-wrapper {
+  scrollbar-color: #a9825f #f3eadf;
+  scrollbar-width: thin;
+}
+
+html:not(.meeting-dark):not(.meeting-dashboard)
+  #budget-pane
+  .budget-wrapper::-webkit-scrollbar {
+  width: 9px;
+  height: 9px;
+}
+
+html:not(.meeting-dark):not(.meeting-dashboard)
+  #budget-pane
+  .budget-wrapper::-webkit-scrollbar-track {
+  background: #f3eadf;
+}
+
+html:not(.meeting-dark):not(.meeting-dashboard)
+  #budget-pane
+  .budget-wrapper::-webkit-scrollbar-thumb {
+  background: #a9825f;
+  border: 2px solid #f3eadf;
+  border-radius: 8px;
+}
+
+html:not(.meeting-dark):not(.meeting-dashboard)
+  #budget-pane
+  .budget-wrapper::-webkit-scrollbar-thumb:hover {
+  background: #946b48;
+}
+
+/* Shared light-gray surround; subsection cards keep their own surfaces. */
+html:not(.meeting-dark):not(.meeting-dashboard) #info-pane .project-info-sheet {
+  background: #f4ece2 !important;
+}
+html:not(.meeting-dark):not(.meeting-dashboard) #info-pane .info-section-card:not(.is-active) {
+  background: #fffaf4 !important;
+  border-color: #bea080 !important;
+  box-shadow: 0 3px 10px #684a2d12;
+}
+html:not(.meeting-dark):not(.meeting-dashboard) #info-pane .info-section-card:not(.is-active) .info-section-head {
+  background: #dfcbb5 !important;
+  color: #49311f !important;
+  border-bottom-color: #bea080 !important;
+  box-shadow: inset 4px 0 #906744;
+}
+html:not(.meeting-dark):not(.meeting-dashboard) #info-pane .info-section-card:not(.is-active) .info-section-body {
+  background: #fffaf4 !important;
+}
+html:not(.meeting-dark):not(.meeting-dashboard) body,
+html:not(.meeting-dark):not(.meeting-dashboard) .container-fluid,
+html:not(.meeting-dark):not(.meeting-dashboard) .detail-card {
+  background: #f8f6f2 !important;
+}
+html:not(.meeting-dark):not(.meeting-dashboard) .detail-card > .tab-content,
+html:not(.meeting-dark):not(.meeting-dashboard) #info-pane,
+html:not(.meeting-dark):not(.meeting-dashboard) #budget-pane,
+html:not(.meeting-dark):not(.meeting-dashboard) #detail-budget-pane,
+html:not(.meeting-dark):not(.meeting-dashboard) #workflow-pane,
+html:not(.meeting-dark):not(.meeting-dashboard) .nav-wrap,
+html:not(.meeting-dark):not(.meeting-dashboard) #projectTab {
+  background: #f4ece2 !important;
+}
+
+html:not(.meeting-dark):not(.meeting-dashboard)
+  #budget-pane.budget-fullscreen-mode {
+  background: #f7f3ee !important;
+}
+
+html:not(.meeting-dark):not(.meeting-dashboard) #budget-pane .budget-table th,
+html:not(.meeting-dark):not(.meeting-dashboard) #budget-pane .budget-table td {
+  border-right-color: #a99784 !important;
+}
+
+html:not(.meeting-dark):not(.meeting-dashboard) #budget-pane .budget-table thead th {
+  border-bottom: 2px solid #92765a !important;
+}
+
+
+html:not(.meeting-dark):not(.meeting-dashboard) #projectTab .nav-link:not(.active) {
+  background: #f4ece2 !important;
+  border-color: #d8c8b5 !important;
+  color: #665242 !important;
+}
+
+html:not(.meeting-dark):not(.meeting-dashboard) #projectTab .nav-link:not(.active):is(:hover, :focus-visible) {
+  background: #ede2d5 !important;
+}
+
+/* Keep summary alignment scoped to its own tab. */
+#budget-meta-approval-date {
+  justify-content: flex-start !important;
+  text-align: left !important;
+}
+
+.meeting-dashboard #operating-overview-cards .fund-row label,
+.meeting-dashboard #operating-overview-cards .fund-label {
+  font-size: 16px;
+}
+
+.meeting-dashboard #operating-overview-cards .fund-input,
+.meeting-dashboard #operating-overview-cards .fund-auto {
+  font-size: 18px;
+}
+
+.meeting-dashboard #operating-overview-cards .mini-card .metric-label {
+  text-align: left !important;
+}
+
+.meeting-dashboard #annual-allocation-cards .mini-card,
+.meeting-dashboard #annual-allocation-cards .mini-card .metric-label,
+.meeting-dashboard #annual-allocation-cards .mini-card .num,
+.meeting-dashboard #annual-allocation-cards .allocation-difference,
+.meeting-dashboard #annual-allocation-cards .allocation-difference span,
+.meeting-dashboard #annual-allocation-cards .allocation-difference strong {
+  text-align: center !important;
+}
+
+/* Project investment totals: swap the card and editable field surfaces. */
+html:not(.meeting-dark) .money-summary .money-card:not(.total) {
+  background: #fcf7f0;
+  border-color: #ccb9a3;
+}
+html:not(.meeting-dark) .money-summary .money-card:not(.total) input {
+  background: #f8fafc !important;
+  border-color: #dce4ee !important;
+}
+
+/* Clicking a project-info subsection highlights its card while form controls
+   keep their own input surfaces and focus styling. */
+html {
+  --meeting-selection-body: #4a4a4a;
+  --meeting-selection-head: #3d3d3d;
+  --meeting-selection-border: #696969;
+}
+html.meeting-dark {
+  --meeting-selection-body: #505058;
+  --meeting-selection-head: #414149;
+  --meeting-selection-border: #c4c4d0;
+}
+.info-section-card {
+  transition: background-color 220ms ease, border-color 220ms ease,
+    box-shadow 220ms ease;
+}
+.info-section-card .info-section-head {
+  cursor: pointer;
+  transition: background-color 220ms ease, color 220ms ease,
+    border-color 220ms ease;
+}
+.info-section-card .info-section-head:focus-visible {
+  outline: 3px solid #bd7a3e;
+  outline-offset: -3px;
+}
+.info-section-card .info-section-body {
+  transition: background-color 220ms ease;
+}
+html:not(.meeting-dashboard) .info-section-card.is-active {
+  background: var(--meeting-selection-body) !important;
+  border-color: var(--meeting-selection-border) !important;
+  color: #fff !important;
+  box-shadow: 0 5px 18px rgba(0, 0, 0, 0.22) !important;
+}
+html:not(.meeting-dashboard) .info-section-card.is-active .info-section-head {
+  background: var(--meeting-selection-head) !important;
+  border-bottom-color: var(--meeting-selection-border) !important;
+  color: #fff !important;
+}
+html:not(.meeting-dashboard) .info-section-card.is-active .info-section-body {
+  background: var(--meeting-selection-body) !important;
+  color: #fff !important;
+}
+html.meeting-dark .info-section-card.is-active {
+  background: var(--meeting-selection-body) !important;
+  border-color: var(--meeting-selection-border) !important;
+  box-shadow: 0 0 0 1px var(--meeting-selection-border), 0 5px 18px rgba(0, 0, 0, 0.28) !important;
+}
+html.meeting-dark .info-section-card.is-active .info-section-head {
+  background: var(--meeting-selection-head) !important;
+  border-bottom-color: var(--meeting-selection-border) !important;
+  color: #fff !important;
+}
+html.meeting-dark .info-section-card.is-active .info-section-body {
+  background: var(--meeting-selection-body) !important;
+  color: #fff !important;
+}
+html:not(.meeting-dashboard) .info-section-card.is-active :is(.info-subnumber, .compact-label) {
+  color: #fff !important;
+}
+/* Nested amount cards keep their own surfaces, so their labels must follow
+   those surfaces rather than the selected section's white text. */
+html:not(.meeting-dark):not(.meeting-dashboard) .info-section-card.is-active .money-card .compact-label {
+  color: #584535 !important;
+}
+html:not(.meeting-dark):not(.meeting-dashboard) .info-section-card.is-active .money-card.total .compact-label {
+  color: #245334 !important;
+}
+html.meeting-dark .info-section-card.is-active .money-card .compact-label {
+  color: #ededf0 !important;
+}
+html.meeting-dark .info-section-card.is-active .money-card.total .compact-label {
+  color: #b9f3dc !important;
+}
+@media (prefers-reduced-motion: reduce) {
+  .info-section-card,
+  .info-section-card .info-section-head,
+  .info-section-card .info-section-body {
+    transition-duration: 0.01ms;
+  }
+}
+
+/* Budget rows share the project-info active palette. Native buttons keep the
+   row labels usable with a keyboard without replacing table semantics. */
+#budget-plan-body .budget-row-activate,
+#budget-project-overview .budget-overview-activate {
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  border-radius: 3px;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: inherit;
+  cursor: pointer;
+}
+#budget-plan-body .budget-row-activate:focus-visible,
+#budget-project-overview .budget-overview-activate:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 4px;
+}
+#budget-plan-body > tr[data-budget-row-key] > td {
+  transition: background-color 220ms ease, color 220ms ease;
+}
+#budget-project-overview .budget-overview-line {
+  border-radius: 6px;
+  transition: background-color 220ms ease, color 220ms ease;
+}
+html #budget-pane #budget-project-overview .budget-overview-line.is-active {
+  background: var(--meeting-selection-body) !important;
+  color: #fff !important;
+}
+html #budget-pane #budget-project-overview .budget-overview-line.is-active :is(.budget-meta-label, .budget-overview-activate, .budget-overview-unit) {
+  color: #fff !important;
+}
+html #budget-pane #budget-plan-body > tr[data-budget-row-key].is-active > td {
+  background: var(--meeting-selection-body) !important;
+  color: #fff !important;
+}
+html #budget-pane #budget-plan-body > tr[data-budget-row-key].is-active > td.label {
+  background: var(--meeting-selection-head) !important;
+}
+html #budget-pane #budget-plan-body > tr.is-active :is(.budget-row-activate, .budget-comment-title) {
+  color: #fff !important;
+}
+html #budget-pane #budget-plan-body > tr.is-active :is(input, textarea, select) {
+  background: var(--active-input-background) !important;
+  color: var(--active-input-color) !important;
+}
+html.meeting-dark #budget-pane #budget-project-overview .budget-overview-line.is-active {
+  box-shadow: inset 0 0 0 2px var(--meeting-selection-border);
+}
+html.meeting-dark #budget-pane #budget-plan-body > tr.is-active > td {
+  box-shadow: inset 0 2px var(--meeting-selection-border), inset 0 -2px var(--meeting-selection-border);
+}
+html.meeting-dark #budget-pane #budget-plan-body > tr.is-active > td.label {
+  box-shadow: inset 4px 0 var(--meeting-selection-border), inset 0 2px var(--meeting-selection-border), inset 0 -2px var(--meeting-selection-border);
+}
+@media (prefers-reduced-motion: reduce) {
+  #budget-plan-body > tr[data-budget-row-key] > td,
+  #budget-project-overview .budget-overview-line {
+    transition-duration: 0.01ms;
+  }
+}
+
+/* Set-budget summary includes commitment and combined operating total. */
+html.meeting-dashboard:not(.meeting-dark) #projectTable tbody tr.project-item-row > td:nth-child(n+3):nth-child(-n+7) {
+  background: #edf4ee !important;
+}
+html.meeting-dashboard:not(.meeting-dark) #projectTable tbody tr.project-item-row > td:nth-child(n+8):nth-child(-n+10) {
+  background: #fbf0df !important;
+}
+html.meeting-dashboard:not(.meeting-dark) #projectTable tbody tr.project-item-row > td:nth-child(11) {
+  background: #fbf7f2 !important;
+}
+
+/* Set-budget ledger: cream identity cells, green/orange financial groups and original totals. */
+#summary-table-fullscreen {
+  --ledger-paper: #fbf7f1;
+  --ledger-budget: #eaf4ed;
+  --ledger-target: #fff0dc;
+  --ledger-group: #e9dfd3;
+  --ledger-total: #d1e2f3;
+  --ledger-ink: #40352c;
+  --ledger-line: #d5c6b5;
+}
+.meeting-dark #summary-table-fullscreen {
+  --ledger-paper: #172536;
+  --ledger-budget: #1c372f;
+  --ledger-target: #403022;
+  --ledger-group: #29425c;
+  --ledger-total: #304d6b;
+  --ledger-ink: #eef5ff;
+  --ledger-line: #405871;
+}
+html #summary-table-fullscreen #projectTable thead th {
+  opacity: 1 !important;
+  backdrop-filter: none !important;
+  background-clip: border-box !important;
+  border: 1px solid #a5bbd1 !important;
+  background: #20598f !important;
+  color: #ffffff !important;
+  border-color: #a5bbd1 !important;
+}
+html #summary-table-fullscreen #projectTable thead :is(.th-group-estimate, .th-estimate) {
+  background: #a35d13 !important;
+  border-color: #e3bc88 !important;
+}
+html #summary-table-fullscreen #projectTable thead :is(.th-group-budget, .th-budget) {
+  background: #1c7054 !important;
+  border-color: #a0cbbb !important;
+}
+html #summary-table-fullscreen #projectTable thead :is(.sub-formula, .header-formula) {
+  color: #ffffff !important;
+}
+html #summary-table-fullscreen #projectTable tbody td {
+  background: var(--ledger-paper) !important;
+  color: var(--ledger-ink);
+  border-color: var(--ledger-line);
+}
+html #summary-table-fullscreen #projectTable tbody tr.project-item-row > td:nth-child(n+3):nth-child(-n+7) {
+  background: var(--ledger-budget) !important;
+}
+html #summary-table-fullscreen #projectTable tbody tr.project-item-row > td:nth-child(n+8):nth-child(-n+10) {
+  background: var(--ledger-target) !important;
+}
+html #summary-table-fullscreen #projectTable tbody tr:is(.row-section-header,.row-subsection-header) > td {
+  background: var(--ledger-group) !important;
+  color: var(--ledger-ink) !important;
+}
+html #summary-table-fullscreen #projectTable tbody tr.row-summary > td {
+  background: var(--ledger-total) !important;
+  color: var(--ledger-ink) !important;
+}
+html #summary-table-fullscreen #projectTable tbody tr.row-grand-total > td {
+  background: #214f7c !important;
+  color: #ffffff !important;
+}
+html #summary-table-fullscreen #projectTable :is(.linked-value, input, textarea) {
+  background: transparent !important;
+  color: var(--ledger-ink) !important;
+}
+
+/* Reuse the palette across change-budget and all cloned annual-summary tables.
+   No widths, column counts, totals, or tab controls are changed. */
+html #summary-table-fullscreen :is(#changeSummaryTable, #future-summary-panel table) thead th {
+  opacity: 1 !important;
+  backdrop-filter: none !important;
+  background-clip: border-box !important;
+  border-width: 1px !important;
+  border-style: solid !important;
+  background: #20598f !important;
+  color: #ffffff !important;
+  border-color: #557fa9 !important;
+}
+html #summary-table-fullscreen #future-summary-panel table thead :is(.th-group-budget,.th-budget),
+html #summary-table-fullscreen #changeSummaryTable thead .change-budget-group,
+html #summary-table-fullscreen #changeSummaryTable thead tr:nth-child(2) > th:nth-child(-n+7) {
+  background: #1c7054 !important;
+  border-color: #5b9f88 !important;
+}
+html #summary-table-fullscreen #future-summary-panel table thead :is(.th-group-estimate,.th-estimate),
+html #summary-table-fullscreen #changeSummaryTable thead .change-target-group,
+html #summary-table-fullscreen #changeSummaryTable thead tr:nth-child(2) > th:nth-child(n+8) {
+  background: #a35d13 !important;
+  border-color: #d29a57 !important;
+}
+html #summary-table-fullscreen :is(#changeSummaryTable, #future-summary-panel table) thead :is(small,.sub-formula,.header-formula,.sub-red,.header-note-input) {
+  color: #ffffff !important;
+}
+html #summary-table-fullscreen :is(#changeSummaryTable, #future-summary-panel table) tbody tr.project-item-row > td {
+  background: var(--ledger-paper) !important;
+  border-color: var(--ledger-line);
+  color: var(--ledger-ink);
+}
+html #summary-table-fullscreen #changeSummaryTable tbody tr.project-item-row > td:nth-child(n+3):nth-child(-n+9),
+html #summary-table-fullscreen #future-summary-panel table tbody tr.project-item-row > td:nth-child(n+3):nth-child(-n+5) {
+  background: var(--ledger-budget) !important;
+}
+html #summary-table-fullscreen #changeSummaryTable tbody tr.project-item-row > td:nth-child(n+10):nth-child(-n+14),
+html #summary-table-fullscreen #future-summary-panel table tbody tr.project-item-row > td:nth-child(n+6):nth-child(-n+8) {
+  background: var(--ledger-target) !important;
+}
+html #summary-table-fullscreen :is(#changeSummaryTable, #future-summary-panel table) :is(.linked-value,input,textarea) {
+  background: transparent !important;
+}
+html #summary-table-fullscreen #changeSummaryTable tr.change-total-row > td,
+html #summary-table-fullscreen #future-summary-panel table tr.row-summary > td {
+  background: var(--ledger-total) !important;
+  color: var(--ledger-ink) !important;
+  border-color: var(--ledger-line) !important;
+  font-weight: 700;
+}
+html #summary-table-fullscreen #future-summary-panel table tr.row-grand-total > td {
+  background: #214f7c !important;
+  color: #ffffff !important;
+  border-color: #557fa9 !important;
+  font-weight: 700;
+}
+/* Grand totals follow the corresponding column-group header colors. */
+html #summary-table-fullscreen #projectTable tbody tr.row-grand-total > td,
+html #summary-table-fullscreen #future-summary-panel table tr.row-grand-total > td {
+  background: #20598f !important;
+  color: #ffffff !important;
+}
+html #summary-table-fullscreen #projectTable tbody tr.row-grand-total > td:nth-child(n+3):nth-child(-n+7),
+html #summary-table-fullscreen #future-summary-panel table tr.row-grand-total > td:nth-child(n+2):nth-child(-n+4) {
+  background: #1c7054 !important;
+}
+html #summary-table-fullscreen #projectTable tbody tr.row-grand-total > td:nth-child(n+8):nth-child(-n+10),
+html #summary-table-fullscreen #future-summary-panel table tr.row-grand-total > td:nth-child(n+5):nth-child(-n+7) {
+  background: #a35d13 !important;
+}
+html #summary-table-fullscreen #projectTable tbody tr.row-summary > td,
+html #summary-table-fullscreen #future-summary-panel table tr.row-summary > td,
+html #summary-table-fullscreen #changeSummaryTable tr.change-total-row > td {
+  background: #e7e9ec !important;
+  color: #303943 !important;
+}
+html.meeting-dark #summary-table-fullscreen :is(#projectTable, #future-summary-panel table) tr.row-summary > td,
+html.meeting-dark #summary-table-fullscreen #changeSummaryTable tr.change-total-row > td {
+  background: #343a42 !important;
+  color: #f0f3f7 !important;
+}
+
+/* Summary toolbar buttons use a distinct warm surface above the pale card. */
+html.meeting-dashboard:not(.meeting-dark) body #summary-table-fullscreen .action-btns > .btn {
+  background: linear-gradient(180deg, #e9edf1, #cbd2da) !important;
+  border-color: #9aa5b2 !important;
+  color: #303943 !important;
+  box-shadow: inset 0 1px 0 #ffffff, 0 2px 4px #3039431a;
+}
+html.meeting-dashboard:not(.meeting-dark) body #summary-table-fullscreen .action-btns > .btn:is(:hover, :focus-visible) {
+  background: #b9c3cf !important;
+  border-color: #778493 !important;
+}
+
+/* Category headings and subtotals share the same charcoal surface in both themes. */
+html.meeting-dashboard body #summary-table-fullscreen :is(#projectTable, #changeSummaryTable, #future-summary-panel table) tr:is([data-summary-group="continuing"], [data-summary-group="new"]) > :is(td, th) {
+  background: #3e434a !important;
+  color: #ffffff !important;
+}
+html.meeting-dashboard body #summary-table-fullscreen :is(#projectTable, #changeSummaryTable, #future-summary-panel table) tr:is(.row-summary, .change-total-row):is([data-summary-group="continuing"], [data-summary-group="new"]) > :is(td, th) {
+  background: #565d66 !important;
+}
+
+/* Black boundaries for investment allocation and remaining-balance columns. */
+html.meeting-dashboard body #summary-table-fullscreen #projectTable thead tr:nth-child(2) > th:nth-child(2),
+html.meeting-dashboard body #summary-table-fullscreen #projectTable tbody tr:not(.row-section-header):not(.row-subsection-header) > td:nth-child(4) {
+  border-left: 2px solid #000000 !important;
+}
+html.meeting-dashboard body #summary-table-fullscreen #projectTable thead tr:nth-child(2) > th:nth-child(4),
+html.meeting-dashboard body #summary-table-fullscreen #projectTable tbody tr:not(.row-section-header):not(.row-subsection-header) > td:nth-child(6) {
+  border-right: 2px solid #000000 !important;
+}
+
